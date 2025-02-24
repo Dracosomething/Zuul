@@ -20,6 +20,7 @@ class Game {
 		Room lab = new Room("in a computing lab");
 		Room office = new Room("in the computing admin office");
 		Room stairwell = new Room("in a stairwell.\n it looks like you can go up and down.");
+		Room bacement = new Room("in the basement, it is fillee");
 
 		// Initialise room exits
 		outside.AddExit("east", theatre);
