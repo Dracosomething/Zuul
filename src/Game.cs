@@ -19,8 +19,8 @@ class Game {
 		Room pub = new Room("in the campus pub");
 		Room lab = new Room("in a computing lab");
 		Room office = new Room("in the computing admin office");
-		Room stairwell = new Room("in a stairwell.\n it looks like you can go up and down.");
-		Room bacement = new Room("in the basement, it is fillee");
+		Room bacement = new Room("in the basement, it is filled with beer fats.");
+		Room attic = new Room("in the attic, there are a lot of cobwebs.");
 
 		// Initialise room exits
 		outside.AddExit("east", theatre);
@@ -30,14 +30,17 @@ class Game {
 		theatre.AddExit("west", outside);
 
 		pub.AddExit("east", outside);
+		pub.AddExit("down", bacement);
+		pub.AddExit("up", attic);
 
 		lab.AddExit("north", outside);
 		lab.AddExit("east", office);
 
 		office.AddExit("west", lab);
 		
-		stairwell.AddExit("up", lab);
-		stairwell.AddExit("down", pub);
+		bacement.AddExit("up", pub);
+		
+		attic.AddExit("down", pub);
 
 		// Create your Items here
 		// ...
