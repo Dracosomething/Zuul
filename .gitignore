@@ -2,6 +2,7 @@
 build
 bin
 obj
+.idea*
 
 *.sln
 .DS*
