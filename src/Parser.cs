@@ -1,19 +1,16 @@
 using System;
 
-class Parser
-{
+class Parser {
 	// Holds all valid command words
 	private readonly CommandLibrary commandLibrary; 
 
 	// Constructor
-	public Parser()
-	{
+	public Parser() {
 		commandLibrary = new CommandLibrary();
 	}
 
 	// Ask and interpret the user input. Return a Command object.
-	public Command GetCommand()
-	{
+	public Command GetCommand() {
 		Console.Write("> "); // print prompt
 
 		string word1 = null;
@@ -34,8 +31,7 @@ class Parser
 	}
 
 	// Prints a list of valid command words from commandLibrary.
-	public void PrintValidCommands()
-	{
+	public void PrintValidCommands() {
 		Console.WriteLine("Your command words are:");
 		Console.WriteLine(commandLibrary.GetCommandsString());
 	}
