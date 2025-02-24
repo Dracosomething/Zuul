@@ -99,6 +99,9 @@ class Game
 			case "quit":
 				wantToQuit = true;
 				break;
+			case "look":
+				Look();
+				break;
 		}
 
 		return wantToQuit;
@@ -136,11 +139,17 @@ class Game
 		Room nextRoom = currentRoom.GetExit(direction);
 		if (nextRoom == null)
 		{
-			Console.WriteLine("There is no door to "+direction+"!");
+			Console.WriteLine($"There is no door to {direction}!");
 			return;
 		}
 
 		currentRoom = nextRoom;
+		Console.WriteLine(currentRoom.GetLongDescription());
+	}
+
+	// gives the description of the current room
+	private void Look()
+	{
 		Console.WriteLine(currentRoom.GetLongDescription());
 	}
 }
