@@ -6,6 +6,7 @@ class Game {
 	private Parser parser;
 	private Player player;
 	private Room StartingRoom;
+	private Room winRoom = new Room("");
 
 	// Constructor
 	public Game() {
@@ -45,7 +46,8 @@ class Game {
 		bacement.AddExit("up", pub);
 		
 		attic.AddExit("down", pub);
-
+		
+		attic.AddExit("west", winRoom);
 		// Create your Items here
 		// ...
 		// And add them to the Rooms
@@ -63,11 +65,14 @@ class Game {
 		// Enter the main command loop. Here we repeatedly read commands and
 		// execute them until the player wants to quit.
 		bool finished = false;
-		while (!finished && player.IsAlive()) {
+		while (!finished && player.isAlive()) {
+			if (player.CurrentRoom == winRoom) {
+				finished = AnounceWin();
+			}
 			Command command = parser.GetCommand();
 			finished = ProcessCommand(command);
 		}
-		if (!player.IsAlive()) {
+		if (!player.isAlive()) {
 			finished = AnounceDeath();
 			return;
 		}
@@ -149,10 +154,11 @@ class Game {
 			Console.WriteLine($"There is no door to {direction}!");
 			return;
 		}
-
 		player.CurrentRoom = nextRoom;
-		Console.WriteLine(player.CurrentRoom.GetLongDescription());
-		player.Damage(5);
+		if (!player.CurrentRoom.Equals(winRoom)) {
+			Console.WriteLine(player.CurrentRoom.GetLongDescription());
+		}
+		player.damage(5);
 	}
 
 	// gives the description of the current room
@@ -162,7 +168,7 @@ class Game {
 	
 	// shows the players status
 	private void Status() {
-		Console.WriteLine($"Health: {player.GetHealth()}");
+		Console.WriteLine($"Health: {player.Health}");
 	}
 	
 	// death message
@@ -173,12 +179,20 @@ class Game {
 		return Restart();
 	}
 	
+	// win message
+	private bool AnounceWin() {
+		Console.WriteLine("You won");
+		Console.WriteLine("type \"continue\" to continue");
+		Console.WriteLine("type \"quit\" to quit");
+		return Restart();
+	}
+	
 	// resets game
 	private bool Restart() {
 		String command = Console.ReadLine();
 		switch (command) {
 			case "continue":
-				player.SetHealth(100);
+				player.Health = 100;
 				player.CurrentRoom = StartingRoom;
 				Play();
 				return false;
@@ -187,8 +201,8 @@ class Game {
 				Console.WriteLine("Thank you for playing.");
 				Console.WriteLine("Press [Enter] to continue.");
 				Console.ReadLine();
-				return true;
 				break;
 		}
+		return true;
 	}
 }
