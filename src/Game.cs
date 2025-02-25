@@ -129,6 +129,12 @@ class Game {
 			case "status":
 				Status();
 				break;
+			case "take":
+				Take(command);
+				break;
+			case "drop":
+				Drop(command);
+				break;
 		}
 
 		return wantToQuit;
@@ -185,6 +191,17 @@ class Game {
 		Console.WriteLine($"inventory:\n{player.BackPack.Show()}");
 	}
 	
+	// take an item from a room
+	private void Take(Command command) {
+		
+	}
+	
+	// put an item into a room
+	private void Drop(Command command) {
+		
+	}
+	
+	// #########################################################
 	// death message
 	private bool AnounceDeath() {
 		Console.WriteLine("Game Over\n you died by bleeding out.");
