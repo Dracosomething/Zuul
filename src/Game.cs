@@ -1,13 +1,15 @@
 using System;
+using Zuul;
 
 class Game {
 	// Private fields
 	private Parser parser;
-	private Room currentRoom;
+	private Player player;
 
 	// Constructor
 	public Game() {
 		parser = new Parser();
+		player = new Player();
 		CreateRooms();
 	}
 
@@ -48,7 +50,7 @@ class Game {
 		// ...
 
 		// Start game outside
-		currentRoom = outside;
+		player.CurrentRoom = outside;
 	}
 
 	//  Main play routine. Loops until end of play.
@@ -138,7 +140,7 @@ class Game {
 			return;
 		}
 
-		currentRoom = nextRoom;
+		player.CurrentRoom = nextRoom;
 		Console.WriteLine(currentRoom.GetLongDescription());
 	}
 
