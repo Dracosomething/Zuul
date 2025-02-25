@@ -94,9 +94,13 @@ class Game {
 		Console.WriteLine(player.CurrentRoom.GetLongDescription());
 	}
 
-	// Given a command, process (that is: execute) the command.
-	// If this command ends the game, it returns true.
-	// Otherwise false is returned.
+	/// <summary>
+	/// <param name="command">Given a command, process (that is: execute) the command.</param>
+	/// <returns>
+	/// If this command ends the game, it returns true.
+	/// Otherwise false is returned.
+	/// </returns>
+	/// </summary>
 	private bool ProcessCommand(Command command) {
 		bool wantToQuit = false;
 
@@ -130,8 +134,10 @@ class Game {
 	// implementations of user commands:
 	// ######################################
 	
-	// Print out some help information.
-	// Here we print the mission and a list of the command words.
+	/*
+	 * Print out some help information.
+	 * Here we print the mission and a list of the command words.
+	 */
 	private void PrintHelp() {
 		Console.WriteLine("You are lost. You are alone.");
 		Console.WriteLine("You wander around at the university.");

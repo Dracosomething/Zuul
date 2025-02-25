@@ -23,7 +23,7 @@ class CommandLibrary {
 		return validCommands.Contains(instring);
 	}
 
-	// returns a list of valid command words as a comma separated string.
+	/// <returns> returns a list of valid command words as a comma separated string.</returns>
 	public string GetCommandsString() {
 		return String.Join(", ", validCommands);
 	}

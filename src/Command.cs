@@ -12,13 +12,13 @@ class Command {
 	}
 
 	
-	// Return true if this command was not understood.
+	/// <returns> true if this command was not understood.</returns>
 	public bool IsUnknown() {
 		return CommandWord == null;
 	}
 
 	
-	// Return true if the command has a second word.
+	/// <returns> Return true if the command has a second word. </returns>
 	public bool HasSecondWord() {
 		return SecondWord != null;
 	}

@@ -10,8 +10,10 @@ class Room {
 	// properties
 	public Inventory Chest { get { return this.chest; } }
 	
-	// Create a room described "description". Initially, it has no exits.
-	// "description" is something like "in a kitchen" or "in a court yard".
+	/*
+	 * Create a room described "description". Initially, it has no exits.
+	 * "description" is something like "in a kitchen" or "in a court yard".
+	 */
 	public Room(string desc) {
 		description = desc;
 		exits = new Dictionary<string, Room>();
@@ -27,10 +29,14 @@ class Room {
 	public string GetShortDescription() {
 		return description;
 	}
-
-	// Return a long description of this room, in the form:
-	//     You are in the kitchen.
-	//     Exits: north, west
+	
+	/// <summary>
+	/// used to get the full description of a room
+	/// </summary>
+	/// <returns>Return a long description of this room, in the form:
+	///				You are in the kitchen.
+	///				Exits: north, west
+	///	 </returns>
 	public string GetLongDescription() {
 		string str = "You are ";
 		str += description;
@@ -39,8 +45,8 @@ class Room {
 		return str;
 	}
 
-	// Return the room that is reached if we go from this room in direction
-	// "direction". If there is no room in that direction, return null.
+	/// <returns> the room that is reached if we go from this room in direction
+	/// "direction". If there is no room in that direction, return null. </returns>
 	public Room GetExit(string direction) {
 		if (exits.ContainsKey(direction)) {
 			return exits[direction];
@@ -48,8 +54,8 @@ class Room {
 		return null;
 	}
 
-	// Return a string describing the room's exits, for example
-	// "Exits: north, west".
+	/// <returns> a string describing the room's exits, for example 
+	/// "Exits: north, west".</returns>
 	private string GetExitString() {
 		string str = "Exits: ";
 		str += String.Join(", ", exits.Keys);

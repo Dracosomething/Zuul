@@ -12,6 +12,12 @@ class Inventory {
     }
     
     // methods
+    /// <summary>
+    /// adds something to the inventory.
+    /// </summary>
+    /// <param name="itemName">the name of an item</param>
+    /// <param name="item">the item to be added</param>
+    /// <returns>true if an item is added, false if it fials</returns>
     public bool Put(string itemName, Item item) {
         int itemWeight = item.Weight;
         if (itemWeight <= FreeWeight()) {
@@ -21,6 +27,11 @@ class Inventory {
         return false;
     }
 
+    /// <summary>
+    /// Gets an item from the inventory
+    /// </summary>
+    /// <param name="itemName">The name of the item to be gotten</param>
+    /// <returns>the item or null if it fails</returns>
     public Item Get(string itemName) {
         if (items.ContainsKey(itemName)) {
             return items[itemName];
@@ -28,6 +39,10 @@ class Inventory {
         return null;
     }
 
+    /// <summary>
+    /// used to get the total weight of all items in the inventory
+    /// </summary>
+    /// <returns>the total weight in the inventory</returns>
     public int TotalWeight() {
         int total = 0;
         foreach (var keyValuePair in items) {
@@ -36,6 +51,10 @@ class Inventory {
         return total;
     }
 
+    /// <summary>
+    /// Used to get the free space in an inventory
+    /// </summary>
+    /// <returns>the weight free</returns>
     public int FreeWeight() {
         return maxWeight - TotalWeight();
     }
