@@ -74,7 +74,6 @@ class Game {
 		}
 		if (!player.isAlive()) {
 			finished = AnounceDeath();
-			return;
 		}
 		Console.WriteLine("Thank you for playing.");
 		Console.WriteLine("Press [Enter] to continue.");
@@ -183,14 +182,15 @@ class Game {
 	private bool AnounceWin() {
 		Console.WriteLine("You won");
 		Console.WriteLine("type \"continue\" to continue");
-		Console.WriteLine("type \"quit\" to quit");
+		Console.WriteLine("type \"quit\" twice to quit");
 		return Restart();
 	}
 	
 	// resets game
 	private bool Restart() {
-		String command = Console.ReadLine();
-		switch (command) {
+		Command command = parser.GetCommand();
+		switch (command.CommandWord)
+		{
 			case "continue":
 				player.Health = 100;
 				player.CurrentRoom = StartingRoom;
@@ -198,11 +198,8 @@ class Game {
 				return false;
 				break;
 			default:
-				Console.WriteLine("Thank you for playing.");
-				Console.WriteLine("Press [Enter] to continue.");
-				Console.ReadLine();
+				return ProcessCommand(command);
 				break;
 		}
-		return true;
 	}
 }
