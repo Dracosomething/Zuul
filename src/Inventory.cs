@@ -58,4 +58,18 @@ class Inventory {
     public int FreeWeight() {
         return maxWeight - TotalWeight();
     }
+
+    public string Show() {
+        string itemString = "";
+        int loopTimes = 0;
+        foreach (var keyValuePair in items) {
+            loopTimes++;
+            itemString += keyValuePair.Key;
+            if (items.Count > loopTimes) {
+                itemString += ", ";
+            }
+        }
+        
+        return itemString;
+    }
 }

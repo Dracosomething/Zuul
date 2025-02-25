@@ -26,10 +26,6 @@ class Game {
 		Room office = new Room("in the computing admin office");
 		Room bacement = new Room("in the basement, it is filled with beer fats.");
 		Room attic = new Room("in the attic, there are a lot of cobwebs.");
-		
-		// Items
-		Item knife = new Item(2, "a scharp pointy object");
-		Item cloack = new Item(1, "A cloack, it seems to be magical");
 
 		// Initialise room exits
 		outside.AddExit("east", theatre);
@@ -52,10 +48,18 @@ class Game {
 		attic.AddExit("down", pub);
 		
 		attic.AddExit("west", winRoom);
-		// Create your Items here
-		// ...
-		// And add them to the Rooms
-		// ...
+		
+		// Items
+		Item knife = new Item(4, "A sharp pointy object.");
+		Item cloack = new Item(2, "A simple cloack, it could be used to bypass sertain obstacles.");
+		Item axe = new Item(20, "A shiny axe, it might be usefull later.");
+		Item lockOpener = new Item(4, "Can be used to open locks.");
+		
+		// adding items to the rooms
+		bacement.Chest.Put(nameof(axe), axe);
+		theatre.Chest.Put(nameof(cloack), cloack);
+		office.Chest.Put(nameof(knife), knife);
+		pub.Chest.Put(nameof(lockOpener), lockOpener);
 		
 		// Start game outside
 		player.CurrentRoom = outside;

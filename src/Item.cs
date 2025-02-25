@@ -6,12 +6,19 @@ class Item {
     private string description;
     
     // attributes
-    public int Weight { get; }
-    public string Description { get; }
+    public int Weight
+    {
+        get { return weight; }
+    }
+
+    public string Description
+    {
+        get { return description; }
+    }
 
     // constructor
     public Item(int weight, string description) {
-        weight = weight;
-        description = description;
+        this.weight = weight;
+        this.description = description;
     }
 }

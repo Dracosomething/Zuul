@@ -7,7 +7,7 @@ class Player {
     private Inventory backPack;
     
     // properties
-    public Room CurrentRoom { get; set; }
+    public Room CurrentRoom { get { return this.currentRoom; } set { this.currentRoom = value; } }
     public int Health { get { return this.health; } set { this.health = value; } }
 
     // constructor
@@ -40,5 +40,13 @@ class Player {
     /// <returns>true if health is above 0, otherwise returns false.</returns>
     public bool isAlive() {
         return health > 0;
+    }
+
+    public bool TakeFromChest(string itemName) {
+        return false;
+    }
+    
+    public bool DropToChest(string itemName) {
+        return false;
     }
 }

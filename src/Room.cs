@@ -42,6 +42,9 @@ class Room {
 		str += description;
 		str += ".\n";
 		str += GetExitString();
+		str += ".\n";
+		str += "The room contains ";
+		str += this.Chest.Show();
 		return str;
 	}
 
