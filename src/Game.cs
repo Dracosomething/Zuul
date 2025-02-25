@@ -152,7 +152,7 @@ class Game {
 
 		player.CurrentRoom = nextRoom;
 		Console.WriteLine(player.CurrentRoom.GetLongDescription());
-		player.Damage(100);
+		player.Damage(5);
 	}
 
 	// gives the description of the current room
@@ -168,7 +168,7 @@ class Game {
 	// death message
 	private bool AnounceDeath() {
 		Console.WriteLine("Game Over\n you died by bleeding out.");
-		Console.WriteLine("type \"contine\" to continue");
+		Console.WriteLine("type \"continue\" to continue");
 		Console.WriteLine("type \"quit\" to quit");
 		String command = Console.ReadLine();
 		switch (command) {
