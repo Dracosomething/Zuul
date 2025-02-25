@@ -103,6 +103,9 @@ class Game {
 			case "look":
 				Look();
 				break;
+			case "status":
+				Status();
+				break;
 		}
 
 		return wantToQuit;
@@ -147,5 +150,11 @@ class Game {
 	// gives the description of the current room
 	private void Look() {
 		Console.WriteLine(player.CurrentRoom.GetLongDescription());
+	}
+	
+	// shows the players status
+	private void Status()
+	{
+		Console.WriteLine($"Health: {player.GetHealth()}");
 	}
 }

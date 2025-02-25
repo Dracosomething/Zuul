@@ -9,18 +9,20 @@ class Player {
         Health = 100;
     }
 
-    public void Damage (int amount)
-    {
+    public void Damage (int amount) {
         Health -= amount;
     }
 
-    public void Heal (int amount)
-    {
+    public void Heal (int amount) {
         Health += amount;
     }
 
-    public bool IsAlive()
-    {
+    public bool IsAlive() {
         return Health > 0;
+    }
+
+    public int GetHealth()
+    {
+        return Health;
     }
 }
