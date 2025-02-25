@@ -43,7 +43,7 @@ class Room {
 		str += ".\n";
 		str += GetExitString();
 		str += ".\n";
-		str += "The room contains ";
+		str += "The room contains these items\n";
 		str += this.Chest.Show();
 		return str;
 	}

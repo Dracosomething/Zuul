@@ -9,7 +9,8 @@ class Player {
     // properties
     public Room CurrentRoom { get { return this.currentRoom; } set { this.currentRoom = value; } }
     public int Health { get { return this.health; } set { this.health = value; } }
-
+    public Inventory BackPack { get { return this.backPack; } }
+    
     // constructor
     public Player() {
         this.currentRoom = null;
@@ -43,10 +44,18 @@ class Player {
     }
 
     public bool TakeFromChest(string itemName) {
+        Item item = CurrentRoom.Chest.Get(itemName);
+        if (BackPack.Put(itemName, item)) {
+            return true;
+        }
         return false;
     }
     
     public bool DropToChest(string itemName) {
+        Item item = BackPack.Get(itemName);
+        if (currentRoom.Chest.Put(itemName, item)) {
+            return true;
+        }
         return false;
     }
 }

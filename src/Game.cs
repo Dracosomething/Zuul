@@ -182,6 +182,7 @@ class Game {
 	// shows the players status
 	private void Status() {
 		Console.WriteLine($"Health: {player.Health}");
+		Console.WriteLine($"inventory:\n{player.BackPack.Show()}");
 	}
 	
 	// death message
