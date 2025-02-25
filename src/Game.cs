@@ -26,6 +26,10 @@ class Game {
 		Room office = new Room("in the computing admin office");
 		Room bacement = new Room("in the basement, it is filled with beer fats.");
 		Room attic = new Room("in the attic, there are a lot of cobwebs.");
+		
+		// Items
+		Item knife = new Item(2, "a scharp pointy object");
+		Item cloack = new Item(1, "A cloack, it seems to be magical");
 
 		// Initialise room exits
 		outside.AddExit("east", theatre);
@@ -52,7 +56,7 @@ class Game {
 		// ...
 		// And add them to the Rooms
 		// ...
-
+		
 		// Start game outside
 		player.CurrentRoom = outside;
 		StartingRoom = outside;
