@@ -21,8 +21,11 @@ class Player {
         return Health > 0;
     }
 
-    public int GetHealth()
-    {
+    public int GetHealth() {
         return Health;
+    }
+
+    public void SetHealth(int amount) {
+        Health = amount;
     }
 }

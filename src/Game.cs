@@ -5,11 +5,13 @@ class Game {
 	// Private fields
 	private Parser parser;
 	private Player player;
+	private Room StartingRoom;
 
 	// Constructor
 	public Game() {
 		parser = new Parser();
 		player = new Player();
+		StartingRoom = null;
 		CreateRooms();
 	}
 
@@ -51,6 +53,7 @@ class Game {
 
 		// Start game outside
 		player.CurrentRoom = outside;
+		StartingRoom = outside;
 	}
 
 	//  Main play routine. Loops until end of play.
@@ -60,9 +63,13 @@ class Game {
 		// Enter the main command loop. Here we repeatedly read commands and
 		// execute them until the player wants to quit.
 		bool finished = false;
-		while (!finished) {
+		while (!finished && player.IsAlive()) {
 			Command command = parser.GetCommand();
 			finished = ProcessCommand(command);
+		}
+		if (!player.IsAlive()) {
+			finished = AnounceDeath();
+			return;
 		}
 		Console.WriteLine("Thank you for playing.");
 		Console.WriteLine("Press [Enter] to continue.");
@@ -145,6 +152,7 @@ class Game {
 
 		player.CurrentRoom = nextRoom;
 		Console.WriteLine(player.CurrentRoom.GetLongDescription());
+		player.Damage(100);
 	}
 
 	// gives the description of the current room
@@ -153,8 +161,29 @@ class Game {
 	}
 	
 	// shows the players status
-	private void Status()
-	{
+	private void Status() {
 		Console.WriteLine($"Health: {player.GetHealth()}");
+	}
+	
+	// death message
+	private bool AnounceDeath() {
+		Console.WriteLine("Game Over\n you died by bleeding out.");
+		Console.WriteLine("type \"contine\" to continue");
+		Console.WriteLine("type \"quit\" to quit");
+		String command = Console.ReadLine();
+		switch (command) {
+			case "continue":
+				player.SetHealth(100);
+				player.CurrentRoom = StartingRoom;
+				Play();
+				return false;
+				break;
+			default:
+				Console.WriteLine("Thank you for playing.");
+				Console.WriteLine("Press [Enter] to continue.");
+				Console.ReadLine();
+				return true;
+			break;
+		}
 	}
 }
