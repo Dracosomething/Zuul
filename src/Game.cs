@@ -170,6 +170,11 @@ class Game {
 		Console.WriteLine("Game Over\n you died by bleeding out.");
 		Console.WriteLine("type \"continue\" to continue");
 		Console.WriteLine("type \"quit\" to quit");
+		return Restart();
+	}
+	
+	// resets game
+	private bool Restart() {
 		String command = Console.ReadLine();
 		switch (command) {
 			case "continue":
@@ -183,7 +188,7 @@ class Game {
 				Console.WriteLine("Press [Enter] to continue.");
 				Console.ReadLine();
 				return true;
-			break;
+				break;
 		}
 	}
 }
