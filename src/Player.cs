@@ -64,4 +64,8 @@ class Player {
         Console.WriteLine("couldn't find item in backpack.");
         return false;
     }
+
+    public string Use(string itemName) {
+        return $"used: {itemName}";
+    }
 }

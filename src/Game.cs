@@ -201,6 +201,11 @@ class Game {
 		player.DropToChest(command.SecondWord);
 	}
 	
+	// use an item
+	private void Use(Command command) {
+		player.Use(command.SecondWord);
+	}
+	
 	// #########################################################
 	// death message
 	private bool AnounceDeath() {
