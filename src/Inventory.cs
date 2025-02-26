@@ -5,6 +5,9 @@ class Inventory {
     private int maxWeight;
     private Dictionary<string, Item> items;
     
+    // attributes
+    public int MaxWeight { get { return maxWeight; } }
+    
     // constructor
     public Inventory(int maxWeight) {
         this.maxWeight = maxWeight;
@@ -72,5 +75,9 @@ class Inventory {
         }
         
         return itemString;
+    }
+
+    public bool Remove(string itemName) {
+        return items.Remove(itemName);
     }
 }

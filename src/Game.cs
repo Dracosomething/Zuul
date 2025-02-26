@@ -187,18 +187,18 @@ class Game {
 	
 	// shows the players status
 	private void Status() {
-		Console.WriteLine($"Health: {player.Health}");
-		Console.WriteLine($"inventory:\n{player.BackPack.Show()}");
+		Console.WriteLine($"[Health: {player.Health}]");
+		Console.WriteLine($"[inventory [weight: {player.BackPack.FreeWeight()}]:\n{player.BackPack.Show()}]");
 	}
 	
 	// take an item from a room
 	private void Take(Command command) {
-		
+		player.TakeFromChest(command.SecondWord);
 	}
 	
 	// put an item into a room
 	private void Drop(Command command) {
-		
+		player.DropToChest(command.SecondWord);
 	}
 	
 	// #########################################################
