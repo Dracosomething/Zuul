@@ -65,7 +65,8 @@ class Player {
         return false;
     }
 
-    public string Use(string itemName) {
-        return $"used: {itemName}";
+    public string Use(string itemName)
+    {
+        return $"succesfully used {itemName}";
     }
 }

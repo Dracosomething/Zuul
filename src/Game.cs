@@ -18,14 +18,20 @@ class Game {
 
 	// Initialise the Rooms (and the Items)
 	private void CreateRooms() {
+		// Items
+		Item knife = new Item(4, "A sharp pointy object.");
+		Item cloack = new Item(2, "A simple cloack, it could be used to bypass sertain obstacles.");
+		Item axe = new Item(20, "A shiny axe, it might be usefull later.");
+		Item lockOpener = new Item(4, "Can be used to open locks.");
+		
 		// Create the rooms
 		Room outside = new Room("outside the main entrance of the university");
 		Room theatre = new Room("in a lecture theatre");
-		Room pub = new Room("in the campus pub");
+		Room pub = new Room("in the campus pub", cloack);
 		Room lab = new Room("in a computing lab");
-		Room office = new Room("in the computing admin office");
-		Room bacement = new Room("in the basement, it is filled with beer fats.");
-		Room attic = new Room("in the attic, there are a lot of cobwebs.");
+		Room office = new Room("in the computing admin office", lockOpener);
+		Room bacement = new Room("in the basement, it is filled with beer fats.", knife);
+		Room attic = new Room("in the attic, there are a lot of cobwebs.", axe);
 
 		// Initialise room exits
 		outside.AddExit("east", theatre);
@@ -46,14 +52,7 @@ class Game {
 		bacement.AddExit("up", pub);
 		
 		attic.AddExit("down", pub);
-		
 		attic.AddExit("west", winRoom);
-		
-		// Items
-		Item knife = new Item(4, "A sharp pointy object.");
-		Item cloack = new Item(2, "A simple cloack, it could be used to bypass sertain obstacles.");
-		Item axe = new Item(20, "A shiny axe, it might be usefull later.");
-		Item lockOpener = new Item(4, "Can be used to open locks.");
 		
 		// adding items to the rooms
 		bacement.Chest.Put(nameof(axe), axe);
@@ -135,6 +134,9 @@ class Game {
 			case "drop":
 				Drop(command);
 				break;
+			case "use":
+				Use(command);
+				break;
 		}
 
 		return wantToQuit;
@@ -173,6 +175,13 @@ class Game {
 			Console.WriteLine($"There is no door to {direction}!");
 			return;
 		}
+
+		if (nextRoom.ConditionalItem != null) {
+			if (!nextRoom.IsUnlocked) {
+				Console.WriteLine("room is blocked");
+				return;
+			}
+		}
 		player.CurrentRoom = nextRoom;
 		if (!player.CurrentRoom.Equals(winRoom)) {
 			Console.WriteLine(player.CurrentRoom.GetLongDescription());
@@ -203,7 +212,28 @@ class Game {
 	
 	// use an item
 	private void Use(Command command) {
-		player.Use(command.SecondWord);
+		string thirdWord = command.ThirdWord;
+		Room nextRoom = player.CurrentRoom.GetExit(thirdWord);
+		if (nextRoom == null) {
+			Console.WriteLine($"There is no door to {thirdWord}!");
+			return;
+		}
+		Item condition = nextRoom.ConditionalItem;
+		if (condition == null) {
+			Console.WriteLine("The room is not blocked.");
+			return;
+		}
+		Item useItem = player.BackPack.Get(command.SecondWord);
+		if (useItem == null) {
+			Console.WriteLine("You don't have that item.");
+			return;
+		}
+		if (condition == useItem) {
+			Console.WriteLine(player.Use(command.SecondWord));
+			nextRoom.IsUnlocked = true;
+			nextRoom.ConditionalItem = null;
+			player.BackPack.Remove(command.SecondWord);
+		}
 	}
 	
 	// #########################################################

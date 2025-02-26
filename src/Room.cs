@@ -6,9 +6,12 @@ class Room {
 	private string description;
 	private Dictionary<string, Room> exits; // stores exits of this room.
 	private Inventory chest;
+	private Item conditionalItem;
 
 	// properties
 	public Inventory Chest { get { return this.chest; } }
+	public Item ConditionalItem { get { return this.conditionalItem; } set { this.conditionalItem = value; } }
+	public bool IsUnlocked { get; set; }
 	
 	/*
 	 * Create a room described "description". Initially, it has no exits.
@@ -18,6 +21,15 @@ class Room {
 		description = desc;
 		exits = new Dictionary<string, Room>();
 		chest = new Inventory(Int32.MaxValue-1);
+		IsUnlocked = true;
+	}
+	
+	public Room(string desc, Item conditionalItem) {
+		description = desc;
+		exits = new Dictionary<string, Room>();
+		chest = new Inventory(Int32.MaxValue-1);
+		this.conditionalItem = conditionalItem;
+		IsUnlocked = false;
 	}
 
 	// Define an exit for this room.
