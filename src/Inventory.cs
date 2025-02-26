@@ -80,4 +80,10 @@ class Inventory {
     public bool Remove(string itemName) {
         return items.Remove(itemName);
     }
+    
+    public void forEach(Action<KeyValuePair<string, Item>> consumer) {
+        foreach (var keyValuePair in items) {
+            consumer.Invoke(keyValuePair);
+        }
+    }
 }

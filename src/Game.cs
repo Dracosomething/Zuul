@@ -19,10 +19,13 @@ class Game {
 	// Initialise the Rooms (and the Items)
 	private void CreateRooms() {
 		// Items
-		Item knife = new Item(4, "A sharp pointy object.");
-		Item cloack = new Item(2, "A simple cloack, it could be used to bypass sertain obstacles.");
-		Item axe = new Item(20, "A shiny axe, it might be usefull later.");
+		Item knife = new Item(4, 2, "A sharp pointy object.", "damage");
+		Item cloack = new Item(2, 3, "A simple cloack, it could be used to bypass sertain obstacles.", "speed");
+		Item axe = new Item(20, 5, -1, "A shiny axe, it might be usefull later.");
 		Item lockOpener = new Item(4, "Can be used to open locks.");
+		
+		// Enemies
+		Enemy guard = new Enemy(50, 10, 100, 1, "Guard");
 		
 		// Create the rooms
 		Room outside = new Room("outside the main entrance of the university");
@@ -59,6 +62,8 @@ class Game {
 		theatre.Chest.Put(nameof(cloack), cloack);
 		office.Chest.Put(nameof(knife), knife);
 		pub.Chest.Put(nameof(lockOpener), lockOpener);
+
+		guard.Room = attic;
 		
 		// Start game outside
 		player.CurrentRoom = outside;
@@ -105,6 +110,12 @@ class Game {
 	/// </returns>
 	/// </summary>
 	private bool ProcessCommand(Command command) {
+		foreach (var currentRoomInhabitant in player.CurrentRoom.Inhabitants) {
+			if (currentRoomInhabitant.Value is Enemy entity) {
+				entity.Tick(player);
+			}
+		}
+		
 		bool wantToQuit = false;
 
 		if(command.IsUnknown()) {
@@ -136,6 +147,9 @@ class Game {
 				break;
 			case "use":
 				Use(command);
+				break;
+			case "attack":
+				Attack(command);
 				break;
 		}
 
@@ -197,6 +211,7 @@ class Game {
 	// shows the players status
 	private void Status() {
 		Console.WriteLine($"[Health: {player.Health}]");
+		Console.WriteLine($"[Damage: {player.DamageModifier}]");
 		Console.WriteLine($"[inventory [weight: {player.BackPack.FreeWeight()}]:\n{player.BackPack.Show()}]");
 	}
 	
@@ -228,11 +243,40 @@ class Game {
 			Console.WriteLine("You don't have that item.");
 			return;
 		}
+		if (thirdWord == null) {
+			useItem.applyModifiers(player);
+			Console.WriteLine($"Added modifiers from {thirdWord}.");
+		}
 		if (condition == useItem) {
 			Console.WriteLine(player.Use(command.SecondWord));
 			nextRoom.IsUnlocked = true;
 			nextRoom.ConditionalItem = null;
 			player.BackPack.Remove(command.SecondWord);
+		}
+	}
+
+	private void Attack(Command command) {
+		string item = command.SecondWord;
+		string target = command.ThirdWord;
+		List<string> targets = new List<string>();
+		foreach (var keyValuePair in player.CurrentRoom.Inhabitants) {
+			string creature = keyValuePair.Key;
+			targets.Add(creature);
+		}
+		if (!targets.Contains(target)) {
+			Console.WriteLine($"Room does not contain {target}.");
+			return;
+		}
+		if (item == null) {
+			Console.WriteLine("I don't recognize that item.");
+			return;
+		}
+		int damage = player.DamageModifier;
+		foreach (var keyValuePair in player.CurrentRoom.Inhabitants) {
+			if (keyValuePair.Key == target) {
+				Console.WriteLine($"Attacked {((Enemy)keyValuePair.Value).Name} using {item}");
+				((Enemy)keyValuePair.Value).Damage(damage);
+			}
 		}
 	}
 	

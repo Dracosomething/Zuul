@@ -1,9 +1,11 @@
 ﻿namespace Zuul;
 
-class Player {
+class Player : Entity {
     // fields
     private Room currentRoom;
     private int health;
+    private int damageModifier;
+    private int speedModifier;
     private Inventory backPack;
     
     // properties
@@ -12,10 +14,12 @@ class Player {
     public Inventory BackPack { get { return this.backPack; } }
     
     // constructor
-    public Player() {
+    public Player() : base(1, 1) {
         this.currentRoom = null;
         this.health = 100;
         this.backPack = new Inventory(25);
+        this.damageModifier = 1;
+        this.speedModifier = 1;
     }
 
     // methods
@@ -57,6 +61,7 @@ class Player {
     public bool DropToChest(string itemName) {
         Item item = BackPack.Get(itemName);
         if (currentRoom.Chest.Put(itemName, item)) {
+            item.removeModifiers(this);
             backPack.Remove(itemName);
             Console.WriteLine("successfully added item to room.");
             return true;
@@ -65,8 +70,7 @@ class Player {
         return false;
     }
 
-    public string Use(string itemName)
-    {
-        return $"succesfully used {itemName}";
+    public string Use(string itemName) {
+        return $"Successfully used {itemName}.";
     }
 }
