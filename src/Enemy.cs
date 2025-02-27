@@ -83,15 +83,15 @@ class Enemy : Entity {
     }
 
     public void Tick() {
+        if (!IsAlive()) {
+            OnDeath();
+        }
         this.Room.AddInhabitant(this.Name, this);
         foreach (var keyValuePair in this.room.Inhabitants) {
             if (keyValuePair.Value is Player player) {
                 Console.WriteLine($"{this.name} attacked player using {nameof(mainWeapon)}.");
                 player.damage(damageModifier);
             }
-        }
-        if (!IsAlive()) {
-            OnDeath();
         }
     }
 

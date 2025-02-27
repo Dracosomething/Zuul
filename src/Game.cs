@@ -92,6 +92,13 @@ class Game {
 			}
 			Command command = parser.GetCommand();
 			finished = ProcessCommand(command);
+			if (player.CurrentRoom.Inhabitants != null) {
+				foreach (var currentRoomInhabitant in player.CurrentRoom.Inhabitants) {
+					if (currentRoomInhabitant.Value is Enemy entity) {
+						entity.Tick();
+					}
+				}
+			}
 		}
 		if (!player.isAlive()) {
 			finished = AnounceDeath();
@@ -119,14 +126,6 @@ class Game {
 	/// </returns>
 	/// </summary>
 	private bool ProcessCommand(Command command) {
-		if (player.CurrentRoom.Inhabitants != null) {
-			foreach (var currentRoomInhabitant in player.CurrentRoom.Inhabitants) {
-				if (currentRoomInhabitant.Value is Enemy entity) {
-					entity.Tick();
-				}
-			}
-		}
-		
 		bool wantToQuit = false;
 
 		if(command.IsUnknown()) {
