@@ -66,7 +66,12 @@ class Room {
 				itterations++;
 				if (inhabitants.Count > itterations) {
 					if (!(keyValuePair.Value is Player)) {
-						str += keyValuePair.Key + ", ";
+						str += keyValuePair.Key;
+						str += ",\nhealth: ";
+						str += ((Enemy)keyValuePair.Value).Health;
+						if (itterations != inhabitants.Count-1) {
+							str += ",\n";
+						}
 					}
 				}
 			}
