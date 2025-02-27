@@ -55,12 +55,27 @@ class Room {
 	///	 </returns>
 	public string GetLongDescription() {
 		string str = "You are ";
+		int itterations = 0;
 		str += description;
 		str += ".\n";
 		str += GetExitString();
 		str += ".\n";
-		str += "The room contains these items\n";
-		str += this.Chest.Show();
+		if (inhabitants.Count != 1) {
+			str += "the rooms inhabitants are ";
+			foreach (var keyValuePair in inhabitants) {
+				itterations++;
+				if (inhabitants.Count > itterations) {
+					if (!(keyValuePair.Value is Player)) {
+						str += keyValuePair.Key + ", ";
+					}
+				}
+			}
+			str += ".\n";
+		}
+		if (this.chest.Count() != 0) {
+			str += "The room contains these items\n";
+			str += this.Chest.Show();
+		}
 		return str;
 	}
 

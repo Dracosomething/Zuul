@@ -40,13 +40,18 @@ class Item {
     }
     
     // methods
-    public void applyModifiers(Entity entity) {
+    public void ApplyModifiers(Entity entity) {
         entity.DamageModifier += damageModifier;
         entity.SpeedModifier += speedModifier;
     }
 
-    public void removeModifiers(Entity entity) {
+    public void RemoveModifiers(Entity entity) {
         entity.DamageModifier -= damageModifier;
         entity.SpeedModifier -= speedModifier;
+    }
+
+    public Item Clone() {
+        Item clone = new Item(this.weight, this.speedModifier, this.damageModifier, this.description);
+        return clone;
     }
 }

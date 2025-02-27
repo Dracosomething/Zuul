@@ -70,7 +70,7 @@ class Inventory {
             itemString += keyValuePair.Key;
             itemString += $"[description: \"{keyValuePair.Value.Description}\", weight: {keyValuePair.Value.Weight}]";
             if (items.Count > loopTimes) {
-                itemString += ",\n";
+                itemString += ", \n";
             }
         }
         
@@ -97,5 +97,25 @@ class Inventory {
         foreach (var keyValuePair in items) {
             consumer.Invoke(keyValuePair.Value);
         }
+    }
+
+    public string GetContents() {
+        string itemsAsString = "";
+        int loopTimes = 0;
+        ForEachItemName((item) =>
+        {
+            loopTimes++;
+            itemsAsString += item;
+            if (items.Count > loopTimes) {
+                itemsAsString += ", ";
+            } else {
+                itemsAsString += ".";
+            }
+        });
+        return itemsAsString;
+    }
+
+    public int Count() {
+        return this.items.Count;
     }
 }

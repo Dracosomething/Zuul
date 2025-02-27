@@ -61,7 +61,7 @@ class Player : Entity {
     public bool DropToChest(string itemName) {
         Item item = BackPack.Get(itemName);
         if (currentRoom.Chest.Put(itemName, item)) {
-            item.removeModifiers(this);
+            item.RemoveModifiers(this);
             backPack.Remove(itemName);
             Console.WriteLine("successfully added item to room.");
             return true;
@@ -71,6 +71,9 @@ class Player : Entity {
     }
 
     public string Use(string itemName) {
+        if (itemName.Equals("medKit")) {
+            this.heal(20);
+        }
         return $"Successfully used {itemName}.";
     }
 }

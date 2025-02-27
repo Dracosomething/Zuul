@@ -56,7 +56,7 @@ class Enemy : Entity {
     
     public bool GiveItem(string itemName, Item item) {
         if (Inventory.Put(itemName, item)) {
-            item.applyModifiers(this);
+            item.ApplyModifiers(this);
             return true;
         }
         return false;
@@ -64,7 +64,7 @@ class Enemy : Entity {
     
     public bool RemoveItem(string itemName, Item item) {
         if (Inventory.Remove(itemName)) {
-            item.removeModifiers(this);
+            item.RemoveModifiers(this);
             return true;
         }
         return false;
@@ -73,7 +73,7 @@ class Enemy : Entity {
     public bool DropToChest(string itemName) {
         Item item = Inventory.Get(itemName);
         if (Room.Chest.Put(itemName, item)) {
-            item.removeModifiers(this);
+            item.RemoveModifiers(this);
             Inventory.Remove(itemName);
             Console.WriteLine($"Enemy dropped {itemName}.");
             return true;
@@ -82,11 +82,13 @@ class Enemy : Entity {
         return false;
     }
 
-    public void Tick(Player player) {
+    public void Tick() {
         this.Room.AddInhabitant(this.Name, this);
-        if (this.Room == player.CurrentRoom) {
-            Console.WriteLine($"{this.name} attacked player using {nameof(mainWeapon)}.");
-            player.damage(damageModifier);
+        foreach (var keyValuePair in this.room.Inhabitants) {
+            if (keyValuePair.Value is Player player) {
+                Console.WriteLine($"{this.name} attacked player using {nameof(mainWeapon)}.");
+                player.damage(damageModifier);
+            }
         }
         if (!IsAlive()) {
             OnDeath();
@@ -95,6 +97,7 @@ class Enemy : Entity {
 
     private void OnDeath() {
         this.Room.Inhabitants.Remove(this.Name);
+        Console.WriteLine($"{this.Name} died and dropped {inventory.GetContents()}");
         this.inventory.ForEachItemName((itemName) => {
             this.DropToChest(itemName);
         });
@@ -102,7 +105,7 @@ class Enemy : Entity {
 
     public void SetWeapon(Item item) {
         this.inventory.Put(nameof(item), item);
-        item.applyModifiers(this);
+        item.ApplyModifiers(this);
         this.mainWeapon = item;
     }
 }

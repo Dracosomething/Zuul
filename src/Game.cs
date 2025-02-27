@@ -21,11 +21,13 @@ class Game {
 		// Items
 		Item knife = new Item(4, 2, "A sharp pointy object.", "damage");
 		Item cloack = new Item(2, 3, "A simple cloack, it could be used to bypass sertain obstacles.", "speed");
-		Item axe = new Item(20, 5, -1, "A shiny axe, it might be usefull later.");
+		Item axe = new Item(20, -1, 5, "A shiny axe, it might be usefull later.");
 		Item lockOpener = new Item(4, "Can be used to open locks.");
+		Item medKit = new Item(10, "A box filled with medical supplies");
 		
 		// Enemies
 		Enemy guard = new Enemy(50, 10, 100, 1, "Guard");
+		Enemy kid = new Enemy(5, 1, 5, 1, "billy");
 		
 		// Create the rooms
 		Room outside = new Room("outside the main entrance of the university");
@@ -59,16 +61,21 @@ class Game {
 		
 		// adding items to the rooms
 		bacement.Chest.Put(nameof(axe), axe);
-		theatre.Chest.Put(nameof(cloack), cloack);
 		office.Chest.Put(nameof(knife), knife);
 		pub.Chest.Put(nameof(lockOpener), lockOpener);
+		office.Chest.Put(nameof(medKit), medKit);
 
 		guard.Room = winRoom;
-		Console.WriteLine(guard);
+		guard.SetWeapon(axe.Clone());
 		winRoom.AddInhabitant(guard.Name, guard);
+
+		kid.Room = theatre;
+		kid.Inventory.Put(nameof(cloack), cloack);
+		theatre.AddInhabitant(kid.Name, kid);
 		
 		// Start game outside
 		player.CurrentRoom = outside;
+		player.CurrentRoom.AddInhabitant("player", player);
 		StartingRoom = outside;
 	}
 
@@ -113,12 +120,9 @@ class Game {
 	/// </summary>
 	private bool ProcessCommand(Command command) {
 		if (player.CurrentRoom.Inhabitants != null) {
-			Console.WriteLine("inhabitants");
 			foreach (var currentRoomInhabitant in player.CurrentRoom.Inhabitants) {
-				Console.WriteLine(currentRoomInhabitant);
 				if (currentRoomInhabitant.Value is Enemy entity) {
-					Console.WriteLine(entity);
-					entity.Tick(player);
+					entity.Tick();
 				}
 			}
 		}
@@ -203,7 +207,16 @@ class Game {
 				return;
 			}
 		}
+		player.CurrentRoom.Inhabitants.Remove("player");
 		player.CurrentRoom = nextRoom;
+		if (player.CurrentRoom.Inhabitants != null) {
+			foreach (var currentRoomInhabitant in player.CurrentRoom.Inhabitants) {
+				if (currentRoomInhabitant.Value is Enemy entity) {
+					entity.Tick();
+				}
+			}
+		}
+		player.CurrentRoom.AddInhabitant("player", player);
 		if (!player.CurrentRoom.Equals(winRoom)) {
 			Console.WriteLine(player.CurrentRoom.GetLongDescription());
 		}
@@ -251,7 +264,7 @@ class Game {
 			return;
 		}
 		if (thirdWord == null) {
-			useItem.applyModifiers(player);
+			useItem.ApplyModifiers(player);
 			Console.WriteLine($"Added modifiers from {thirdWord}.");
 		}
 		if (condition == useItem) {
@@ -263,8 +276,8 @@ class Game {
 	}
 
 	private void Attack(Command command) {
-		string item = command.SecondWord;
-		string target = command.ThirdWord;
+		string item = command.ThirdWord;
+		string target = command.SecondWord;
 		List<string> targets = new List<string>();
 		foreach (var keyValuePair in player.CurrentRoom.Inhabitants) {
 			string creature = keyValuePair.Key;
@@ -274,7 +287,7 @@ class Game {
 			Console.WriteLine($"Room does not contain {target}.");
 			return;
 		}
-		if (item == null) {
+		if (item == null || !item.Equals("fists")) {
 			Console.WriteLine("I don't recognize that item.");
 			return;
 		}
