@@ -63,7 +63,9 @@ class Game {
 		office.Chest.Put(nameof(knife), knife);
 		pub.Chest.Put(nameof(lockOpener), lockOpener);
 
-		guard.Room = attic;
+		guard.Room = winRoom;
+		Console.WriteLine(guard);
+		winRoom.AddInhabitant(guard.Name, guard);
 		
 		// Start game outside
 		player.CurrentRoom = outside;
@@ -110,9 +112,14 @@ class Game {
 	/// </returns>
 	/// </summary>
 	private bool ProcessCommand(Command command) {
-		foreach (var currentRoomInhabitant in player.CurrentRoom.Inhabitants) {
-			if (currentRoomInhabitant.Value is Enemy entity) {
-				entity.Tick(player);
+		if (player.CurrentRoom.Inhabitants != null) {
+			Console.WriteLine("inhabitants");
+			foreach (var currentRoomInhabitant in player.CurrentRoom.Inhabitants) {
+				Console.WriteLine(currentRoomInhabitant);
+				if (currentRoomInhabitant.Value is Enemy entity) {
+					Console.WriteLine(entity);
+					entity.Tick(player);
+				}
 			}
 		}
 		

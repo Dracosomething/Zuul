@@ -31,6 +31,7 @@ class Room {
 		description = desc;
 		exits = new Dictionary<string, Room>();
 		chest = new Inventory(Int32.MaxValue-1);
+		inhabitants = new Dictionary<string, Entity>();
 		this.conditionalItem = conditionalItem;
 		IsUnlocked = false;
 	}

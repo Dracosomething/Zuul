@@ -81,9 +81,21 @@ class Inventory {
         return items.Remove(itemName);
     }
     
-    public void forEach(Action<KeyValuePair<string, Item>> consumer) {
+    public void ForEach(Action<KeyValuePair<string, Item>> consumer) {
         foreach (var keyValuePair in items) {
             consumer.Invoke(keyValuePair);
+        }
+    }
+    
+    public void ForEachItemName(Action<string> consumer) {
+        foreach (var keyValuePair in items) {
+            consumer.Invoke(keyValuePair.Key);
+        }
+    }
+    
+    public void ForEachItem(Action<Item> consumer) {
+        foreach (var keyValuePair in items) {
+            consumer.Invoke(keyValuePair.Value);
         }
     }
 }

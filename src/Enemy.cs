@@ -89,14 +89,14 @@ class Enemy : Entity {
             player.damage(damageModifier);
         }
         if (!IsAlive()) {
-            onDeath();
+            OnDeath();
         }
     }
 
-    private void onDeath() {
+    private void OnDeath() {
         this.Room.Inhabitants.Remove(this.Name);
-        this.inventory.forEach((KeyValuePair) => {
-            this.DropToChest(KeyValuePair.Key);
+        this.inventory.ForEachItemName((itemName) => {
+            this.DropToChest(itemName);
         });
     }
 
