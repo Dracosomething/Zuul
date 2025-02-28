@@ -105,4 +105,8 @@ class Room {
 	public void AddInhabitant(string name, Entity creature) {
 		Inhabitants.TryAdd(name, creature);
 	}
+
+	public Room Clone() {
+		return new Room(this.description, this.conditionalItem);
+	}
 }

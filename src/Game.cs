@@ -37,7 +37,10 @@ class Game {
 		Room office = new Room("in the computing admin office", lockOpener);
 		Room bacement = new Room("in the basement, it is filled with beer fats.", knife);
 		Room attic = new Room("in the attic, there are a lot of cobwebs.", axe);
-
+		Room pubStairMid = new Room("in a room with a staircase.");
+		Room pubStairTip = new Room("at the top of the staircase");
+		Room pubStairBottom = new Room("at the bottom of the staircase");
+		
 		// Initialise room exits
 		outside.AddExit("east", theatre);
 		outside.AddExit("south", lab);
@@ -46,28 +49,40 @@ class Game {
 		theatre.AddExit("west", outside);
 
 		pub.AddExit("east", outside);
-		pub.AddExit("down", bacement);
-		pub.AddExit("up", attic);
-
+		pub.AddExit("west", pubStairMid);
+		
+		pubStairMid.AddExit("up", pubStairTip);
+		pubStairMid.AddExit("down", pubStairBottom);
+		
+		pubStairBottom.AddExit("east", bacement);
+		pubStairBottom.AddExit("up", pubStairMid);
+		
+		pubStairTip.AddExit("east", attic);
+		pubStairTip.AddExit("down", pubStairMid);
+		
 		lab.AddExit("north", outside);
 		lab.AddExit("east", office);
 
 		office.AddExit("west", lab);
 		
-		bacement.AddExit("up", pub);
+		bacement.AddExit("west", pubStairBottom);
 		
-		attic.AddExit("down", pub);
-		attic.AddExit("west", winRoom);
+		attic.AddExit("west", pubStairTip);
+		// attic.AddExit("west", winRoom);
 		
 		// adding items to the rooms
 		bacement.Chest.Put(nameof(axe), axe);
+		bacement.Chest.Put(nameof(knife), knife.Clone());
 		office.Chest.Put(nameof(knife), knife);
 		pub.Chest.Put(nameof(lockOpener), lockOpener);
 		office.Chest.Put(nameof(medKit), medKit);
 
-		guard.Room = winRoom;
+		guard.Room = attic;
 		guard.SetWeapon(axe.Clone());
-		winRoom.AddInhabitant(guard.Name, guard);
+		attic.AddInhabitant(guard.Name, guard);
+
+		Generartion generartion = new Generartion();
+		generartion.GenerateWorld(attic);
 
 		kid.Room = theatre;
 		kid.Inventory.Put(nameof(cloack), cloack);
@@ -90,8 +105,6 @@ class Game {
 			if (player.CurrentRoom == winRoom) {
 				finished = AnounceWin();
 			}
-			Command command = parser.GetCommand();
-			finished = ProcessCommand(command);
 			if (player.CurrentRoom.Inhabitants != null) {
 				foreach (var currentRoomInhabitant in player.CurrentRoom.Inhabitants) {
 					if (currentRoomInhabitant.Value is Enemy entity) {
@@ -99,6 +112,8 @@ class Game {
 					}
 				}
 			}
+			Command command = parser.GetCommand();
+			finished = ProcessCommand(command);
 		}
 		if (!player.isAlive()) {
 			finished = AnounceDeath();
@@ -208,18 +223,11 @@ class Game {
 		}
 		player.CurrentRoom.Inhabitants.Remove("player");
 		player.CurrentRoom = nextRoom;
-		if (player.CurrentRoom.Inhabitants != null) {
-			foreach (var currentRoomInhabitant in player.CurrentRoom.Inhabitants) {
-				if (currentRoomInhabitant.Value is Enemy entity) {
-					entity.Tick();
-				}
-			}
-		}
 		player.CurrentRoom.AddInhabitant("player", player);
 		if (!player.CurrentRoom.Equals(winRoom)) {
 			Console.WriteLine(player.CurrentRoom.GetLongDescription());
 		}
-		player.damage(5);
+		// player.damage(5);
 	}
 
 	// gives the description of the current room
@@ -246,6 +254,17 @@ class Game {
 	
 	// use an item
 	private void Use(Command command) {
+		Item useItem = player.BackPack.Get(command.SecondWord);
+		if (useItem == null) {
+			Console.WriteLine("You don't have that item.");
+			return;
+		}
+		if (command.SecondWord.Equals("medKit")) {
+			player.heal(20);
+			player.BackPack.Remove(command.SecondWord);
+			return;
+		}
+		
 		string thirdWord = command.ThirdWord;
 		Room nextRoom = player.CurrentRoom.GetExit(thirdWord);
 		if (nextRoom == null) {
@@ -256,15 +275,6 @@ class Game {
 		if (condition == null) {
 			Console.WriteLine("The room is not blocked.");
 			return;
-		}
-		Item useItem = player.BackPack.Get(command.SecondWord);
-		if (useItem == null) {
-			Console.WriteLine("You don't have that item.");
-			return;
-		}
-		if (thirdWord == null) {
-			useItem.ApplyModifiers(player);
-			Console.WriteLine($"Added modifiers from {thirdWord}.");
 		}
 		if (condition == useItem) {
 			Console.WriteLine(player.Use(command.SecondWord));
@@ -289,6 +299,14 @@ class Game {
 		if (item == null || !item.Equals("fists")) {
 			Console.WriteLine("I don't recognize that item.");
 			return;
+		}
+
+		Item weapon = player.BackPack.Get(item);
+		if (weapon == null && item != "fists") {
+			Console.WriteLine("You dont have that weapon");
+			return;
+		} else if (item != "fists") {
+			weapon.ApplyModifiers(player);
 		}
 		int damage = player.DamageModifier;
 		foreach (var keyValuePair in player.CurrentRoom.Inhabitants) {

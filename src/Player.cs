@@ -49,10 +49,12 @@ class Player : Entity {
 
     public bool TakeFromChest(string itemName) {
         Item item = CurrentRoom.Chest.Get(itemName);
-        if (BackPack.Put(itemName, item)) {
-            CurrentRoom.Chest.Remove(itemName);
-            Console.WriteLine("successfully added item to backpack.");
-            return true;
+        if (item != null) {
+            if (BackPack.Put(itemName, item)) {
+                CurrentRoom.Chest.Remove(itemName);
+                Console.WriteLine("successfully added item to backpack.");
+                return true;
+            }
         }
         Console.WriteLine("Item couldn't be found in current room.");
         return false;
@@ -60,11 +62,13 @@ class Player : Entity {
     
     public bool DropToChest(string itemName) {
         Item item = BackPack.Get(itemName);
-        if (currentRoom.Chest.Put(itemName, item)) {
-            item.RemoveModifiers(this);
-            backPack.Remove(itemName);
-            Console.WriteLine("successfully added item to room.");
-            return true;
+        if (item != null) {
+            if (currentRoom.Chest.Put(itemName, item)) {
+                item.RemoveModifiers(this);
+                backPack.Remove(itemName);
+                Console.WriteLine("successfully added item to room.");
+                return true;
+            }
         }
         Console.WriteLine("couldn't find item in backpack.");
         return false;
