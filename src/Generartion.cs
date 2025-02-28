@@ -102,4 +102,14 @@ class Generartion
             }
         }
     }
+
+    private List<Room> GetNextGenerationRoom(Room start) {
+        List<Room> rooms = new List<Room>();
+        foreach (var dir in directionPool) {
+            if (start.HasExit(dir)) {
+                rooms.Add(start.GetExit(dir));
+            }
+        }
+        return rooms;
+    }
 }

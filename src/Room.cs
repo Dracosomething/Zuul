@@ -109,4 +109,8 @@ class Room {
 	public Room Clone() {
 		return new Room(this.description, this.conditionalItem);
 	}
+
+	public bool HasExit(string direction) {
+		return GetExit(direction) != null;
+	}
 }
