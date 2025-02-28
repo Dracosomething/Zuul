@@ -7,12 +7,14 @@ class Game {
 	private Player player;
 	private Room StartingRoom;
 	private Room winRoom = new Room("");
+	private bool isHurt;
 
 	// Constructor
 	public Game() {
 		parser = new Parser();
 		player = new Player();
 		StartingRoom = null;
+		isHurt = true;
 		CreateRooms();
 	}
 
@@ -227,7 +229,9 @@ class Game {
 		if (!player.CurrentRoom.Equals(winRoom)) {
 			Console.WriteLine(player.CurrentRoom.GetLongDescription());
 		}
-		// player.damage(5);
+		if (isHurt) {
+			player.damage(5);
+		}
 	}
 
 	// gives the description of the current room
@@ -261,6 +265,11 @@ class Game {
 		}
 		if (command.SecondWord.Equals("medKit")) {
 			player.heal(20);
+			player.BackPack.Remove(command.SecondWord);
+			return;
+		}
+		if (command.SecondWord.Equals("stiches")) {
+			isHurt = false;
 			player.BackPack.Remove(command.SecondWord);
 			return;
 		}

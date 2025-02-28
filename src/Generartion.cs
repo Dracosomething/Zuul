@@ -47,8 +47,8 @@ class Generartion
                 startRoom.AddExit("east", room);
                 Console.WriteLine("first");
                 room.AddExit("west", startRoom);
-                Item med_kit = new Item(10, "medical supplies to patch up your wounds");
-                room.Chest.Put(nameof(med_kit).Replace("_", " "), med_kit);
+                Item stiches = new Item(10, "medical supplies to patch up your wounds");
+                room.Chest.Put(nameof(stiches), stiches);
                 Console.WriteLine("efdefwe");
                 directionPoolCopy.Remove("west");
                 Console.WriteLine(directionPoolCopy);
