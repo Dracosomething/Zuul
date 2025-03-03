@@ -64,10 +64,10 @@ class Generartion
                 // Console.WriteLine(chance); 
                 foreach (var dir in directionPoolCopy) { 
                     // Console.WriteLine(dir); 
-                    Room nextRoom = roomPool[random.Next(0, roomPool.Count)].Clone(); 
-                    nextRoom.PreviousRoom = room; 
                     // Console.WriteLine(nextRoom.GetLongDescription()); 
                     if (random.Next(1, 100) <= chance) { 
+                        Room nextRoom = roomPool[random.Next(0, roomPool.Count)].Clone(); 
+                        nextRoom.PreviousRoom = room; 
                         nextRoom.AddExit(dir.Equals("west") ? "east" : dir.Equals("east") ? "west" : dir.Equals("north") ? "south" : "north", room); 
                         if (!room.HasExit(dir)) { 
                             room.AddExit(dir, nextRoom);
