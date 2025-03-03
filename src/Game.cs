@@ -271,6 +271,7 @@ class Game {
 		}
 		if (command.SecondWord.Equals("stiches")) {
 			isHurt = false;
+			Console.WriteLine("used stiches and healed 20 hp");
 			player.BackPack.Remove(command.SecondWord);
 			return;
 		}
