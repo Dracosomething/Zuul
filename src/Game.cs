@@ -91,9 +91,9 @@ class Game {
 		theatre.AddInhabitant(kid.Name, kid);
 		
 		// Start game outside
-		player.CurrentRoom = outside;
+		player.CurrentRoom = attic;
 		player.CurrentRoom.AddInhabitant("player", player);
-		StartingRoom = outside;
+		StartingRoom = attic;
 	}
 
 	//  Main play routine. Loops until end of play.
@@ -265,6 +265,7 @@ class Game {
 		}
 		if (command.SecondWord.Equals("medKit")) {
 			player.heal(20);
+			Console.WriteLine("used med kit and healed 20 hp");
 			player.BackPack.Remove(command.SecondWord);
 			return;
 		}

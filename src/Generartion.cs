@@ -34,80 +34,70 @@ class Generartion
         directionPool.Add("south");
     }
 
+    private Room currentRoom;
+    private List<Room> currentRooms = new List<Room>();
+    private Room previousRoom;
+
     public void GenerateWorld(Room startRoom) {
         Random random = new Random();
-
-        for (int i = 0; i <= 25; i++) {
-            Console.WriteLine(i);
-            Room room = roomPool[random.Next(0, roomPool.Count)].Clone();
-            Console.WriteLine(room);
+        int chance;
+        
+        for (int i = 0; i <= 10; i++) {
             List<string> directionPoolCopy = directionPool;
-            Console.WriteLine(directionPoolCopy);
             if (i == 0) {
-                startRoom.AddExit("east", room);
-                Console.WriteLine("first");
-                room.AddExit("west", startRoom);
-                Item stiches = new Item(10, "medical supplies to patch up your wounds");
-                room.Chest.Put(nameof(stiches), stiches);
-                Console.WriteLine("efdefwe");
-                directionPoolCopy.Remove("west");
-                Console.WriteLine(directionPoolCopy);
-            }
-
-            int chance = 50;
-            if (room.Equals(stairwell)) {
-                Console.WriteLine("stairs");
-                List<Room> stairRooms = new List<Room>();
-                List<string> upOrDown = new List<string>();
-                
-                stairRooms.Add(stairwell);
-                stairRooms.Add(stairwellBottom);
-                stairRooms.Add(stairwellTip);
-                Console.WriteLine(stairRooms.ToArray());
-                
-                upOrDown.Add("up");
-                upOrDown.Add("down");
-                Console.WriteLine(upOrDown.ToArray());
-
-                foreach (var direction in upOrDown) {
-                    Console.WriteLine(direction);
-                    int randNumber = random.Next(1, 100);
-                    Console.WriteLine(randNumber);
-                    Console.WriteLine(chance);
-                    Room nextStair = stairRooms[random.Next(0, stairRooms.Count)].Clone();
-                    Console.WriteLine(nextStair);
-                    if (randNumber <= chance) {
-                        Console.WriteLine("added exit");
-                        room.AddExit(direction, nextStair);
-                    }
-                    chance += 50;
-                    Console.WriteLine(chance);
-                }
-            }
-
-            chance = 10;
-            Console.WriteLine(chance);
-            foreach (var direction in directionPoolCopy) {
-                Console.WriteLine(direction);
-                int randNumber = random.Next(1, 100);
-                Console.WriteLine(randNumber);
                 Room nextRoom = roomPool[random.Next(0, roomPool.Count)].Clone();
-                Console.WriteLine(nextRoom);
-                if (randNumber <= chance) {
-                    room.AddExit(direction, nextRoom);
-                    Console.WriteLine("added exit");
-                }
-                chance += 30;
-                Console.WriteLine(chance);
+                nextRoom.PreviousRoom = startRoom;
+                startRoom.AddExit("east", nextRoom);
+                nextRoom.AddExit("west", startRoom);
+                nextRoom.Chest.Put("stiches", new Item(1, "medical supplies"));
+                directionPoolCopy.Remove("west");
+                currentRoom = nextRoom;
+                currentRooms.Add(currentRoom);
+                continue;
             }
+            
+            List<Room> toBeAdded = new List<Room>();
+            Console.WriteLine("text");
+            foreach (var room in currentRooms) { 
+                // Console.WriteLine(room.GetLongDescription()); 
+                chance = 25;
+                // Console.WriteLine(chance); 
+                foreach (var dir in directionPoolCopy) { 
+                    // Console.WriteLine(dir); 
+                    Room nextRoom = roomPool[random.Next(0, roomPool.Count)].Clone(); 
+                    nextRoom.PreviousRoom = room; 
+                    // Console.WriteLine(nextRoom.GetLongDescription()); 
+                    if (random.Next(1, 100) <= chance) { 
+                        nextRoom.AddExit(dir.Equals("west") ? "east" : dir.Equals("east") ? "west" : dir.Equals("north") ? "south" : "north", room); 
+                        if (!room.HasExit(dir)) { 
+                            room.AddExit(dir, nextRoom);
+                        } 
+                        // Console.WriteLine("added exit");
+                    }
+                    toBeAdded.Add(nextRoom);
+                    chance += 25; 
+                    // Console.WriteLine(chance);
+                }
+                // Console.WriteLine(room.GetLongDescription());
+            }
+            currentRooms.Clear();
+            Console.WriteLine(currentRooms.Count);
+            foreach (var roomAdded in toBeAdded) {
+                currentRooms.Add(roomAdded);
+            }
+            Console.WriteLine(currentRooms.Count);
         }
     }
 
-    private List<Room> GetNextGenerationRoom(Room start) {
+    private List<Room> GetNextGenerationRooms(Room start) {
+        Console.WriteLine(start.GetLongDescription());
         List<Room> rooms = new List<Room>();
         foreach (var dir in directionPool) {
+            Console.WriteLine(dir);
             if (start.HasExit(dir)) {
+                Console.WriteLine("has exit");
                 rooms.Add(start.GetExit(dir));
+                Console.WriteLine("added exit to dir          " + start.GetExit(dir));
             }
         }
         return rooms;
