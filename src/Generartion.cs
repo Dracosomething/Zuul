@@ -42,7 +42,7 @@ class Generartion
         Random random = new Random();
         int chance;
         
-        for (int i = 0; i <= 10; i++) {
+        for (int i = 0; i <= 33; i++) {
             List<string> directionPoolCopy = directionPool;
             if (i == 0) {
                 Room nextRoom = roomPool[random.Next(0, roomPool.Count)].Clone();
