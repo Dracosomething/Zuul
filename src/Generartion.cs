@@ -73,8 +73,8 @@ class Generartion
                             room.AddExit(dir, nextRoom);
                         } 
                         // Console.WriteLine("added exit");
+                        toBeAdded.Add(nextRoom);
                     }
-                    toBeAdded.Add(nextRoom);
                     chance += 25; 
                     // Console.WriteLine(chance);
                 }
