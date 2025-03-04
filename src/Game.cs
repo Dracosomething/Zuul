@@ -87,7 +87,7 @@ class Game {
 		attic.AddInhabitant(guard.Name, guard);
 
 		Generartion generartion = new Generartion();
-		generartion.GenerateWorld(attic, winRoom);
+		generartion.GenerateWorld(attic, winRoom, 47);
 
 		kid.CurrentRoom = theatre;
 		kid.Inventory.Put(yellowKey.Name, yellowKey);
@@ -267,7 +267,7 @@ class Game {
 			Console.WriteLine("You don't have that item.");
 			return;
 		}
-		if (command.SecondWord.Equals("medKit")) {
+		if (command.SecondWord.Equals("med-kit")) {
 			player.heal(20);
 			Console.WriteLine("used med kit and healed 20 hp");
 			player.BackPack.Remove(command.SecondWord);
