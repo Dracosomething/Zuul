@@ -40,7 +40,7 @@ class Generartion
         int chance;
         int roomAmount = 0;
         
-        for (int i = 0; i <= 33; i++) {
+        for (int i = 0; i <= 31; i++) {
             List<string> directionPoolCopy = directionPool;
             if (i == 0) {
                 Room nextRoom = roomPool[random.Next(0, roomPool.Count)].Clone();
@@ -56,20 +56,50 @@ class Generartion
             Console.WriteLine("text");
             foreach (var room in currentRooms) { 
                 chance = 25;
-                foreach (var dir in directionPoolCopy) { 
+                if (room.GetShortDescription().Contains("at the top of the staircase")) {
+                    Room nextStairs = random.Next(0, 2) == 1 ? stairwell.Clone() : stairwellBottom.Clone();
+                    if (!room.HasExit("down")) {
+                        room.AddExit("down", nextStairs);
+                        nextStairs.AddExit("up", room);
+                        toBeAdded.Add(nextStairs);
+                    }
+                } else if (room.GetShortDescription().Contains("in a room with a staircase.")) {
+                    Room nextStairsDown = random.Next(0, 2) == 1 ? stairwell.Clone() : stairwellBottom.Clone();
+                    Room nextStairsUp = random.Next(0, 2) == 1 ? stairwell.Clone() : stairwellTip.Clone();
+                    if (!room.HasExit("up")) { 
+                        room.AddExit("up", nextStairsUp);
+                        nextStairsUp.AddExit("down", nextStairsUp);
+                        toBeAdded.Add(nextStairsUp);
+                    }
+                    if (!room.HasExit("down")) { 
+                        room.AddExit("down", nextStairsDown);
+                        nextStairsDown.AddExit("up", room);
+                        toBeAdded.Add(nextStairsDown);
+                    }
+                    continue;
+                } else if (room.GetShortDescription().Contains("at the bottom of the staircase")) {
+                    Room nextStairs = random.Next(0, 2) == 1 ? stairwell.Clone() : stairwellTip.Clone();
+                    if (!room.HasExit("up")) {
+                        room.AddExit("up", nextStairs);
+                        nextStairs.AddExit("down", room);
+                        toBeAdded.Add(nextStairs);
+                    }
+                }
+                foreach (var dir in directionPoolCopy) {
                     if (random.Next(1, 100) <= chance) {
                         Room roomPoolChosen = roomPool[random.Next(0, roomPool.Count)];
                         Room nextRoom = roomPoolChosen.Clone(); 
                         nextRoom.AddExit(dir.Equals("west") ? "east" : dir.Equals("east") ? "west" : dir.Equals("north") ? "south" : "north", room); 
                         if (!room.HasExit(dir)) { 
                             room.AddExit(dir, nextRoom);
-                        } 
+                        }
+                        toBeAdded.Add(nextRoom);
                     }
                     chance += 25; 
                 }
             }
             currentRooms.Clear();
-            Console.WriteLine(currentRooms.Count);
+            Console.WriteLine(i);
             foreach (var roomAdded in toBeAdded) {
                 currentRooms.Add(roomAdded);
             }
