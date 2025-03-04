@@ -92,7 +92,7 @@ class Game {
 		theatre.AddInhabitant(kid.Name, kid);
 		
 		// Start game outside
-		player.BackPack.Put(nameof(noteBook), noteBook);
+		player.BackPack.Put("notebook", noteBook);
 		player.CurrentRoom = attic;
 		player.CurrentRoom.AddInhabitant("player", player);
 		StartingRoom = attic;
