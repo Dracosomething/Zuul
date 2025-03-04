@@ -26,6 +26,7 @@ class Game {
 		Item axe = new Item(20, -1, 5, "A shiny axe, it might be usefull later.");
 		Item lockOpener = new Item(4, "Can be used to open locks.");
 		Item medKit = new Item(10, "A box filled with medical supplies");
+		Item noteBook = new Item(0, "A book where you can note down the exits of rooms.");
 		
 		// Enemies
 		Enemy guard = new Enemy(50, 10, 100, 1, "Guard");
@@ -91,6 +92,7 @@ class Game {
 		theatre.AddInhabitant(kid.Name, kid);
 		
 		// Start game outside
+		player.BackPack.Put(nameof(noteBook), noteBook);
 		player.CurrentRoom = attic;
 		player.CurrentRoom.AddInhabitant("player", player);
 		StartingRoom = attic;
@@ -273,6 +275,22 @@ class Game {
 			isHurt = false;
 			Console.WriteLine("used stiches and closed your wounds");
 			player.BackPack.Remove(command.SecondWord);
+			return;
+		}
+		if (command.SecondWord.Equals("notebook")) {
+			string useCase = command.ThirdWord;
+			if (useCase.Equals("")) {
+				Console.WriteLine("I dont understand how to use that.");
+				Console.WriteLine("valid uses are: write, look");
+				return;
+			}
+			if (useCase.ToLower().Equals("write")) {
+				player.NoteDown(player.CurrentRoom);
+				Console.WriteLine("successfully wrote down the rooms exits");
+			}
+			if (useCase.ToLower().Equals("look")) {
+				Console.WriteLine(player.Read());
+			}
 			return;
 		}
 		

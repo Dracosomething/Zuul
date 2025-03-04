@@ -3,6 +3,7 @@
 class Player : Entity {
     // fields
     private Inventory backPack;
+    private string noteBook;
     
     // properties
     public Inventory BackPack { get { return this.backPack; } }
@@ -10,6 +11,7 @@ class Player : Entity {
     // constructor
     public Player() : base(1, 1, 100) {
         this.backPack = new Inventory(25);
+        noteBook = "";
     }
 
     // methods
@@ -69,5 +71,16 @@ class Player : Entity {
             this.heal(20);
         }
         return $"Successfully used {itemName}.";
+    }
+
+    public void NoteDown(Room room) {
+        room.ForEachExit((keyValuePair) => {
+            this.noteBook += keyValuePair.Key;
+            this.noteBook += "\n"; 
+        });
+    }
+
+    public string Read() {
+        return this.noteBook;
     }
 }

@@ -113,4 +113,10 @@ class Room {
 	public bool HasExit(string direction) {
 		return GetExit(direction) != null;
 	}
+
+	public void ForEachExit(Action<KeyValuePair<string, Room>> consumer) {
+		foreach (var keyValuePair in exits) {
+			consumer.Invoke(keyValuePair);
+		}
+	}
 }
