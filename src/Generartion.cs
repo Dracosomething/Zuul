@@ -70,14 +70,12 @@ class Generartion
             
             foreach (var room in currentRooms) {
                 chance = 25;
-                
                 if (room.Name.Equals("staircase-top")) { 
                     if (!room.HasExit("down")) { 
                         Room nextStairs = random.Next(0, 2) == 1 ? stairwell.Clone() : stairwellBottom.Clone(); 
                         
                         room.AddExit("down", nextStairs); 
                         nextStairs.AddExit("up", room); 
-                        
                         toBeAdded.Add(nextStairs); 
                     }
                 } else if (room.Name.Equals("staircase-middle")) { 
@@ -86,7 +84,6 @@ class Generartion
                         
                         room.AddExit("up", nextStairsUp); 
                         nextStairsUp.AddExit("down", nextStairsUp); 
-                        
                         toBeAdded.Add(nextStairsUp); 
                     }
                     
@@ -95,10 +92,8 @@ class Generartion
                         
                         room.AddExit("down", nextStairsDown);
                         nextStairsDown.AddExit("up", room);
-                        
                         toBeAdded.Add(nextStairsDown);
                     }
-                    
                     continue;
                 } else if (room.Name.Equals("staircase-bottom")) {
                     if (!room.HasExit("up")) {
@@ -106,7 +101,6 @@ class Generartion
                         
                         room.AddExit("up", nextStairs);
                         nextStairs.AddExit("down", room);
-                        
                         toBeAdded.Add(nextStairs);
                     }
                 }
@@ -116,7 +110,15 @@ class Generartion
                         if (!room.HasExit(dir)) {
                             Room roomPoolChosen = roomPool[random.Next(0, roomPool.Count)];
                             Room nextRoom = roomPoolChosen.Clone();
-                            
+                            if (roomPoolChosen.Name.Equals(roomWithEnemy.Name)) {
+                                List<string> names = ["Ermanno", "Leofwine", "Gerald", "Sam", "Timothée", "Guard", "Jimmy"];
+
+                                string name = names[random.Next(0, names.Count)];
+
+                                Enemy enemy = new Enemy(random.Next(1, 101), random.Next(1, 21), 9999, random.Next(1, 11), name);
+                                nextRoom.Inhabitants.Add(name, enemy);
+                                enemy.CurrentRoom = nextRoom;
+                            }
                             nextRoom.AddExit(
                                 dir.Equals("west") ? "east" :
                                 dir.Equals("east") ? "west" :
@@ -126,42 +128,48 @@ class Generartion
                             toBeAdded.Add(nextRoom);
                         }
                     }
-                    
                     chance += 30; 
                 }
             }
-            
             currentRooms.Clear();
-            
             Console.WriteLine(i);
-            
             foreach (var roomAdded in toBeAdded) {
                 currentRooms.Add(roomAdded);
             }
-            
             roomAmount += currentRooms.Count;
             
+            // for placing the rooms that have to be put in the dungeon
             if (i >= 47) {
                 chance = 1;
+                Room goldKeyRoom = new Room("A room with a chest in the middle", "gold-key-room");
+                Item goldKey = new Item(5, "A very shiny key.", "gold-key");
+                goldKeyRoom.Chest.Put(goldKey.Name, goldKey);
+                winRoom.ConditionalItem = goldKey;
                 
-                foreach (var room in currentRooms) {
-                    if (random.Next(0, currentRooms.Count) <= chance) {
-                        string dir = directionPoolCopy[random.Next(0, directionPoolCopy.Count)];
-                        
-                        while (room.HasExit(dir)) {
-                            dir = directionPoolCopy[random.Next(0, directionPoolCopy.Count)];
-                        }
-                        room.AddExit(dir, winRoom);
-                        
-                        Console.WriteLine("placed win room");
-                        break;
-                    }
-                    
-                    chance++;
-                }
+                // call methods here to place the rooms
+                PlaceRequiredRooms(chance, directionPoolCopy, currentRooms, winRoom);
+                PlaceRequiredRooms(chance, directionPoolCopy, currentRooms, goldKeyRoom);
             }
         }
         
         Console.WriteLine(roomAmount);
+    }
+
+    private void PlaceRequiredRooms(int chance, List<string> directionPoolCopy, List<Room> rooms, Room required) {
+        Random random = new Random();
+        foreach (var room in rooms) {
+            if (random.Next(0, rooms.Count) <= chance) {
+                string dir = directionPoolCopy[random.Next(0, directionPoolCopy.Count)];
+                        
+                while (room.HasExit(dir)) {
+                    dir = directionPoolCopy[random.Next(0, directionPoolCopy.Count)];
+                }
+                        
+                room.AddExit(dir, required);
+                break;
+            }
+
+            chance++;
+        }
     }
 }

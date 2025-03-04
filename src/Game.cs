@@ -101,14 +101,20 @@ class Game {
 
 	//  Main play routine. Loops until end of play.
 	public void Play() {
-		PrintWelcome();
-
 		// Enter the main command loop. Here we repeatedly read commands and
 		// execute them until the player wants to quit.
-		bool finished = false;
-		while (!finished && player.isAlive()) {
+		bool finished = !PrintWelcome();
+		if (!finished) {
+			Console.WriteLine(player.CurrentRoom.GetLongDescription());
+		}
+		while (!finished) {
+			if (!player.isAlive()) {
+				Console.WriteLine("you died and lost the game.");
+				finished = !PrintWelcome();
+			}
 			if (player.CurrentRoom == winRoom) {
-				finished = AnounceWin();
+				Console.WriteLine("You won.");
+				finished = !PrintWelcome();
 			}
 			if (player.CurrentRoom.Inhabitants != null) {
 				foreach (var currentRoomInhabitant in player.CurrentRoom.Inhabitants) {
@@ -120,22 +126,20 @@ class Game {
 			Command command = parser.GetCommand();
 			finished = ProcessCommand(command);
 		}
-		if (!player.isAlive()) {
-			finished = AnounceDeath();
-		}
 		Console.WriteLine("Thank you for playing.");
 		Console.WriteLine("Press [Enter] to continue.");
 		Console.ReadLine();
 	}
 
 	// Print out the opening message for the player.
-	private void PrintWelcome() {
+	private bool PrintWelcome() {
 		Console.WriteLine();
 		Console.WriteLine("Welcome to Zuul!");
 		Console.WriteLine("Zuul is a new, incredibly boring adventure game.");
 		Console.WriteLine("Type 'help' if you need help.");
 		Console.WriteLine();
-		Console.WriteLine(player.CurrentRoom.GetLongDescription());
+		Console.WriteLine("type start to start\ntype quit to quit");
+		return Console.ReadLine() == "start";
 	}
 
 	/// <summary>
@@ -222,7 +226,7 @@ class Game {
 
 		if (nextRoom.ConditionalItem != null) {
 			if (!nextRoom.IsUnlocked) {
-				Console.WriteLine("room is blocked");
+				Console.WriteLine($"room needs {nextRoom.ConditionalItem.Name} to be unlocked");
 				return;
 			}
 		}
@@ -303,7 +307,7 @@ class Game {
 		}
 		Item condition = nextRoom.ConditionalItem;
 		if (condition == null) {
-			Console.WriteLine("The room is not blocked.");
+			Console.WriteLine("This room needs nothing to be opened");
 			return;
 		}
 		if (condition == useItem) {
@@ -327,15 +331,16 @@ class Game {
 			return;
 		}
 		if (item == null || !item.Equals("fists")) {
-			Console.WriteLine("I don't recognize that item.");
+			Console.WriteLine("You dont have that weapon.");
 			return;
 		}
 
 		Item weapon = player.BackPack.Get(item);
 		if (weapon == null && item != "fists") {
-			Console.WriteLine("You dont have that weapon");
+			Console.WriteLine("You dont have that weapon.");
 			return;
-		} else if (item != "fists") {
+		} 
+		if (item != "fists") {
 			weapon.ApplyModifiers(player);
 		}
 		int damage = player.DamageModifier;
@@ -348,36 +353,4 @@ class Game {
 	}
 	
 	// #########################################################
-	// death message
-	private bool AnounceDeath() {
-		Console.WriteLine("Game Over\n you died by bleeding out.");
-		Console.WriteLine("type \"continue\" to continue");
-		Console.WriteLine("type \"quit\" to quit");
-		return Restart();
-	}
-	
-	// win message
-	private bool AnounceWin() {
-		Console.WriteLine("You won");
-		Console.WriteLine("type \"continue\" to continue");
-		Console.WriteLine("type \"quit\" twice to quit");
-		return Restart();
-	}
-	
-	// resets game
-	private bool Restart() {
-		Command command = parser.GetCommand();
-		switch (command.CommandWord)
-		{
-			case "continue":
-				player.Health = 100;
-				player.CurrentRoom = StartingRoom;
-				Play();
-				return false;
-				break;
-			default:
-				return ProcessCommand(command);
-				break;
-		}
-	}
 }
