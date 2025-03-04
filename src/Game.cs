@@ -79,14 +79,14 @@ class Game {
 		pub.Chest.Put(nameof(lockOpener), lockOpener);
 		office.Chest.Put(nameof(medKit), medKit);
 
-		guard.Room = attic;
+		guard.CurrentRoom = attic;
 		guard.SetWeapon(axe.Clone());
 		attic.AddInhabitant(guard.Name, guard);
 
 		Generartion generartion = new Generartion();
 		generartion.GenerateWorld(attic);
 
-		kid.Room = theatre;
+		kid.CurrentRoom = theatre;
 		kid.Inventory.Put(nameof(cloack), cloack);
 		theatre.AddInhabitant(kid.Name, kid);
 		

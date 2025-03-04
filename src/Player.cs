@@ -2,24 +2,14 @@
 
 class Player : Entity {
     // fields
-    private Room currentRoom;
-    private int health;
-    private int damageModifier;
-    private int speedModifier;
     private Inventory backPack;
     
     // properties
-    public Room CurrentRoom { get { return this.currentRoom; } set { this.currentRoom = value; } }
-    public int Health { get { return this.health; } set { this.health = value; } }
     public Inventory BackPack { get { return this.backPack; } }
     
     // constructor
-    public Player() : base(1, 1) {
-        this.currentRoom = null;
-        this.health = 100;
+    public Player() : base(1, 1, 100) {
         this.backPack = new Inventory(25);
-        this.damageModifier = 1;
-        this.speedModifier = 1;
     }
 
     // methods
@@ -28,7 +18,7 @@ class Player : Entity {
     /// </summary>
     /// <param name="amount">the amount of damage</param>
     public void damage (int amount) {
-        health -= amount;
+        Health -= amount;
     }
 
     /// <summary>
@@ -36,7 +26,7 @@ class Player : Entity {
     /// </summary>
     /// <param name="amount">the amount of health that should be added</param>
     public void heal (int amount) {
-        health += amount;
+        Health += amount;
     }
 
     /// <summary>
@@ -44,7 +34,7 @@ class Player : Entity {
     /// </summary>
     /// <returns>true if health is above 0, otherwise returns false.</returns>
     public bool isAlive() {
-        return health > 0;
+        return Health > 0;
     }
 
     public bool TakeFromChest(string itemName) {
@@ -63,7 +53,7 @@ class Player : Entity {
     public bool DropToChest(string itemName) {
         Item item = BackPack.Get(itemName);
         if (item != null) {
-            if (currentRoom.Chest.Put(itemName, item)) {
+            if (CurrentRoom.Chest.Put(itemName, item)) {
                 item.RemoveModifiers(this);
                 backPack.Remove(itemName);
                 Console.WriteLine("successfully added item to room.");

@@ -2,29 +2,17 @@
 
 class Enemy : Entity {
     // fields
-    private Room room;
-    private int health;
-    private int damageModifier;
-    private int speedModifier;
     private string name;
     private Inventory inventory;
     private Item mainWeapon;
     
     // attributes
-    public int Health { get { return health; } set { health = value; } }
-    public int DamageModifier { get { return damageModifier; } set { damageModifier = value; } }
-    public int SpeedModifier { get { return speedModifier; } set { speedModifier = value; } }
     public string Name { get { return name; } }
-    public Room Room { get { return this.room; } set { this.room = value; } }
     public Inventory Inventory { get { return inventory; } }
 
     // constructor
-    public Enemy(int hp, int dmg, int invSize, int speed, string enemyName) : base(dmg, speed) {
-        this.room = null;
-        health = hp;
+    public Enemy(int hp, int dmg, int invSize, int speed, string enemyName) : base(dmg, speed, hp) {
         name = enemyName;
-        damageModifier = dmg;
-        speedModifier = speed;
         inventory = new Inventory(invSize);
         mainWeapon = null;
     }
@@ -72,7 +60,7 @@ class Enemy : Entity {
     
     public bool DropToChest(string itemName) {
         Item item = Inventory.Get(itemName);
-        if (Room.Chest.Put(itemName, item)) {
+        if (CurrentRoom.Chest.Put(itemName, item)) {
             item.RemoveModifiers(this);
             Inventory.Remove(itemName);
             Console.WriteLine($"Enemy dropped {itemName}.");
@@ -86,18 +74,18 @@ class Enemy : Entity {
         if (!IsAlive()) {
             OnDeath();
         } else {
-            this.Room.AddInhabitant(this.Name, this);
-            foreach (var keyValuePair in this.room.Inhabitants) {
+            this.CurrentRoom.AddInhabitant(this.Name, this);
+            foreach (var keyValuePair in this.CurrentRoom.Inhabitants) {
                 if (keyValuePair.Value is Player player) {
                     Console.WriteLine($"{this.name} attacked player using {nameof(mainWeapon)}.");
-                    player.damage(damageModifier);
+                    player.damage(DamageModifier);
                 }
             }
         }
     }
 
     private void OnDeath() {
-        this.Room.Inhabitants.Remove(this.Name);
+        this.CurrentRoom.Inhabitants.Remove(this.Name);
         Console.WriteLine($"{this.Name} died and dropped {inventory.GetContents()}");
         this.inventory.ForEachItemName((itemName) => {
             this.DropToChest(itemName);

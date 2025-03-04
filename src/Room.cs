@@ -14,7 +14,6 @@ class Room {
 	public Item ConditionalItem { get { return this.conditionalItem; } set { this.conditionalItem = value; } }
 	public bool IsUnlocked { get; set; }
 	public Dictionary<string, Entity> Inhabitants { get { return inhabitants; } }
-	public Room PreviousRoom { get; set; }
 	
 	/*
 	 * Create a room described "description". Initially, it has no exits.

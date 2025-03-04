@@ -18,7 +18,6 @@ class Generartion
     public Generartion()
     {
         roomPool.Add(hallway);
-        roomPool.Add(stairwell);
         roomPool.Add(stairwellBottom);
         roomPool.Add(stairwellTip);
         roomPool.Add(roomChest);
@@ -34,51 +33,40 @@ class Generartion
         directionPool.Add("south");
     }
 
-    private Room currentRoom;
     private List<Room> currentRooms = new List<Room>();
-    private Room previousRoom;
 
     public void GenerateWorld(Room startRoom) {
         Random random = new Random();
         int chance;
+        int roomAmount = 0;
         
         for (int i = 0; i <= 33; i++) {
             List<string> directionPoolCopy = directionPool;
             if (i == 0) {
                 Room nextRoom = roomPool[random.Next(0, roomPool.Count)].Clone();
-                nextRoom.PreviousRoom = startRoom;
                 startRoom.AddExit("east", nextRoom);
                 nextRoom.AddExit("west", startRoom);
                 nextRoom.Chest.Put("stiches", new Item(1, "medical supplies"));
                 directionPoolCopy.Remove("west");
-                currentRoom = nextRoom;
-                currentRooms.Add(currentRoom);
+                currentRooms.Add(nextRoom);
                 continue;
             }
             
             List<Room> toBeAdded = new List<Room>();
             Console.WriteLine("text");
             foreach (var room in currentRooms) { 
-                // Console.WriteLine(room.GetLongDescription()); 
                 chance = 25;
-                // Console.WriteLine(chance); 
                 foreach (var dir in directionPoolCopy) { 
-                    // Console.WriteLine(dir); 
-                    // Console.WriteLine(nextRoom.GetLongDescription()); 
-                    if (random.Next(1, 100) <= chance) { 
-                        Room nextRoom = roomPool[random.Next(0, roomPool.Count)].Clone(); 
-                        nextRoom.PreviousRoom = room; 
+                    if (random.Next(1, 100) <= chance) {
+                        Room roomPoolChosen = roomPool[random.Next(0, roomPool.Count)];
+                        Room nextRoom = roomPoolChosen.Clone(); 
                         nextRoom.AddExit(dir.Equals("west") ? "east" : dir.Equals("east") ? "west" : dir.Equals("north") ? "south" : "north", room); 
                         if (!room.HasExit(dir)) { 
                             room.AddExit(dir, nextRoom);
                         } 
-                        // Console.WriteLine("added exit");
-                        toBeAdded.Add(nextRoom);
                     }
                     chance += 25; 
-                    // Console.WriteLine(chance);
                 }
-                // Console.WriteLine(room.GetLongDescription());
             }
             currentRooms.Clear();
             Console.WriteLine(currentRooms.Count);
@@ -86,20 +74,8 @@ class Generartion
                 currentRooms.Add(roomAdded);
             }
             Console.WriteLine(currentRooms.Count);
+            roomAmount += currentRooms.Count;
         }
-    }
-
-    private List<Room> GetNextGenerationRooms(Room start) {
-        Console.WriteLine(start.GetLongDescription());
-        List<Room> rooms = new List<Room>();
-        foreach (var dir in directionPool) {
-            Console.WriteLine(dir);
-            if (start.HasExit(dir)) {
-                Console.WriteLine("has exit");
-                rooms.Add(start.GetExit(dir));
-                Console.WriteLine("added exit to dir          " + start.GetExit(dir));
-            }
-        }
-        return rooms;
+        Console.WriteLine(roomAmount);
     }
 }
