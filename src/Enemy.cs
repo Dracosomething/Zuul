@@ -77,7 +77,7 @@ class Enemy : Entity {
             this.CurrentRoom.AddInhabitant(this.Name, this);
             foreach (var keyValuePair in this.CurrentRoom.Inhabitants) {
                 if (keyValuePair.Value is Player player) {
-                    Console.WriteLine($"{this.name} attacked player using {(mainWeapon.Name == null ? "fists" : mainWeapon.Name)}.");
+                    Console.WriteLine($"{this.name} attacked player using {(mainWeapon == null ? "fists" : mainWeapon.Name)}.");
                     player.damage(DamageModifier);
                 }
             }
