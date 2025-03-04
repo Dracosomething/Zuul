@@ -74,9 +74,13 @@ class Player : Entity {
     }
 
     public void NoteDown(Room room) {
+        this.noteBook += room.Name;
+        this.noteBook += ":\n\t";
         room.ForEachExit((keyValuePair) => {
             this.noteBook += keyValuePair.Key;
-            this.noteBook += "\n"; 
+            this.noteBook += " -> ";
+            this.noteBook += room.GetExit(keyValuePair.Key).Name;
+            this.noteBook += ".\n\t";
         });
     }
 

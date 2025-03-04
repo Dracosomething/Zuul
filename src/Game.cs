@@ -6,7 +6,7 @@ class Game {
 	private Parser parser;
 	private Player player;
 	private Room StartingRoom;
-	private Room winRoom = new Room("");
+	private Room winRoom = new Room("", "");
 	private bool isHurt;
 
 	// Constructor
@@ -33,16 +33,16 @@ class Game {
 		Enemy kid = new Enemy(5, 1, 5, 1, "billy");
 		
 		// Create the rooms
-		Room outside = new Room("outside the main entrance of the university");
-		Room theatre = new Room("in a lecture theatre");
-		Room pub = new Room("in the campus pub", cloack);
-		Room lab = new Room("in a computing lab");
-		Room office = new Room("in the computing admin office", lockOpener);
-		Room bacement = new Room("in the basement, it is filled with beer fats.", knife);
-		Room attic = new Room("in the attic, there are a lot of cobwebs.", axe);
-		Room pubStairMid = new Room("in a room with a staircase.");
-		Room pubStairTip = new Room("at the top of the staircase");
-		Room pubStairBottom = new Room("at the bottom of the staircase");
+		Room outside = new Room("outside the main entrance of the university", "outside");
+		Room theatre = new Room("in a lecture theatre", "theatre");
+		Room pub = new Room("in the campus pub", "pub", cloack);
+		Room lab = new Room("in a computing lab", "lab");
+		Room office = new Room("in the computing admin office", "office", lockOpener);
+		Room bacement = new Room("in the basement, it is filled with beer fats.", "bacement", knife);
+		Room attic = new Room("in the attic, there are a lot of cobwebs.", "attic", axe);
+		Room pubStairMid = new Room("in a room with a staircase.", "pub-stairs-middle");
+		Room pubStairTip = new Room("at the top of the staircase", "pub-stairs-top");
+		Room pubStairBottom = new Room("at the bottom of the staircase", "pub-stairs-bottom");
 		
 		// Initialise room exits
 		outside.AddExit("east", theatre);
@@ -279,16 +279,16 @@ class Game {
 		}
 		if (command.SecondWord.Equals("notebook")) {
 			string useCase = command.ThirdWord;
-			if (useCase == null) {
+			if (useCase == null && useCase != "write" && useCase != "read") {
 				Console.WriteLine("I dont understand how to use that.");
-				Console.WriteLine("valid uses are: write, look");
+				Console.WriteLine("valid uses are: write, read");
 				return;
 			}
 			if (useCase.ToLower().Equals("write")) {
 				player.NoteDown(player.CurrentRoom);
 				Console.WriteLine("successfully wrote down the rooms exits");
 			}
-			if (useCase.ToLower().Equals("look")) {
+			if (useCase.ToLower().Equals("read")) {
 				Console.WriteLine(player.Read());
 			}
 			return;

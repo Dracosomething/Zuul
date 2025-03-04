@@ -4,6 +4,7 @@ using Zuul;
 class Room {
 	// Private fields
 	private string description;
+	private string name;
 	private Dictionary<string, Room> exits; // stores exits of this room.
 	private Inventory chest;
 	private Item conditionalItem;
@@ -14,21 +15,24 @@ class Room {
 	public Item ConditionalItem { get { return this.conditionalItem; } set { this.conditionalItem = value; } }
 	public bool IsUnlocked { get; set; }
 	public Dictionary<string, Entity> Inhabitants { get { return inhabitants; } }
+	public string Name { get { return this.name; } }
 	
 	/*
 	 * Create a room described "description". Initially, it has no exits.
 	 * "description" is something like "in a kitchen" or "in a court yard".
 	 */
-	public Room(string desc) {
+	public Room(string desc, string name) {
 		description = desc;
+		this.name =  name;
 		exits = new Dictionary<string, Room>();
 		chest = new Inventory(Int32.MaxValue-1);
 		IsUnlocked = true;
 		inhabitants = new Dictionary<string, Entity>();
 	}
 	
-	public Room(string desc, Item conditionalItem) {
+	public Room(string desc, string name, Item conditionalItem) {
 		description = desc;
+		this.name = name;
 		exits = new Dictionary<string, Room>();
 		chest = new Inventory(Int32.MaxValue-1);
 		inhabitants = new Dictionary<string, Entity>();
@@ -107,7 +111,7 @@ class Room {
 	}
 
 	public Room Clone() {
-		return new Room(this.description, this.conditionalItem);
+		return new Room(this.description, this.name, this.conditionalItem);
 	}
 
 	public bool HasExit(string direction) {

@@ -4,16 +4,16 @@ class Generartion
 {
     private List<Room> roomPool = new List<Room>();
     private List<string> directionPool = new List<string>();
-    private Room hallway = new Room("in a long winding hallway.");
-    private Room stairwell = new Room("in a room with a staircase.");
-    private Room stairwellTip = new Room("at the top of the staircase");
-    private Room stairwellBottom = new Room("at the bottom of the staircase");
-    private Room roomChest = new Room("a room with a chest");
-    private Room roomEmpty = new Room("an empty room");
-    private Room roomWithEnemy = new Room("a room with an enemy");
-    private Room trapRoomEmpty = new Room("an empty room");
-    private Room trapRoomChest = new Room("a room with a chest");
-    private Room celler = new Room("a room filled with beer fats");
+    private Room hallway = new Room("in a long winding hallway.", "hallway");
+    private Room stairwell = new Room("in a room with a staircase.", "staircase-middle");
+    private Room stairwellTip = new Room("at the top of the staircase", "staircase-top");
+    private Room stairwellBottom = new Room("at the bottom of the staircase", "staircase-bottom");
+    private Room roomChest = new Room("a room with a chest", "chest-room");
+    private Room roomEmpty = new Room("an empty room", "empty-room");
+    private Room roomWithEnemy = new Room("a room with an enemy", "room-with-enemy");
+    private Room trapRoomEmpty = new Room("an empty room", "empty-room");
+    private Room trapRoomChest = new Room("a room with a chest", "chest-room");
+    private Room celler = new Room("a room filled with beer fats", "cellar");
     
     public Generartion()
     {
@@ -40,7 +40,7 @@ class Generartion
         int chance;
         int roomAmount = 0;
         
-        for (int i = 0; i <= 57; i++) {
+        for (int i = 0; i <= 51; i++) {
             List<string> directionPoolCopy = directionPool;
             if (i == 0) {
                 Room nextRoom = roomPool[random.Next(0, roomPool.Count)].Clone();
@@ -56,14 +56,14 @@ class Generartion
             Console.WriteLine("text");
             foreach (var room in currentRooms) { 
                 chance = 25;
-                if (room.GetShortDescription().Contains("at the top of the staircase")) {
+                if (room.Name.Equals("staircase-top")) {
                     Room nextStairs = random.Next(0, 2) == 1 ? stairwell.Clone() : stairwellBottom.Clone();
                     if (!room.HasExit("down")) {
                         room.AddExit("down", nextStairs);
                         nextStairs.AddExit("up", room);
                         toBeAdded.Add(nextStairs);
                     }
-                } else if (room.GetShortDescription().Contains("in a room with a staircase.")) {
+                } else if (room.Name.Equals("staircase-middle")) {
                     Room nextStairsDown = random.Next(0, 2) == 1 ? stairwell.Clone() : stairwellBottom.Clone();
                     Room nextStairsUp = random.Next(0, 2) == 1 ? stairwell.Clone() : stairwellTip.Clone();
                     if (!room.HasExit("up")) { 
@@ -77,7 +77,7 @@ class Generartion
                         toBeAdded.Add(nextStairsDown);
                     }
                     continue;
-                } else if (room.GetShortDescription().Contains("at the bottom of the staircase")) {
+                } else if (room.Name.Equals("staircase-middle")) {
                     Room nextStairs = random.Next(0, 2) == 1 ? stairwell.Clone() : stairwellTip.Clone();
                     if (!room.HasExit("up")) {
                         room.AddExit("up", nextStairs);
@@ -109,7 +109,7 @@ class Generartion
             }
             Console.WriteLine(currentRooms.Count);
             roomAmount += currentRooms.Count;
-            if (i == 57) {
+            if (i == 51) {
                 chance = 1;
                 foreach (var room in currentRooms) {
                     if (random.Next(0, currentRooms.Count) <= chance) {
