@@ -22,7 +22,7 @@ class Game {
 	private void CreateRooms() {
 		// Items
 		Item knife = new Item(4, 2, "A sharp pointy object.", "damage", "knife");
-		Item yellowKey = new Item(1, "Used to open the yellow lock", "yellow-lock");
+		Item yellowKey = new Item(1, "Used to open the yellow lock", "yellow-key");
 		Item axe = new Item(20, -1, 5, "A shiny axe, it might be usefull later.", "axe");
 		Item greenKey = new Item(1, "Used to open the green lock", "green-key");
 		Item blueKey = new Item(1, "Used to open the blue lock", "blue-key");
