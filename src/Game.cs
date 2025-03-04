@@ -22,9 +22,11 @@ class Game {
 	private void CreateRooms() {
 		// Items
 		Item knife = new Item(4, 2, "A sharp pointy object.", "damage", "knife");
-		Item cloack = new Item(2, 3, "A simple cloack, it could be used to bypass sertain obstacles.", "speed", "cloack");
+		Item yellowKey = new Item(1, "Used to open the yellow lock", "yellow-lock");
 		Item axe = new Item(20, -1, 5, "A shiny axe, it might be usefull later.", "axe");
-		Item lockOpener = new Item(4, "Can be used to open locks.", "lock-opener");
+		Item greenKey = new Item(1, "Used to open the green lock", "green-key");
+		Item blueKey = new Item(1, "Used to open the blue lock", "blue-key");
+		Item redKey = new Item(1, "Used to open the red lock", "red-key");
 		Item medKit = new Item(10, "A box filled with medical supplies", "med-kit");
 		Item noteBook = new Item(0, "A book where you can note down the exits of rooms.", "notebook");
 		
@@ -35,11 +37,11 @@ class Game {
 		// Create the rooms
 		Room outside = new Room("outside the main entrance of the university", "outside");
 		Room theatre = new Room("in a lecture theatre", "theatre");
-		Room pub = new Room("in the campus pub", "pub", cloack);
+		Room pub = new Room("in the campus pub", "pub", yellowKey);
 		Room lab = new Room("in a computing lab", "lab");
-		Room office = new Room("in the computing admin office", "office", lockOpener);
-		Room bacement = new Room("in the basement, it is filled with beer fats.", "bacement", knife);
-		Room attic = new Room("in the attic, there are a lot of cobwebs.", "attic", axe);
+		Room office = new Room("in the computing admin office", "office", redKey);
+		Room bacement = new Room("in the basement, it is filled with beer fats.", "bacement", blueKey);
+		Room attic = new Room("in the attic, there are a lot of cobwebs.", "attic", greenKey);
 		Room pubStairMid = new Room("in a room with a staircase.", "pub-stairs-middle");
 		Room pubStairTip = new Room("at the top of the staircase", "pub-stairs-top");
 		Room pubStairBottom = new Room("at the bottom of the staircase", "pub-stairs-bottom");
@@ -75,9 +77,9 @@ class Game {
 		
 		// adding items to the rooms
 		bacement.Chest.Put(axe.Name, axe);
-		bacement.Chest.Put(knife.Name, knife.Clone());
-		office.Chest.Put(knife.Name, knife);
-		pub.Chest.Put(lockOpener.Name, lockOpener);
+		bacement.Chest.Put(greenKey.Name, greenKey);
+		office.Chest.Put(blueKey.Name, blueKey);
+		pub.Chest.Put(redKey.Name, redKey);
 		office.Chest.Put(medKit.Name, medKit);
 
 		guard.CurrentRoom = attic;
@@ -88,14 +90,14 @@ class Game {
 		generartion.GenerateWorld(attic, winRoom);
 
 		kid.CurrentRoom = theatre;
-		kid.Inventory.Put(cloack.Name, cloack);
+		kid.Inventory.Put(yellowKey.Name, yellowKey);
 		theatre.AddInhabitant(kid.Name, kid);
 		
 		// Start game outside
 		player.BackPack.Put("notebook", noteBook);
-		player.CurrentRoom = attic;
+		player.CurrentRoom = outside;
 		player.CurrentRoom.AddInhabitant("player", player);
-		StartingRoom = attic;
+		StartingRoom = outside;
 	}
 
 	//  Main play routine. Loops until end of play.
