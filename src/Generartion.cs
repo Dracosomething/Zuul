@@ -118,6 +118,21 @@ class Generartion
                                 Enemy enemy = new Enemy(random.Next(1, 101), random.Next(1, 21), 9999, random.Next(1, 11), name);
                                 nextRoom.Inhabitants.Add(name, enemy);
                                 enemy.CurrentRoom = nextRoom;
+                            } else if (roomPoolChosen.Name.Equals(roomChest.Name)) {
+                                Item rustySword = new Item(5, 7, "A old and rusty sword", "damage", "rusty-sword");
+                                Item shield = new Item(3, 3, "A normal shield, used for defending yourself.", "armor", "shield");
+                                Item cloackOfHealth = new Item(1, 25, "A magical cloack.", "health", "cloack-of-health");
+                                Item excalibur = new Item(5, 14, "A old and rusty sword", "damage", "excalibur");
+                                Item rustyShield = new Item(2, 1, "A rusty old shield, used for defending yourself.", "armor", "shield");
+                                Item armor = new Item(20, 5, 5, "A suit of heavy armor.", "armor");
+                                Item oldArmor = new Item(10, 2, 1, "A suit of rusty old armor.", "old-armor");
+                                Item medKit = new Item(10, "A box filled with medical supplies", "med-kit");
+
+                                List<Item> items = [rustyShield, shield, rustySword, excalibur, cloackOfHealth, medKit, armor, oldArmor];
+
+                                Item contents = items[random.Next(0, items.Count)];
+
+                                nextRoom.Chest.Put(contents.Name, contents);
                             }
                             nextRoom.AddExit(
                                 dir.Equals("west") ? "east" :

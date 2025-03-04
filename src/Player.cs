@@ -9,7 +9,7 @@ class Player : Entity {
     public Inventory BackPack { get { return this.backPack; } }
     
     // constructor
-    public Player() : base(1, 1, 100) {
+    public Player() : base(1, 0, 100) {
         this.backPack = new Inventory(25);
         noteBook = "";
     }
@@ -19,7 +19,8 @@ class Player : Entity {
     /// deals damage to the player
     /// </summary>
     /// <param name="amount">the amount of damage</param>
-    public void damage (int amount) {
+    public void Damage (int amount) {
+        amount = (int) Math.Floor(amount * (ArmorModifier * 0.01));
         Health -= amount;
     }
 
@@ -27,7 +28,7 @@ class Player : Entity {
     /// heals the player
     /// </summary>
     /// <param name="amount">the amount of health that should be added</param>
-    public void heal (int amount) {
+    public void Heal (int amount) {
         Health += amount;
     }
 
@@ -35,7 +36,7 @@ class Player : Entity {
     /// checks if the players health is above 0
     /// </summary>
     /// <returns>true if health is above 0, otherwise returns false.</returns>
-    public bool isAlive() {
+    public bool IsAlive() {
         return Health > 0;
     }
 
@@ -68,7 +69,7 @@ class Player : Entity {
 
     public string Use(string itemName) {
         if (itemName.Equals("medKit")) {
-            this.heal(20);
+            this.Heal(20);
         }
         return $"Successfully used {itemName}.";
     }

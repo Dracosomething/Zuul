@@ -21,7 +21,7 @@ class Game {
 	// Initialise the Rooms (and the Items)
 	private void CreateRooms() {
 		// Items
-		Item axe = new Item(20, -1, 5, "A shiny axe, it might be usefull later.", "axe");
+		Item axe = new Item(20, 5 , "A shiny axe, it might be usefull later.", "damage", "axe");
 		Item yellowKey = new Item(1, "Used to open the yellow lock", "yellow-key");
 		Item greenKey = new Item(1, "Used to open the green lock", "green-key");
 		Item blueKey = new Item(1, "Used to open the blue lock", "blue-key");
@@ -108,7 +108,7 @@ class Game {
 			Console.WriteLine(player.CurrentRoom.GetLongDescription());
 		}
 		while (!finished) {
-			if (!player.isAlive()) {
+			if (!player.IsAlive()) {
 				Console.WriteLine("you died and lost the game.");
 				finished = !PrintWelcome();
 			}
@@ -237,7 +237,7 @@ class Game {
 			Console.WriteLine(player.CurrentRoom.GetLongDescription());
 		}
 		if (isHurt) {
-			player.damage(5);
+			player.Damage(5);
 		}
 	}
 
@@ -265,13 +265,36 @@ class Game {
 	
 	// use an item
 	private void Use(Command command) {
+		if (command.SecondWord.ToLower().Equals("equip")) {
+			Item item = player.BackPack.Get(command.ThirdWord);
+			if (item == null) {
+				Console.WriteLine("You don't have that item.");
+				return;
+			}
+			
+			item.ApplyModifiers(player);
+			item.Equiped = true;
+			return;
+		}
+		if (command.SecondWord.ToLower().Equals("unequip")) {
+			Item item = player.BackPack.Get(command.ThirdWord);
+			if (item == null) {
+				Console.WriteLine("You don't have that item.");
+				return;
+			}
+			
+			item.RemoveModifiers(player);
+			item.Equiped = false;
+			return;
+		}
+		
 		Item useItem = player.BackPack.Get(command.SecondWord);
 		if (useItem == null) {
 			Console.WriteLine("You don't have that item.");
 			return;
 		}
 		if (command.SecondWord.Equals("med-kit")) {
-			player.heal(20);
+			player.Heal(20);
 			Console.WriteLine("used med kit and healed 20 hp");
 			player.BackPack.Remove(command.SecondWord);
 			return;

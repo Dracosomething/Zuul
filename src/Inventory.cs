@@ -68,7 +68,7 @@ class Inventory {
         foreach (var keyValuePair in items) {
             loopTimes++;
             itemString += keyValuePair.Key;
-            itemString += $"[description: \"{keyValuePair.Value.Description}\", weight: {keyValuePair.Value.Weight}]";
+            itemString += $"[description: \"{keyValuePair.Value.Description}\", weight: {keyValuePair.Value.Weight}, is equipped: {keyValuePair.Value.Equiped}]";
             if (items.Count > loopTimes) {
                 itemString += ", \n";
             }

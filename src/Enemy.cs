@@ -11,7 +11,7 @@ class Enemy : Entity {
     public Inventory Inventory { get { return inventory; } }
 
     // constructor
-    public Enemy(int hp, int dmg, int invSize, int speed, string enemyName) : base(dmg, speed, hp) {
+    public Enemy(int hp, int dmg, int invSize, int armor, string enemyName) : base(dmg, armor, hp) {
         name = enemyName;
         inventory = new Inventory(invSize);
         mainWeapon = null;
@@ -23,6 +23,7 @@ class Enemy : Entity {
     /// </summary>
     /// <param name="amount">the amount of damage</param>
     public void Damage (int amount) {
+        amount = (int) Math.Floor(amount * (ArmorModifier * 0.01));
         Health -= amount;
     }
 
@@ -78,7 +79,7 @@ class Enemy : Entity {
             foreach (var keyValuePair in this.CurrentRoom.Inhabitants) {
                 if (keyValuePair.Value is Player player) {
                     Console.WriteLine($"{this.name} attacked player using {(mainWeapon == null ? "fists" : mainWeapon.Name)}.");
-                    player.damage(DamageModifier);
+                    player.Damage(DamageModifier);
                 }
             }
         }
@@ -95,6 +96,7 @@ class Enemy : Entity {
     public void SetWeapon(Item item) {
         this.inventory.Put(nameof(item), item);
         item.ApplyModifiers(this);
+        item.Equiped = true;
         this.mainWeapon = item;
     }
 }
