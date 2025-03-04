@@ -106,7 +106,7 @@ class Generartion
                 }
                 
                 foreach (var dir in directionPoolCopy) {
-                    if (random.Next(1, 100) <= chance) {
+                    if (random.Next(0, 100) <= chance) {
                         if (!room.HasExit(dir)) {
                             Room roomPoolChosen = roomPool[random.Next(0, roomPool.Count)];
                             Room nextRoom = roomPoolChosen.Clone();
@@ -133,6 +133,10 @@ class Generartion
                                 Item contents = items[random.Next(0, items.Count)];
 
                                 nextRoom.Chest.Put(contents.Name, contents);
+                            } else if (roomPoolChosen.Name.Equals(celler.Name)) {
+                                Item food = new Item(0, "a delicious meal.", "food-plate");
+
+                                nextRoom.Chest.Put(food.Name, food);
                             }
                             nextRoom.AddExit(
                                 dir.Equals("west") ? "east" :

@@ -321,6 +321,12 @@ class Game {
 			}
 			return;
 		}
+		if (command.SecondWord.Equals("food-plate")) {
+			player.Heal(10);
+			Console.WriteLine("You ate the food and feel rejuvenated");
+			player.BackPack.Remove(command.SecondWord);
+			return;
+		}
 		
 		string thirdWord = command.ThirdWord;
 		Room nextRoom = player.CurrentRoom.GetExit(thirdWord);
