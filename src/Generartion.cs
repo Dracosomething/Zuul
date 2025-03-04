@@ -158,7 +158,7 @@ class Generartion
             roomAmount += currentRooms.Count;
             
             // for placing the rooms that have to be put in the dungeon
-            if (i >= 47) {
+            if (i >= iterations) {
                 chance = 1;
                 Room goldKeyRoom = new Room("A room with a chest in the middle", "gold-key-room");
                 Item goldKey = new Item(5, "A very shiny key.", "gold-key");
