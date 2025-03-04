@@ -85,7 +85,7 @@ class Game {
 		attic.AddInhabitant(guard.Name, guard);
 
 		Generartion generartion = new Generartion();
-		generartion.GenerateWorld(attic);
+		generartion.GenerateWorld(attic, winRoom);
 
 		kid.CurrentRoom = theatre;
 		kid.Inventory.Put(nameof(cloack), cloack);
@@ -279,7 +279,7 @@ class Game {
 		}
 		if (command.SecondWord.Equals("notebook")) {
 			string useCase = command.ThirdWord;
-			if (useCase.Equals("")) {
+			if (useCase == null) {
 				Console.WriteLine("I dont understand how to use that.");
 				Console.WriteLine("valid uses are: write, look");
 				return;

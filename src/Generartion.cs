@@ -35,12 +35,12 @@ class Generartion
 
     private List<Room> currentRooms = new List<Room>();
 
-    public void GenerateWorld(Room startRoom) {
+    public void GenerateWorld(Room startRoom, Room winRoom) {
         Random random = new Random();
         int chance;
         int roomAmount = 0;
         
-        for (int i = 0; i <= 31; i++) {
+        for (int i = 0; i <= 32; i++) {
             List<string> directionPoolCopy = directionPool;
             if (i == 0) {
                 Room nextRoom = roomPool[random.Next(0, roomPool.Count)].Clone();
@@ -105,6 +105,21 @@ class Generartion
             }
             Console.WriteLine(currentRooms.Count);
             roomAmount += currentRooms.Count;
+            if (i == 32) {
+                chance = 1;
+                foreach (var room in currentRooms) {
+                    if (random.Next(0, currentRooms.Count) <= chance) {
+                        string dir = directionPoolCopy[random.Next(0, directionPoolCopy.Count)];
+                        while (room.HasExit(dir)) {
+                            dir = directionPoolCopy[random.Next(0, directionPoolCopy.Count)];
+                        }
+                        room.AddExit(dir, winRoom);
+                        Console.WriteLine("placed win room");
+                        break;
+                    }
+                    chance++;
+                }
+            }
         }
         Console.WriteLine(roomAmount);
     }
