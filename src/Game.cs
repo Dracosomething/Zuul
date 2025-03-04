@@ -21,12 +21,12 @@ class Game {
 	// Initialise the Rooms (and the Items)
 	private void CreateRooms() {
 		// Items
-		Item knife = new Item(4, 2, "A sharp pointy object.", "damage");
-		Item cloack = new Item(2, 3, "A simple cloack, it could be used to bypass sertain obstacles.", "speed");
-		Item axe = new Item(20, -1, 5, "A shiny axe, it might be usefull later.");
-		Item lockOpener = new Item(4, "Can be used to open locks.");
-		Item medKit = new Item(10, "A box filled with medical supplies");
-		Item noteBook = new Item(0, "A book where you can note down the exits of rooms.");
+		Item knife = new Item(4, 2, "A sharp pointy object.", "damage", "knife");
+		Item cloack = new Item(2, 3, "A simple cloack, it could be used to bypass sertain obstacles.", "speed", "cloack");
+		Item axe = new Item(20, -1, 5, "A shiny axe, it might be usefull later.", "axe");
+		Item lockOpener = new Item(4, "Can be used to open locks.", "lock-opener");
+		Item medKit = new Item(10, "A box filled with medical supplies", "med-kit");
+		Item noteBook = new Item(0, "A book where you can note down the exits of rooms.", "notebook");
 		
 		// Enemies
 		Enemy guard = new Enemy(50, 10, 100, 1, "Guard");
@@ -74,11 +74,11 @@ class Game {
 		// attic.AddExit("west", winRoom);
 		
 		// adding items to the rooms
-		bacement.Chest.Put(nameof(axe), axe);
-		bacement.Chest.Put(nameof(knife), knife.Clone());
-		office.Chest.Put(nameof(knife), knife);
-		pub.Chest.Put(nameof(lockOpener), lockOpener);
-		office.Chest.Put(nameof(medKit), medKit);
+		bacement.Chest.Put(axe.Name, axe);
+		bacement.Chest.Put(knife.Name, knife.Clone());
+		office.Chest.Put(knife.Name, knife);
+		pub.Chest.Put(lockOpener.Name, lockOpener);
+		office.Chest.Put(medKit.Name, medKit);
 
 		guard.CurrentRoom = attic;
 		guard.SetWeapon(axe.Clone());
@@ -88,7 +88,7 @@ class Game {
 		generartion.GenerateWorld(attic, winRoom);
 
 		kid.CurrentRoom = theatre;
-		kid.Inventory.Put(nameof(cloack), cloack);
+		kid.Inventory.Put(cloack.Name, cloack);
 		theatre.AddInhabitant(kid.Name, kid);
 		
 		// Start game outside

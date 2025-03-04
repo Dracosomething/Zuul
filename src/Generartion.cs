@@ -40,13 +40,13 @@ class Generartion
         int chance;
         int roomAmount = 0;
         
-        for (int i = 0; i <= 32; i++) {
+        for (int i = 0; i <= 57; i++) {
             List<string> directionPoolCopy = directionPool;
             if (i == 0) {
                 Room nextRoom = roomPool[random.Next(0, roomPool.Count)].Clone();
                 startRoom.AddExit("east", nextRoom);
                 nextRoom.AddExit("west", startRoom);
-                nextRoom.Chest.Put("stiches", new Item(1, "medical supplies"));
+                nextRoom.Chest.Put("stiches", new Item(1, "medical supplies", "stiches"));
                 directionPoolCopy.Remove("west");
                 currentRooms.Add(nextRoom);
                 continue;
@@ -88,12 +88,16 @@ class Generartion
                 foreach (var dir in directionPoolCopy) {
                     if (random.Next(1, 100) <= chance) {
                         Room roomPoolChosen = roomPool[random.Next(0, roomPool.Count)];
-                        Room nextRoom = roomPoolChosen.Clone(); 
-                        nextRoom.AddExit(dir.Equals("west") ? "east" : dir.Equals("east") ? "west" : dir.Equals("north") ? "south" : "north", room); 
-                        if (!room.HasExit(dir)) { 
+                        if (!room.HasExit(dir)) {
+                            Room nextRoom = roomPoolChosen.Clone();
+                            nextRoom.AddExit(
+                                dir.Equals("west") ? "east" :
+                                dir.Equals("east") ? "west" :
+                                dir.Equals("north") ? "south" : "north", room);
                             room.AddExit(dir, nextRoom);
+
+                            toBeAdded.Add(nextRoom);
                         }
-                        toBeAdded.Add(nextRoom);
                     }
                     chance += 25; 
                 }
@@ -105,7 +109,7 @@ class Generartion
             }
             Console.WriteLine(currentRooms.Count);
             roomAmount += currentRooms.Count;
-            if (i == 32) {
+            if (i == 57) {
                 chance = 1;
                 foreach (var room in currentRooms) {
                     if (random.Next(0, currentRooms.Count) <= chance) {
