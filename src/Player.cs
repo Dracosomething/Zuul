@@ -7,6 +7,7 @@ class Player : Entity {
     
     // properties
     public Inventory BackPack { get { return this.backPack; } }
+    public string NoteBook { get { return this.noteBook; } }
     
     // constructor
     public Player() : base(1, 0, 100) {

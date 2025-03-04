@@ -1,4 +1,6 @@
-﻿namespace Zuul;
+﻿using System.Text.Json.Serialization;
+
+namespace Zuul;
 
 class Entity {
     // fields
@@ -10,6 +12,7 @@ class Entity {
     // attributes
     public int DamageModifier { get { return damageModifier; } set { damageModifier = value; } }
     public int ArmorModifier { get { return armorModifier; } set { armorModifier = value; } }
+    [JsonIgnore]
     public Room CurrentRoom { get { return currentRoom; } set { this.currentRoom = value; } }
     public int Health { get { return health; } set { health = value; } }
 

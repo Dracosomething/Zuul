@@ -14,6 +14,9 @@ class Item {
     public string Description { get { return description; } }
     public string Name { get { return this.name; } }
     public bool Equiped { get; set; }
+    public int ArmorModifier { get { return armorModifier; } }
+    public int DamageModifier { get { return damageModifier; } }
+    public int HealthModifier { get { return healthModifier; } }
 
     // constructor
     public Item(int weight, string description, string name) {

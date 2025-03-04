@@ -7,6 +7,7 @@ class Inventory {
     
     // attributes
     public int MaxWeight { get { return maxWeight; } }
+    public Dictionary<string, Item> Items { get {return items; } }
     
     // constructor
     public Inventory(int maxWeight) {
