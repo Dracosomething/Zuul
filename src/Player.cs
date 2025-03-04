@@ -82,6 +82,7 @@ class Player : Entity {
             this.noteBook += room.GetExit(keyValuePair.Key).Name;
             this.noteBook += ".\n\t";
         });
+        this.noteBook += "\n";
     }
 
     public string Read() {

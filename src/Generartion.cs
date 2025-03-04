@@ -2,6 +2,7 @@
 
 class Generartion
 {
+    // fields
     private List<Room> roomPool = new List<Room>();
     private List<string> directionPool = new List<string>();
     private Room hallway = new Room("in a long winding hallway.", "hallway");
@@ -15,6 +16,7 @@ class Generartion
     private Room trapRoomChest = new Room("a room with a chest", "chest-room");
     private Room celler = new Room("a room filled with beer fats", "cellar");
     
+    // constructor
     public Generartion()
     {
         roomPool.Add(hallway);
@@ -33,14 +35,21 @@ class Generartion
         directionPool.Add("south");
     }
 
+    // list for all rooms that have to get a new room
     private List<Room> currentRooms = new List<Room>();
 
+    /// <summary>
+    /// generates a new dungeon when called, it does this by using a for-loop that loops for 47 times.
+    /// </summary>
+    /// <param name="startRoom">The room where the generations should start at.</param>
+    /// <param name="winRoom">The room that makes the player win.</param>
     public void GenerateWorld(Room startRoom, Room winRoom) {
-        Random random = new Random();
-        int chance;
-        int roomAmount = 0;
+        Random random = new Random(); // creates the randomizer.
+        int chance; // an empty variable that gets assigned the chance for the randomizer to succeed.
+        int roomAmount = 0; // the variable that stores all rooms, used for debugging.
         
-        for (int i = 0; i <= 51; i++) {
+        // the for loop for the generation
+        for (int i = 0; i <= 47; i++) {
             List<string> directionPoolCopy = directionPool;
             if (i == 0) {
                 Room nextRoom = roomPool[random.Next(0, roomPool.Count)].Clone();
@@ -52,8 +61,7 @@ class Generartion
                 continue;
             }
             
-            List<Room> toBeAdded = new List<Room>();
-            Console.WriteLine("text");
+            List<Room> toBeAdded= new List<Room>();
             foreach (var room in currentRooms) { 
                 chance = 25;
                 if (room.Name.Equals("staircase-top")) {
@@ -77,7 +85,7 @@ class Generartion
                         toBeAdded.Add(nextStairsDown);
                     }
                     continue;
-                } else if (room.Name.Equals("staircase-middle")) {
+                } else if (room.Name.Equals("staircase-bottom")) {
                     Room nextStairs = random.Next(0, 2) == 1 ? stairwell.Clone() : stairwellTip.Clone();
                     if (!room.HasExit("up")) {
                         room.AddExit("up", nextStairs);
@@ -99,7 +107,7 @@ class Generartion
                             toBeAdded.Add(nextRoom);
                         }
                     }
-                    chance += 25; 
+                    chance += 30; 
                 }
             }
             currentRooms.Clear();
@@ -107,9 +115,8 @@ class Generartion
             foreach (var roomAdded in toBeAdded) {
                 currentRooms.Add(roomAdded);
             }
-            Console.WriteLine(currentRooms.Count);
             roomAmount += currentRooms.Count;
-            if (i == 51) {
+            if (i >= 47) {
                 chance = 1;
                 foreach (var room in currentRooms) {
                     if (random.Next(0, currentRooms.Count) <= chance) {
