@@ -1,4 +1,6 @@
-﻿namespace Zuul;
+﻿using System.Text.Json.Serialization;
+
+namespace Zuul;
 
 class Item {
     // fields
@@ -63,6 +65,17 @@ class Item {
                 break;
         }
         Equiped = false;
+    }
+
+    [JsonConstructor]
+    public Item() {
+        this.name = null;
+        this.description = null;
+        this.weight = 0;
+        this.armorModifier = 0;
+        this.damageModifier = 0;
+        this.healthModifier = 0;
+        this.Equiped = false;
     }
     
     // methods

@@ -15,7 +15,7 @@ class Game {
 	public Game() {
 		string directory = Getdirectory();
 		parser = new Parser();
-		if (Directory.Exists(directory)) {
+		if (File.Exists(directory)) {
 			player = LoadPlayer();
 		} else {
 			player = new Player();
@@ -397,14 +397,13 @@ class Game {
 		}
 		
 		string directory = Getdirectory();
-		Console.WriteLine(directory);
 
 		JsonSerializerOptions options = new JsonSerializerOptions { WriteIndented = true  };
 		string jsonString = JsonSerializer.Serialize(player);
 		Byte[] bytes = Encoding.UTF8.GetBytes(jsonString);
 		string base64String = Convert.ToBase64String(bytes);
 		string newJsonString = JsonSerializer.Serialize(base64String, options);
-		File.WriteAllText(directory, base64String);
+		File.WriteAllText(directory, newJsonString);
 	}
 
 	private Player LoadPlayer() {
@@ -412,7 +411,7 @@ class Game {
 
 		JsonSerializerOptions options = new JsonSerializerOptions { WriteIndented = true  };
 		string jsonBase64String = File.ReadAllText(directory);
-		string base64String = jsonBase64String.Replace("{", "").Replace("}", "");
+		string base64String = JsonSerializer.Deserialize<string>(jsonBase64String);
 		Byte[] bytes = Convert.FromBase64String(base64String);
 		string jsonString = Encoding.UTF8.GetString(bytes);
 		return JsonSerializer.Deserialize<Player>(jsonString, options);

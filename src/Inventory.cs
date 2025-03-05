@@ -25,7 +25,7 @@ class Inventory {
     public bool Put(string itemName, Item item) {
         int itemWeight = item.Weight;
         if (itemWeight <= FreeWeight()) {
-            items.Add(itemName, item);
+            items.TryAdd(itemName, item);
             return true;
         }
         return false;
