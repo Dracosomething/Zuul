@@ -11,12 +11,13 @@ class Room {
 	private Dictionary<string, Entity> inhabitants;
 
 	// properties
-	public Inventory Chest { get { return this.chest; } }
+	public Inventory Chest { get { return this.chest; } set { this.chest = value; } }
 	public Item ConditionalItem { get { return this.conditionalItem; } set { this.conditionalItem = value; } }
 	public bool IsUnlocked { get; set; }
-	public Dictionary<string, Entity> Inhabitants { get { return inhabitants; } }
-	public string Name { get { return this.name; } }
-	
+	public Dictionary<string, Entity> Inhabitants { get { return inhabitants; } set { this.Inhabitants = value; } }
+	public string Name { get { return this.name; } set { this.name = value; } }
+	public string Description { get { return this.description; } set { this.description = value; } }
+
 	/*
 	 * Create a room described "description". Initially, it has no exits.
 	 * "description" is something like "in a kitchen" or "in a court yard".
