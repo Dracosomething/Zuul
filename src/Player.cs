@@ -21,7 +21,7 @@ class Player : Entity {
     /// </summary>
     /// <param name="amount">the amount of damage</param>
     public void Damage (int amount) {
-        amount = (int) Math.Floor(amount * (ArmorModifier * 0.01));
+        amount = (int) Math.Ceiling(amount * ((ArmorModifier+1) * 0.01));
         Health -= amount;
     }
 

@@ -38,7 +38,7 @@ class Game {
 		
 		// Enemies
 		Enemy guard = new Enemy(50, 10, 100, 1, "Guard");
-		Enemy kid = new Enemy(5, 1, 5, 1, "billy");
+		Enemy kid = new Enemy(5, 1, 5, 0, "billy");
 		
 		// Create the rooms
 		Room outside = new Room("outside the main entrance of the university", "outside");
@@ -93,7 +93,7 @@ class Game {
 		attic.AddInhabitant(guard.Name, guard);
 
 		Generartion generartion = new Generartion();
-		generartion.GenerateWorld(attic, winRoom, 47);
+		generartion.GenerateWorld(attic, winRoom, 42);
 
 		kid.CurrentRoom = theatre;
 		kid.Inventory.Put(yellowKey.Name, yellowKey);
@@ -414,7 +414,13 @@ class Game {
 		string base64String = JsonSerializer.Deserialize<string>(jsonBase64String);
 		Byte[] bytes = Convert.FromBase64String(base64String);
 		string jsonString = Encoding.UTF8.GetString(bytes);
-		return JsonSerializer.Deserialize<Player>(jsonString, options);
+		Player loadedPlayer = JsonSerializer.Deserialize<Player>(jsonString, options);
+		loadedPlayer.BackPack.ForEachItemName((Item) => {
+			if (Item.Contains("key")) {
+				loadedPlayer.BackPack.Remove(Item);
+			}
+		});
+		return loadedPlayer;
 	}
 
 	private string Getdirectory() {
