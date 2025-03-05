@@ -137,6 +137,18 @@ class Generartion
                                 Item food = new Item(0, "a delicious meal.", "food-plate");
 
                                 nextRoom.Chest.Put(food.Name, food);
+                            } else if (roomPoolChosen.Name.Equals(trapRoomChest.Name)) {
+                                Trap mimic = new Trap(0, "Mimic", "A chest that when opened becomes a monster.", false);
+                                mimic.Function = (() => MimicSpawn(mimic));
+                                
+                                nextRoom.Inhabitants.Add(mimic.Name, mimic);
+                                mimic.CurrentRoom = nextRoom;
+                            } else if (roomPoolChosen.Name.Equals(trapRoomEmpty.Name)) {
+                                Trap arrowWall = new Trap(7, "Arrow-Wall", "A wall that fires arrows.", false);
+                                arrowWall.Function = () => ShootArrows(arrowWall);
+                                
+                                nextRoom.Inhabitants.Add(arrowWall.Name, arrowWall);
+                                arrowWall.CurrentRoom = nextRoom;
                             }
                             nextRoom.AddExit(
                                 dir.Equals("west") ? "east" :
@@ -189,6 +201,30 @@ class Generartion
             }
 
             chance++;
+        }
+    }
+
+    private void MimicSpawn(Trap trap) {
+        if (!trap.CurrentRoom.Inhabitants.ContainsKey("player")) {
+            Trap newMimic = new Trap(0, "Mimic", "A chest that when opened becomes a monster.", false);
+            newMimic.Function = (() => MimicSpawn(newMimic));
+                                
+            trap.CurrentRoom.Inhabitants.Add(newMimic.Name, newMimic);
+            newMimic.CurrentRoom = trap.CurrentRoom;
+        } else {
+            Enemy mimic = new Enemy(25, 5, 700, 3, "Mimic");
+            trap.CurrentRoom.Inhabitants.Add(mimic.Name, mimic);
+            trap.Discard();
+            Console.WriteLine("The chest became a mimic.");
+        }
+    }
+
+    private void ShootArrows(Trap trap) {
+        foreach (var Inhabitant in trap.CurrentRoom.Inhabitants) {
+            Entity inhabitant = Inhabitant.Value;
+            if (!(inhabitant is Trap)) {
+                inhabitant.Damage(trap.DamageModifier);
+            }
         }
     }
 }
