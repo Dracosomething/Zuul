@@ -12,13 +12,13 @@ class Item {
     private int healthModifier;
     
     // attributes
-    public int Weight { get { return weight; } set { this.weight = value; } }
-    public string Description { get { return description; } set { this.description = value; } }
-    public string Name { get { return this.name; } set { this.name = value; } }
+    public int Weight { get { return weight; } }
+    public string Description { get { return description; } }
+    public string Name { get { return this.name; } }
     public bool Equiped { get; set; }
-    public int ArmorModifier { get { return armorModifier; } set { this.armorModifier = value; } }
-    public int DamageModifier { get { return damageModifier; } set { this.damageModifier = value; } }
-    public int HealthModifier { get { return healthModifier; } set { this.healthModifier = value; } }
+    public int ArmorModifier { get { return armorModifier; } }
+    public int DamageModifier { get { return damageModifier; } }
+    public int HealthModifier { get { return healthModifier; } }
 
     // constructor
     public Item(int weight, string description, string name) {

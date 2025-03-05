@@ -44,10 +44,10 @@ class Generartion
     /// <param name="startRoom">The room where the generations should start at.</param>
     /// <param name="winRoom">The room that makes the player win.</param>
     /// <param name="iterations">The amount of times it should loop.</param>
-    public List<Room> GenerateWorld(Room startRoom, Room winRoom, int iterations) {
+    public void GenerateWorld(Room startRoom, Room winRoom, int iterations) {
         Random random = new Random(); // creates the randomizer.
         int chance; // an empty variable that gets assigned the chance for the randomizer to succeed.
-        List<Room> roomAmount = new List<Room>(); // the variable that stores all rooms, used for debugging.
+        int roomAmount = 0; // the variable that stores all rooms, used for debugging.
         
         // the for loop for the generation
         for (int i = 0; i <= iterations; i++) {
@@ -167,7 +167,7 @@ class Generartion
             foreach (var roomAdded in toBeAdded) {
                 currentRooms.Add(roomAdded);
             }
-            roomAmount.AddRange(currentRooms);
+            roomAmount += currentRooms.Count;
             
             // for placing the rooms that have to be put in the dungeon
             if (i >= iterations) {
@@ -183,8 +183,7 @@ class Generartion
             }
         }
         
-        Console.WriteLine(roomAmount.Count);
-        return roomAmount;
+        Console.WriteLine(roomAmount);
     }
 
     private void PlaceRequiredRooms(int chance, List<string> directionPoolCopy, List<Room> rooms, Room required) {

@@ -14,11 +14,6 @@ class Inventory {
         this.maxWeight = maxWeight;
         this.items = new Dictionary<string, Item>();
     }
-
-    public Inventory() {
-        this.maxWeight = 0;
-        this.items = new Dictionary<string, Item>();
-    }
     
     // methods
     /// <summary>

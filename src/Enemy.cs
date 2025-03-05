@@ -7,8 +7,8 @@ class Enemy : Entity {
     private Item mainWeapon;
     
     // attributes
-    public string Name { get { return name; } set { this.name = value; } }
-    public Inventory Inventory { get { return inventory; }  set { this.inventory = value; } }
+    public string Name { get { return name; } }
+    public Inventory Inventory { get { return inventory; } }
 
     // constructor
     public Enemy(int hp, int dmg, int invSize, int armor, string enemyName) : base(dmg, armor, hp) {

@@ -12,7 +12,7 @@ class Entity {
     // attributes
     public int DamageModifier { get { return damageModifier; } set { damageModifier = value; } }
     public int ArmorModifier { get { return armorModifier; } set { armorModifier = value; } }
-    // [JsonIgnore]
+    [JsonIgnore]
     public Room CurrentRoom { get { return currentRoom; } set { this.currentRoom = value; } }
     public int Health { get { return health; } set { health = value; } }
 
@@ -22,13 +22,6 @@ class Entity {
         this.damageModifier = damageModifier;
         this.armorModifier = armorModifier;
         this.health = health;
-        this.currentRoom = null;
-    }
-    
-    public Entity() {
-        this.damageModifier = 0;
-        this.armorModifier = 0;
-        this.health = 0;
         this.currentRoom = null;
     }
     

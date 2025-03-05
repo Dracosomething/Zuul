@@ -1,7 +1,6 @@
 using System;
 using System.Text;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using Zuul;
 
 class Game {
@@ -11,27 +10,19 @@ class Game {
 	private Room StartingRoom;
 	private Room winRoom = new Room("", "");
 	private bool isHurt;
-	private List<Room> world;
 
 	// Constructor
 	public Game() {
-		string directoryPlayer = GetDirectoryPlayer();
-		string directoryWorld = GetDirectoryWorld();
+		string directory = Getdirectory();
 		parser = new Parser();
-		if (File.Exists(directoryPlayer)) {
+		if (File.Exists(directory)) {
 			player = LoadPlayer();
 		} else {
 			player = new Player();
 		}
-		world = new List<Room>();
 		StartingRoom = null;
 		isHurt = true;
-		if (File.Exists(directoryWorld)) {
-			world = LoadWorld();
-			
-		} else {
-			CreateRooms();
-		}
+		CreateRooms();
 	}
 
 	// Initialise the Rooms (and the Items)
@@ -60,8 +51,6 @@ class Game {
 		Room pubStairMid = new Room("in a room with a staircase.", "pub-stairs-middle");
 		Room pubStairTip = new Room("at the top of the staircase", "pub-stairs-top");
 		Room pubStairBottom = new Room("at the bottom of the staircase", "pub-stairs-bottom");
-		List<Room> defaultRooms =
-			[outside, theatre, pub, lab, office, bacement, attic, pubStairMid, pubStairTip, pubStairBottom];
 		
 		// Initialise room exits
 		outside.AddExit("east", theatre);
@@ -104,10 +93,8 @@ class Game {
 		attic.AddInhabitant(guard.Name, guard);
 
 		Generartion generartion = new Generartion();
-		List<Room> randomRooms = generartion.GenerateWorld(attic, winRoom, 15);
-		defaultRooms.AddRange(randomRooms);
-		world.AddRange(defaultRooms);
-		
+		generartion.GenerateWorld(attic, winRoom, 45);
+
 		kid.CurrentRoom = theatre;
 		kid.Inventory.Put(yellowKey.Name, yellowKey);
 		theatre.AddInhabitant(kid.Name, kid);
@@ -127,7 +114,6 @@ class Game {
 		if (!finished) {
 			Console.WriteLine(player.CurrentRoom.GetLongDescription());
 		}
-		SafeWorld();
 		while (!finished) {
 			SafePlayer();
 			if (!player.IsAlive()) {
@@ -146,7 +132,6 @@ class Game {
 			Command command = parser.GetCommand();
 			finished = ProcessCommand(command);
 		}
-		SafeWorld();
 		Console.WriteLine("Thank you for playing.");
 		Console.WriteLine("Press [Enter] to continue.");
 		Console.ReadLine();
@@ -404,15 +389,15 @@ class Game {
 
 	private void SafePlayer() {
 		if (OperatingSystem.IsWindows()) {
-			Directory.CreateDirectory(Directory.GetCurrentDirectory() + "\\save");
+			Directory.CreateDirectory(Directory.GetCurrentDirectory() + "\\player");
 		} else {
-			Directory.CreateDirectory(Directory.GetCurrentDirectory() + "/save");
+			Directory.CreateDirectory(Directory.GetCurrentDirectory() + "/player");
 		}
 		
-		string directory = GetDirectoryPlayer();
+		string directory = Getdirectory();
 
-		JsonSerializerOptions options = new JsonSerializerOptions { WriteIndented = true, ReferenceHandler = ReferenceHandler.Preserve, MaxDepth = 9999 };
-		string jsonString = JsonSerializer.Serialize(player, options);
+		JsonSerializerOptions options = new JsonSerializerOptions { WriteIndented = true  };
+		string jsonString = JsonSerializer.Serialize(player);
 		Byte[] bytes = Encoding.UTF8.GetBytes(jsonString);
 		string base64String = Convert.ToBase64String(bytes);
 		string newJsonString = JsonSerializer.Serialize(base64String, options);
@@ -420,11 +405,11 @@ class Game {
 	}
 
 	private Player LoadPlayer() {
-		string directory = GetDirectoryPlayer();
+		string directory = Getdirectory();
 
-		JsonSerializerOptions options = new JsonSerializerOptions { WriteIndented = true, ReferenceHandler = ReferenceHandler.Preserve, MaxDepth = 9999 };
+		JsonSerializerOptions options = new JsonSerializerOptions { WriteIndented = true  };
 		string jsonBase64String = File.ReadAllText(directory);
-		string base64String = JsonSerializer.Deserialize<string>(jsonBase64String, options);
+		string base64String = JsonSerializer.Deserialize<string>(jsonBase64String);
 		Byte[] bytes = Convert.FromBase64String(base64String);
 		string jsonString = Encoding.UTF8.GetString(bytes);
 		Player loadedPlayer = JsonSerializer.Deserialize<Player>(jsonString, options);
@@ -436,52 +421,12 @@ class Game {
 		return loadedPlayer;
 	}
 
-	private void  SafeWorld() {
-		if (OperatingSystem.IsWindows()) {
-			Directory.CreateDirectory(Directory.GetCurrentDirectory() + "\\save");
-		} else {
-			Directory.CreateDirectory(Directory.GetCurrentDirectory() + "/save");
-		}
-		
-		string directory = GetDirectoryWorld();
-
-		JsonSerializerOptions options = new JsonSerializerOptions { WriteIndented = true, ReferenceHandler = ReferenceHandler.Preserve, MaxDepth = 9999 };
-		string jsonString = JsonSerializer.Serialize(world, options);
-		Byte[] bytes = Encoding.UTF8.GetBytes(jsonString);
-		string base64String = Convert.ToBase64String(bytes);
-		string newJsonString = JsonSerializer.Serialize(base64String, options);
-		File.WriteAllText(directory, newJsonString);
-	}
-	
-	private List<Room> LoadWorld() {
-		string directory = GetDirectoryWorld();
-
-		JsonSerializerOptions options = new JsonSerializerOptions { WriteIndented = true, ReferenceHandler = ReferenceHandler.Preserve, MaxDepth = 9999 };
-		string jsonBase64String = File.ReadAllText(directory);
-		string base64String = JsonSerializer.Deserialize<string>(jsonBase64String, options);
-		Byte[] bytes = Convert.FromBase64String(base64String);
-		string jsonString = Encoding.UTF8.GetString(bytes);
-		List<Room> loadedWorld = JsonSerializer.Deserialize<List<Room>>(jsonString, options);
-		return loadedWorld;
-	}
-
-	private string GetDirectoryPlayer() {
+	private string Getdirectory() {
 		string directory;
 		if (OperatingSystem.IsWindows()) {
-			directory = Directory.GetCurrentDirectory() + "\\save\\player.json";
+			directory = Directory.GetCurrentDirectory() + "\\player\\player.json";
 		} else {
-			directory = Directory.GetCurrentDirectory() + "/save/player.json";
-		}
-
-		return directory;
-	}
-	
-	private string GetDirectoryWorld() {
-		string directory;
-		if (OperatingSystem.IsWindows()) {
-			directory = Directory.GetCurrentDirectory() + "\\save\\world.json";
-		} else {
-			directory = Directory.GetCurrentDirectory() + "/save/world.json";
+			directory = Directory.GetCurrentDirectory() + "/player/player.json";
 		}
 
 		return directory;

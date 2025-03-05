@@ -14,11 +14,9 @@ class Room {
 	public Inventory Chest { get { return this.chest; } set { this.chest = value; } }
 	public Item ConditionalItem { get { return this.conditionalItem; } set { this.conditionalItem = value; } }
 	public bool IsUnlocked { get; set; }
-	public Dictionary<string, Entity> Inhabitants { get { return inhabitants; } set { this.inhabitants = value; } }
+	public Dictionary<string, Entity> Inhabitants { get { return inhabitants; } set { this.Inhabitants = value; } }
 	public string Name { get { return this.name; } set { this.name = value; } }
 	public string Description { get { return this.description; } set { this.description = value; } }
-	public Dictionary<string, Room> Exits { get { return exits; } set { this.exits = value; } }
-
 
 	/*
 	 * Create a room described "description". Initially, it has no exits.
@@ -27,15 +25,6 @@ class Room {
 	public Room(string desc, string name) {
 		description = desc;
 		this.name =  name;
-		exits = new Dictionary<string, Room>();
-		chest = new Inventory(Int32.MaxValue-1);
-		IsUnlocked = true;
-		inhabitants = new Dictionary<string, Entity>();
-	}
-	
-	public Room() {
-		description = null;
-		this.name =  null;
 		exits = new Dictionary<string, Room>();
 		chest = new Inventory(Int32.MaxValue-1);
 		IsUnlocked = true;
