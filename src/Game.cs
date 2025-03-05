@@ -1,4 +1,6 @@
 using System;
+using System.Text;
+using System.Text.Json;
 using Zuul;
 
 class Game {
@@ -11,8 +13,13 @@ class Game {
 
 	// Constructor
 	public Game() {
+		string directory = Getdirectory();
 		parser = new Parser();
-		player = new Player();
+		if (Directory.Exists(directory)) {
+			player = LoadPlayer();
+		} else {
+			player = new Player();
+		}
 		StartingRoom = null;
 		isHurt = true;
 		CreateRooms();
@@ -108,6 +115,7 @@ class Game {
 			Console.WriteLine(player.CurrentRoom.GetLongDescription());
 		}
 		while (!finished) {
+			SafePlayer();
 			if (!player.IsAlive()) {
 				Console.WriteLine("you died and lost the game.");
 				finished = !PrintWelcome();
@@ -380,6 +388,45 @@ class Game {
 			}
 		}
 	}
-	
+
+	private void SafePlayer() {
+		if (OperatingSystem.IsWindows()) {
+			Directory.CreateDirectory(Directory.GetCurrentDirectory() + "\\player");
+		} else {
+			Directory.CreateDirectory(Directory.GetCurrentDirectory() + "/player");
+		}
+		
+		string directory = Getdirectory();
+		Console.WriteLine(directory);
+
+		JsonSerializerOptions options = new JsonSerializerOptions { WriteIndented = true  };
+		string jsonString = JsonSerializer.Serialize(player);
+		Byte[] bytes = Encoding.UTF8.GetBytes(jsonString);
+		string base64String = Convert.ToBase64String(bytes);
+		string newJsonString = JsonSerializer.Serialize(base64String, options);
+		File.WriteAllText(directory, base64String);
+	}
+
+	private Player LoadPlayer() {
+		string directory = Getdirectory();
+
+		JsonSerializerOptions options = new JsonSerializerOptions { WriteIndented = true  };
+		string jsonBase64String = File.ReadAllText(directory);
+		string base64String = jsonBase64String.Replace("{", "").Replace("}", "");
+		Byte[] bytes = Convert.FromBase64String(base64String);
+		string jsonString = Encoding.UTF8.GetString(bytes);
+		return JsonSerializer.Deserialize<Player>(jsonString, options);
+	}
+
+	private string Getdirectory() {
+		string directory;
+		if (OperatingSystem.IsWindows()) {
+			directory = Directory.GetCurrentDirectory() + "\\player\\player.json";
+		} else {
+			directory = Directory.GetCurrentDirectory() + "/player/player.json";
+		}
+
+		return directory;
+	}
 	// #########################################################
 }

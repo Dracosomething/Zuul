@@ -6,8 +6,8 @@ class Player : Entity {
     private string noteBook;
     
     // properties
-    public Inventory BackPack { get { return this.backPack; } }
-    public string NoteBook { get { return this.noteBook; } }
+    public Inventory BackPack { get { return this.backPack; } set { this.backPack = value; } }
+    public string NoteBook { get { return this.noteBook; } set { this.noteBook = value; } }
     
     // constructor
     public Player() : base(1, 0, 100) {

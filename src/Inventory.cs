@@ -6,8 +6,8 @@ class Inventory {
     private Dictionary<string, Item> items;
     
     // attributes
-    public int MaxWeight { get { return maxWeight; } }
-    public Dictionary<string, Item> Items { get {return items; } }
+    public int MaxWeight { get { return maxWeight; } set { maxWeight = value; } }
+    public Dictionary<string, Item> Items { get {return items; } set { items = value; } }
     
     // constructor
     public Inventory(int maxWeight) {
