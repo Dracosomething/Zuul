@@ -93,7 +93,7 @@ class Game {
 		attic.AddInhabitant(guard.Name, guard);
 
 		Generartion generartion = new Generartion();
-		generartion.GenerateWorld(attic, winRoom, 42);
+		generartion.GenerateWorld(attic, winRoom, 45);
 
 		kid.CurrentRoom = theatre;
 		kid.Inventory.Put(yellowKey.Name, yellowKey);
@@ -126,9 +126,7 @@ class Game {
 			}
 			if (player.CurrentRoom.Inhabitants != null) {
 				foreach (var currentRoomInhabitant in player.CurrentRoom.Inhabitants) {
-					if (currentRoomInhabitant.Value is Enemy entity) {
-						entity.Tick();
-					}
+					currentRoomInhabitant.Value.Tick();
 				}
 			}
 			Command command = parser.GetCommand();
