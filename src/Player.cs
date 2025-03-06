@@ -4,15 +4,18 @@ class Player : Entity {
     // fields
     private Inventory backPack;
     private string noteBook;
+    private int maxHealth;
     
     // properties
     public Inventory BackPack { get { return this.backPack; } set { this.backPack = value; } }
     public string NoteBook { get { return this.noteBook; } set { this.noteBook = value; } }
+    public int MaxHealth { get { return this.maxHealth; } set { maxHealth = value; } }
     
     // constructor
     public Player() : base(1, 0, 100, "player") {
         this.backPack = new Inventory(25);
         noteBook = "";
+        this.maxHealth = 100;
     }
 
     // methods
@@ -27,6 +30,11 @@ class Player : Entity {
         }
         Console.WriteLine("Item couldn't be found in current room.");
         return false;
+    }
+    
+    public new void Heal (int amount) {
+        if ((Health += amount) == maxHealth) return;
+        Health += amount;
     }
     
     public bool DropToChest(string itemName) {

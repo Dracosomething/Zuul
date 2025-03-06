@@ -53,8 +53,11 @@ class Enemy : Entity {
             this.CurrentRoom.AddInhabitant(this.Name, this);
             CurrentRoom.ForEachInhabitant((inhabitant) => {
                 if (inhabitant.Value is Player player) {
-                    Console.WriteLine(
-                        $"{this.Name} attacked player using {(mainWeapon == null ? "fists" : mainWeapon.Name)}.");
+                    if (this.mainWeapon != null) {
+                        Console.WriteLine($"{this.Name} attacked player using {mainWeapon.Name}.");
+                    } else {
+                        Console.WriteLine($"{this.Name} attacked player.");
+                    }
                     player.Damage(DamageModifier);
                     hasSeenPlayer = true;
                 }

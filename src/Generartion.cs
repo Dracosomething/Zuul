@@ -219,7 +219,7 @@ class Generartion
             mimic.Tick();
         }
     }
-
+    
     private void ShootArrows(Trap trap) {
         trap.CurrentRoom.ForEachInhabitant((Inhabitant) => {
             Entity inhabitant = Inhabitant.Value;

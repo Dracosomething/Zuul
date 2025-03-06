@@ -457,6 +457,7 @@ class Game {
 
 	private void InfHealth() {
 		this.player.Health = Int32.MaxValue;
+		this.player.MaxHealth = Int32.MaxValue;
 	}
 
 	private void FunnySword() {
