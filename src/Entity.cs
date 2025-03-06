@@ -40,7 +40,8 @@ class Entity {
     /// </summary>
     /// <param name="amount">the amount of damage</param>
     public void Damage (int amount) {
-        amount -= (int) Math.Ceiling(amount * ((ArmorModifier+1) * 0.01));
+        if (amount * ((ArmorModifier+1) * 0.01) < 0) amount = 0;
+        else amount -= (int) Math.Ceiling(amount * ((ArmorModifier+1) * 0.01));
         Health -= amount;
     }
 
