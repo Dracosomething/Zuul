@@ -82,13 +82,23 @@ class Item {
     public void ApplyModifiers(Entity entity) {
         entity.DamageModifier += damageModifier;
         entity.ArmorModifier += armorModifier;
-        entity.Health += healthModifier;
+        if (entity.GetType().Name.Equals("Player")) {
+            Player player = (Player)entity;
+            player.MaxHealth += healthModifier;
+        } else {
+            entity.Health += healthModifier;
+        }
     }
 
     public void RemoveModifiers(Entity entity) {
         entity.DamageModifier -= damageModifier;
         entity.ArmorModifier -= armorModifier;
-        entity.Health -= healthModifier;
+        if (entity.GetType().Name.Equals("Player")) {
+            Player player = (Player)entity;
+            player.MaxHealth -= healthModifier;
+        } else {
+            entity.Health -= healthModifier;
+        }    
     }
 
     public Item Clone() {
