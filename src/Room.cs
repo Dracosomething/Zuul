@@ -8,13 +8,12 @@ class Room {
 	private Dictionary<string, Room> exits; // stores exits of this room.
 	private Inventory chest;
 	private Item conditionalItem;
-	private Dictionary<string, Entity> inhabitants;
+	private Dictionary<string, dynamic> inhabitants;
 
 	// properties
 	public Inventory Chest { get { return this.chest; } }
 	public Item ConditionalItem { get { return this.conditionalItem; } set { this.conditionalItem = value; } }
 	public bool IsUnlocked { get; set; }
-	public Dictionary<string, Entity> Inhabitants { get { return inhabitants; } }
 	public string Name { get { return this.name; } }
 	
 	/*
@@ -27,7 +26,7 @@ class Room {
 		exits = new Dictionary<string, Room>();
 		chest = new Inventory(Int32.MaxValue-1);
 		IsUnlocked = true;
-		inhabitants = new Dictionary<string, Entity>();
+		inhabitants = new Dictionary<string, dynamic>();
 	}
 	
 	public Room(string desc, string name, Item conditionalItem) {
@@ -35,7 +34,7 @@ class Room {
 		this.name = name;
 		exits = new Dictionary<string, Room>();
 		chest = new Inventory(Int32.MaxValue-1);
-		inhabitants = new Dictionary<string, Entity>();
+		inhabitants = new Dictionary<string, dynamic>();
 		this.conditionalItem = conditionalItem;
 		IsUnlocked = false;
 	}
@@ -106,10 +105,6 @@ class Room {
 		return str;
 	}
 
-	public void AddInhabitant(string name, Entity creature) {
-		Inhabitants.TryAdd(name, creature);
-	}
-
 	public Room Clone() {
 		return new Room(this.description, this.name, this.conditionalItem);
 	}
@@ -121,6 +116,24 @@ class Room {
 	public void ForEachExit(Action<KeyValuePair<string, Room>> consumer) {
 		foreach (var keyValuePair in exits) {
 			consumer.Invoke(keyValuePair);
+		}
+	}
+
+	public void AddInhabitant( string name, Entity entity) {
+		this.inhabitants.TryAdd(name, entity);
+	}
+
+	public void RemoveInhabitant(string name) {
+		this.inhabitants.Remove(name);
+	}
+
+	public bool ContainsInhabitant(string name) {
+		return this.inhabitants.ContainsKey(name);
+	}
+
+	public void ForEachInhabitant(Action<KeyValuePair<string, dynamic>> action) {
+		foreach (var inhabitant in inhabitants) {
+			action.Invoke(inhabitant);
 		}
 	}
 }

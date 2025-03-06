@@ -49,19 +49,21 @@ class Enemy : Entity {
     public void Tick() {
         if (!IsAlive()) {
             OnDeath();
-        } else {
+        }
+        else {
             this.CurrentRoom.AddInhabitant(this.Name, this);
-            foreach (var keyValuePair in this.CurrentRoom.Inhabitants) {
-                if (keyValuePair.Value is Player player) {
-                    Console.WriteLine($"{this.name} attacked player using {(mainWeapon == null ? "fists" : mainWeapon.Name)}.");
+            CurrentRoom.ForEachInhabitant((inhabitant) => {
+                if (inhabitant.Value is Player player) {
+                    Console.WriteLine(
+                        $"{this.name} attacked player using {(mainWeapon == null ? "fists" : mainWeapon.Name)}.");
                     player.Damage(DamageModifier);
                 }
-            }
+            });
         }
     }
 
     private void OnDeath() {
-        this.CurrentRoom.Inhabitants.Remove(this.Name);
+        this.CurrentRoom.RemoveInhabitant(this.Name);
         Console.WriteLine($"{this.Name} died and dropped {inventory.GetContents()}");
         this.inventory.ForEachItemName((itemName) => {
             this.DropToChest(itemName);

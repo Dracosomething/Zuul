@@ -93,7 +93,7 @@ class Game {
 		attic.AddInhabitant(guard.Name, guard);
 
 		Generartion generartion = new Generartion();
-		generartion.GenerateWorld(attic, winRoom, 45);
+		generartion.GenerateWorld(attic, winRoom, 40);
 
 		kid.CurrentRoom = theatre;
 		kid.Inventory.Put(yellowKey.Name, yellowKey);
@@ -124,11 +124,11 @@ class Game {
 				Console.WriteLine("You won.");
 				finished = !PrintWelcome();
 			}
-			if (player.CurrentRoom.Inhabitants != null) {
-				foreach (var currentRoomInhabitant in player.CurrentRoom.Inhabitants) {
-					currentRoomInhabitant.Value.Tick();
+			player.CurrentRoom.ForEachInhabitant((inhabitant) => {
+				if (inhabitant.Value != null) {
+					inhabitant.Value.Tick();
 				}
-			}
+			});
 			Command command = parser.GetCommand();
 			finished = ProcessCommand(command);
 		}
@@ -236,7 +236,7 @@ class Game {
 				return;
 			}
 		}
-		player.CurrentRoom.Inhabitants.Remove("player");
+		player.CurrentRoom.RemoveInhabitant("player");
 		player.CurrentRoom = nextRoom;
 		player.CurrentRoom.AddInhabitant("player", player);
 		if (!player.CurrentRoom.Equals(winRoom)) {
@@ -357,10 +357,10 @@ class Game {
 		string item = command.ThirdWord;
 		string target = command.SecondWord;
 		List<string> targets = new List<string>();
-		foreach (var keyValuePair in player.CurrentRoom.Inhabitants) {
+		player.CurrentRoom.ForEachInhabitant((keyValuePair) => {
 			string creature = keyValuePair.Key;
 			targets.Add(creature);
-		}
+		});
 		if (!targets.Contains(target)) {
 			Console.WriteLine($"Room does not contain {target}.");
 			return;
@@ -379,12 +379,12 @@ class Game {
 			weapon.ApplyModifiers(player);
 		}
 		int damage = player.DamageModifier;
-		foreach (var keyValuePair in player.CurrentRoom.Inhabitants) {
+		player.CurrentRoom.ForEachInhabitant((keyValuePair) => {
 			if (keyValuePair.Key == target) {
 				Console.WriteLine($"Attacked {((Enemy)keyValuePair.Value).Name} using {item}");
 				((Enemy)keyValuePair.Value).Damage(damage);
 			}
-		}
+		});
 	}
 
 	private void SafePlayer() {

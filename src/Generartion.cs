@@ -116,7 +116,7 @@ class Generartion
                                 string name = names[random.Next(0, names.Count)];
 
                                 Enemy enemy = new Enemy(random.Next(1, 101), random.Next(1, 21), 9999, random.Next(1, 11), name);
-                                nextRoom.Inhabitants.Add(name, enemy);
+                                nextRoom.AddInhabitant(name, enemy);
                                 enemy.CurrentRoom = nextRoom;
                             } else if (roomPoolChosen.Name.Equals(roomChest.Name)) {
                                 Item rustySword = new Item(5, 7, "A old and rusty sword", "damage", "rusty-sword");
@@ -141,13 +141,13 @@ class Generartion
                                 Trap mimic = new Trap(0, "Mimic", "A chest that when opened becomes a monster.", false);
                                 mimic.Function = (() => MimicSpawn(mimic));
                                 
-                                nextRoom.Inhabitants.Add(mimic.Name, mimic);
+                                nextRoom.AddInhabitant(mimic.Name, mimic);
                                 mimic.CurrentRoom = nextRoom;
                             } else if (roomPoolChosen.Name.Equals(trapRoomEmpty.Name)) {
                                 Trap arrowWall = new Trap(7, "Arrow-Wall", "A wall that fires arrows.", false);
                                 arrowWall.Function = () => ShootArrows(arrowWall);
                                 
-                                nextRoom.Inhabitants.Add(arrowWall.Name, arrowWall);
+                                nextRoom.AddInhabitant(arrowWall.Name, arrowWall);
                                 arrowWall.CurrentRoom = nextRoom;
                             }
                             nextRoom.AddExit(
@@ -205,26 +205,26 @@ class Generartion
     }
 
     private void MimicSpawn(Trap trap) {
-        if (!trap.CurrentRoom.Inhabitants.ContainsKey("player")) {
+        if (!trap.CurrentRoom.ContainsInhabitant("player")) {
             Trap newMimic = new Trap(0, "Mimic", "A chest that when opened becomes a monster.", false);
             newMimic.Function = (() => MimicSpawn(newMimic));
                                 
-            trap.CurrentRoom.Inhabitants.Add(newMimic.Name, newMimic);
+            trap.CurrentRoom.AddInhabitant(newMimic.Name, newMimic);
             newMimic.CurrentRoom = trap.CurrentRoom;
         } else {
             Enemy mimic = new Enemy(25, 5, 700, 3, "Mimic");
-            trap.CurrentRoom.Inhabitants.Add(mimic.Name, mimic);
+            trap.CurrentRoom.AddInhabitant(mimic.Name, mimic);
             trap.Discard();
             Console.WriteLine("The chest became a mimic.");
         }
     }
 
     private void ShootArrows(Trap trap) {
-        foreach (var Inhabitant in trap.CurrentRoom.Inhabitants) {
+        trap.CurrentRoom.ForEachInhabitant((Inhabitant) => {
             Entity inhabitant = Inhabitant.Value;
             if (!(inhabitant is Trap)) {
                 inhabitant.Damage(trap.DamageModifier);
             }
-        }
+        });
     }
 }

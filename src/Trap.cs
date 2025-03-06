@@ -45,14 +45,14 @@ class Trap : Entity {
     }
 
     public void Discard() {
-        this.CurrentRoom.Inhabitants.Remove(this.name);
+        this.CurrentRoom.RemoveInhabitant(this.name);
     }
 
     public void Tick() {
-        foreach (var currentRoomInhabitant in this.CurrentRoom.Inhabitants) {
+        this.CurrentRoom.ForEachInhabitant((currentRoomInhabitant) => {
             if (!(currentRoomInhabitant.Value is Trap)) {
                 this.function.Invoke();
             }
-        }
+        });
     }
 }
