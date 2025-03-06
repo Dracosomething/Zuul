@@ -8,6 +8,7 @@ class Entity {
     private int armorModifier;
     private int health;
     private Room currentRoom;
+    private string name;
 
     // attributes
     public int DamageModifier { get { return damageModifier; } set { damageModifier = value; } }
@@ -15,14 +16,17 @@ class Entity {
     [JsonIgnore]
     public Room CurrentRoom { get { return currentRoom; } set { this.currentRoom = value; } }
     public int Health { get { return health; } set { health = value; } }
+    [JsonIgnore]
+    public string Name { get { return name; } }
 
     
     // constructor
-    public Entity(int damageModifier, int armorModifier, int health) {
+    public Entity(int damageModifier, int armorModifier, int health, string name) {
         this.damageModifier = damageModifier;
         this.armorModifier = armorModifier;
         this.health = health;
         this.currentRoom = null;
+        this.name = name;
     }
     
     // methods

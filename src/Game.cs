@@ -112,6 +112,7 @@ class Game {
 		// execute them until the player wants to quit.
 		bool finished = !PrintWelcome();
 		if (!finished) {
+			Console.WriteLine("After a long day you want to leave, there is just one problem, the front gate is locked.");
 			Console.WriteLine(player.CurrentRoom.GetLongDescription());
 		}
 		while (!finished) {
@@ -150,7 +151,7 @@ class Game {
 	private bool PrintWelcome() {
 		Console.WriteLine();
 		Console.WriteLine("Welcome to Zuul!");
-		Console.WriteLine("Zuul is a new, incredibly boring adventure game.");
+		Console.WriteLine("Zuul is a new text adventure, where your goal is to escape campus.\n The front gate is locked, however there are rumours of a hidden dungeon in the attic of the campus pub with a second exit.");
 		Console.WriteLine("Type 'help' if you need help.");
 		Console.WriteLine();
 		Console.WriteLine("type start to start\ntype quit to quit");
@@ -386,7 +387,7 @@ class Game {
 			Console.WriteLine($"Room does not contain {target}.");
 			return;
 		}
-		if (item == null || !item.Equals("fists")) {
+		if (item == null && !item.Equals("fists")) {
 			Console.WriteLine("You dont have that weapon.");
 			return;
 		}
@@ -404,15 +405,16 @@ class Game {
 			if (keyValuePair.Key == target) {
 				Console.WriteLine($"Attacked {((Enemy)keyValuePair.Value).Name} using {item}");
 				((Enemy)keyValuePair.Value).Damage(damage);
+				weapon.RemoveModifiers(player);
 			}
 		});
 	}
 
 	private void SafePlayer() {
 		if (OperatingSystem.IsWindows()) {
-			Directory.CreateDirectory(Directory.GetCurrentDirectory() + "\\player");
+			Directory.CreateDirectory(Directory.GetCurrentDirectory() + "\\save");
 		} else {
-			Directory.CreateDirectory(Directory.GetCurrentDirectory() + "/player");
+			Directory.CreateDirectory(Directory.GetCurrentDirectory() + "/save");
 		}
 		
 		string directory = Getdirectory();
@@ -445,9 +447,9 @@ class Game {
 	private string Getdirectory() {
 		string directory;
 		if (OperatingSystem.IsWindows()) {
-			directory = Directory.GetCurrentDirectory() + "\\player\\player.json";
+			directory = Directory.GetCurrentDirectory() + "\\save\\player.json";
 		} else {
-			directory = Directory.GetCurrentDirectory() + "/player/player.json";
+			directory = Directory.GetCurrentDirectory() + "/save/player.json";
 		}
 
 		return directory;
@@ -458,7 +460,7 @@ class Game {
 	}
 
 	private void FunnySword() {
-		Item funnySword = new Item(0, 9999, "A weapon for defelopers.", "damage", "funny-sword");
+		Item funnySword = new Item(0, 9999, "A weapon for developers.", "damage", "funny-sword");
 		player.BackPack.Put(funnySword.Name, funnySword);
 	}
 

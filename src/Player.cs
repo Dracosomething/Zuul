@@ -10,7 +10,7 @@ class Player : Entity {
     public string NoteBook { get { return this.noteBook; } set { this.noteBook = value; } }
     
     // constructor
-    public Player() : base(1, 0, 100) {
+    public Player() : base(1, 0, 100, "player") {
         this.backPack = new Inventory(25);
         noteBook = "";
     }
@@ -33,7 +33,9 @@ class Player : Entity {
         Item item = BackPack.Get(itemName);
         if (item != null) {
             if (CurrentRoom.Chest.Put(itemName, item)) {
-                item.RemoveModifiers(this);
+                if (item.Equiped) {
+                    item.RemoveModifiers(this);
+                }
                 backPack.Remove(itemName);
                 Console.WriteLine("successfully added item to room.");
                 return true;

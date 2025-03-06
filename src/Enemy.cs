@@ -2,18 +2,15 @@
 
 class Enemy : Entity {
     // fields
-    private string name;
     private Inventory inventory;
     private Item mainWeapon;
     private bool hasSeenPlayer;
     
     // attributes
-    public string Name { get { return name; } }
     public Inventory Inventory { get { return inventory; } }
 
     // constructor
-    public Enemy(int hp, int dmg, int invSize, int armor, string enemyName) : base(dmg, armor, hp) {
-        name = enemyName;
+    public Enemy(int hp, int dmg, int invSize, int armor, string enemyName) : base(dmg, armor, hp, enemyName) {
         inventory = new Inventory(invSize);
         mainWeapon = null;
         hasSeenPlayer = false;
@@ -52,28 +49,34 @@ class Enemy : Entity {
         Random random = new Random();
         if (!IsAlive()) {
             OnDeath();
-        }
-        else {
+        } else {
             this.CurrentRoom.AddInhabitant(this.Name, this);
             CurrentRoom.ForEachInhabitant((inhabitant) => {
                 if (inhabitant.Value is Player player) {
                     Console.WriteLine(
-                        $"{this.name} attacked player using {(mainWeapon == null ? "fists" : mainWeapon.Name)}.");
+                        $"{this.Name} attacked player using {(mainWeapon == null ? "fists" : mainWeapon.Name)}.");
                     player.Damage(DamageModifier);
                     hasSeenPlayer = true;
                 }
             });
+            int count = this.CurrentRoom.GetExitCount();
+            int itterations = 0;
             this.CurrentRoom.ForEachExit((exit) => {
                 if (hasSeenPlayer) {
                     if (exit.Value.ContainsInhabitant("player") || (this.CurrentRoom.ContainsInhabitant("player"))) {
-                        if (random.Next(0, 100) <= 50) {
-                            this.CurrentRoom.RemoveInhabitant(this.name);
-                            this.CurrentRoom = exit.Value;
-                            exit.Value.AddInhabitant(this.name, this);
+                        if (this.CurrentRoom.ContainsInhabitant("player")) {
+                            return;
                         }
-                    } else {
+                        if (random.Next(0, 100) <= 50) {
+                            this.CurrentRoom.RemoveInhabitant(this.Name);
+                            this.CurrentRoom = exit.Value;
+                            exit.Value.AddInhabitant(this.Name, this);
+                        }
+                    } else if (itterations == count) {
                         hasSeenPlayer = false;
                     }
+
+                    itterations++;
                 }
             });
         }

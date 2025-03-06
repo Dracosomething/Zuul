@@ -68,10 +68,10 @@ class Room {
 			foreach (var keyValuePair in inhabitants) {
 				itterations++;
 				if (inhabitants.Count > itterations) {
-					if (!(keyValuePair.Value is Player)) {
+					if (!(keyValuePair.Value is Player || keyValuePair.Value is Trap)) {
 						str += keyValuePair.Key;
 						str += ",\nhealth: ";
-						str += ((Enemy)keyValuePair.Value).Health;
+						str += (keyValuePair.Value).Health;
 						if (itterations != inhabitants.Count-1) {
 							str += ",\n";
 						}
@@ -132,8 +132,14 @@ class Room {
 	}
 
 	public void ForEachInhabitant(Action<KeyValuePair<string, dynamic>> action) {
-		foreach (var inhabitant in inhabitants) {
-			action.Invoke(inhabitant);
-		}
+		try {
+			foreach (var inhabitant in inhabitants) {
+				action.Invoke(inhabitant);
+			}
+		} catch (Exception e) {}
+	}
+
+	public int GetExitCount() {
+		return this.exits.Count;
 	}
 }

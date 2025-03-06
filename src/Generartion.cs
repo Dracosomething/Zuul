@@ -12,8 +12,8 @@ class Generartion
     private Room roomChest = new Room("a room with a chest", "chest-room");
     private Room roomEmpty = new Room("an empty room", "empty-room");
     private Room roomWithEnemy = new Room("a room with an enemy", "room-with-enemy");
-    private Room trapRoomEmpty = new Room("an empty room", "empty-room");
-    private Room trapRoomChest = new Room("a room with a chest", "chest-room");
+    private Room trapRoomEmpty = new Room("an empty room", "empty-room-trap");
+    private Room trapRoomChest = new Room("a room with a chest", "chest-room-trap");
     private Room celler = new Room("a room filled with beer fats", "cellar");
     
     // constructor
@@ -138,13 +138,13 @@ class Generartion
 
                                 nextRoom.Chest.Put(food.Name, food);
                             } else if (roomPoolChosen.Name.Equals(trapRoomChest.Name)) {
-                                Trap mimic = new Trap(0, "Mimic", "A chest that when opened becomes a monster.", false);
+                                Trap mimic = new Trap(0, "Mimic", "The chest reveals itself to be a mimic.", false);
                                 mimic.Function = (() => MimicSpawn(mimic));
                                 
                                 nextRoom.AddInhabitant(mimic.Name, mimic);
                                 mimic.CurrentRoom = nextRoom;
                             } else if (roomPoolChosen.Name.Equals(trapRoomEmpty.Name)) {
-                                Trap arrowWall = new Trap(7, "Arrow-Wall", "A wall that fires arrows.", false);
+                                Trap arrowWall = new Trap(7, "Arrow-Wall", "The walls open up and fire arrows at you.", false);
                                 arrowWall.Function = () => ShootArrows(arrowWall);
                                 
                                 nextRoom.AddInhabitant(arrowWall.Name, arrowWall);
@@ -212,10 +212,11 @@ class Generartion
             trap.CurrentRoom.AddInhabitant(newMimic.Name, newMimic);
             newMimic.CurrentRoom = trap.CurrentRoom;
         } else {
-            Enemy mimic = new Enemy(25, 5, 700, 3, "Mimic");
-            trap.CurrentRoom.AddInhabitant(mimic.Name, mimic);
+            Room trappedRoom = trap.CurrentRoom;
             trap.Discard();
-            Console.WriteLine("The chest became a mimic.");
+            Enemy mimic = new Enemy(25, 5, 700, 3, "Mimic");
+            mimic.CurrentRoom = trappedRoom;
+            mimic.Tick();
         }
     }
 
