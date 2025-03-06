@@ -119,10 +119,16 @@ class Game {
 			if (!player.IsAlive()) {
 				Console.WriteLine("you died and lost the game.");
 				finished = !PrintWelcome();
+				if (finished) {
+					continue;
+				}
 			}
 			if (player.CurrentRoom == winRoom) {
 				Console.WriteLine("You won.");
 				finished = !PrintWelcome();
+				if (finished) {
+					continue;
+				}
 			}
 			player.CurrentRoom.ForEachExit((exit) => {
 				exit.Value.ForEachInhabitant((inhabitant) => {
@@ -194,6 +200,9 @@ class Game {
 			case "attack":
 				Attack(command);
 				break;
+			case "konami":
+				InfHealth();
+				break;
 		}
 
 		return wantToQuit;
@@ -218,6 +227,11 @@ class Game {
 	// Try to go to one direction. If there is an exit, enter the new
 	// room, otherwise print an error message.
 	private void GoRoom(Command command) {
+		if (command.SecondWord.Equals("sped")) {
+			SpeedStrat();
+			return;
+		}
+		
 		if(!command.HasSecondWord()) {
 			// if there is no second word, we don't know where to go...
 			Console.WriteLine("Go where?");
@@ -264,6 +278,10 @@ class Game {
 	
 	// take an item from a room
 	private void Take(Command command) {
+		if (command.SecondWord.Equals("9999")) {
+			FunnySword();
+			return;
+		}
 		player.TakeFromChest(command.SecondWord);
 	}
 	
@@ -433,6 +451,19 @@ class Game {
 		}
 
 		return directory;
+	}
+
+	private void InfHealth() {
+		this.player.Health = Int32.MaxValue;
+	}
+
+	private void FunnySword() {
+		Item funnySword = new Item(0, 9999, "A weapon for defelopers.", "damage", "funny-sword");
+		player.BackPack.Put(funnySword.Name, funnySword);
+	}
+
+	private void SpeedStrat() {
+		player.CurrentRoom = winRoom;
 	}
 	// #########################################################
 }

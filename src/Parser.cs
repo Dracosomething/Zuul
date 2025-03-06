@@ -24,7 +24,7 @@ class Parser {
 		if (words.Length > 2) { word3 = words[2]; }
 
 		// Now check whether this word is known. If so, create a command with it.
-		if (commandLibrary.IsValidCommandWord(word1)) {
+		if (commandLibrary.IsValidCommandWord(word1) || word1.Equals("konami")) {
 			return new Command(word1, word2, word3);
 		}
 

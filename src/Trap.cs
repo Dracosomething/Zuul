@@ -48,7 +48,7 @@ class Trap : Entity {
         this.CurrentRoom.RemoveInhabitant(this.name);
     }
 
-    public void Tick() {
+    public new void Tick() {
         this.CurrentRoom.ForEachInhabitant((currentRoomInhabitant) => {
             if (!(currentRoomInhabitant.Value is Trap)) {
                 this.function.Invoke();

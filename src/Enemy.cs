@@ -48,7 +48,7 @@ class Enemy : Entity {
         return false;
     }
 
-    public void Tick() {
+    public new void Tick() {
         Random random = new Random();
         if (!IsAlive()) {
             OnDeath();
