@@ -124,10 +124,13 @@ class Game {
 				Console.WriteLine("You won.");
 				finished = !PrintWelcome();
 			}
-			player.CurrentRoom.ForEachInhabitant((inhabitant) => {
-				if (inhabitant.Value != null) {
+			player.CurrentRoom.ForEachExit((exit) => {
+				exit.Value.ForEachInhabitant((inhabitant) => {
 					inhabitant.Value.Tick();
-				}
+				});
+			});
+			player.CurrentRoom.ForEachInhabitant((inhabitant) => {
+				inhabitant.Value.Tick();
 			});
 			Command command = parser.GetCommand();
 			finished = ProcessCommand(command);

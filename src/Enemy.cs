@@ -5,6 +5,7 @@ class Enemy : Entity {
     private string name;
     private Inventory inventory;
     private Item mainWeapon;
+    private bool hasSeenPlayer;
     
     // attributes
     public string Name { get { return name; } }
@@ -15,6 +16,7 @@ class Enemy : Entity {
         name = enemyName;
         inventory = new Inventory(invSize);
         mainWeapon = null;
+        hasSeenPlayer = false;
     }
     
     // methods
@@ -47,6 +49,7 @@ class Enemy : Entity {
     }
 
     public void Tick() {
+        Random random = new Random();
         if (!IsAlive()) {
             OnDeath();
         }
@@ -57,6 +60,20 @@ class Enemy : Entity {
                     Console.WriteLine(
                         $"{this.name} attacked player using {(mainWeapon == null ? "fists" : mainWeapon.Name)}.");
                     player.Damage(DamageModifier);
+                    hasSeenPlayer = true;
+                }
+            });
+            this.CurrentRoom.ForEachExit((exit) => {
+                if (hasSeenPlayer) {
+                    if (exit.Value.ContainsInhabitant("player") || (this.CurrentRoom.ContainsInhabitant("player"))) {
+                        if (random.Next(0, 100) <= 50) {
+                            this.CurrentRoom.RemoveInhabitant(this.name);
+                            this.CurrentRoom = exit.Value;
+                            exit.Value.AddInhabitant(this.name, this);
+                        }
+                    } else {
+                        hasSeenPlayer = false;
+                    }
                 }
             });
         }
