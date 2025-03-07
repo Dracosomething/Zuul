@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Text;
 using System.Text.Json;
 using Zuul;
@@ -10,6 +11,7 @@ class Game {
 	private Room StartingRoom;
 	private Room winRoom = new Room("", "");
 	private bool isHurt;
+	private Generartion generartion = new Generartion();
 
 	// Constructor
 	public Game() {
@@ -92,7 +94,6 @@ class Game {
 		guard.SetWeapon(axe.Clone());
 		attic.AddInhabitant(guard.Name, guard);
 
-		Generartion generartion = new Generartion();
 		generartion.GenerateWorld(attic, winRoom, 19);
 
 		kid.CurrentRoom = theatre;
@@ -119,17 +120,18 @@ class Game {
 			SafePlayer();
 			if (!player.IsAlive()) {
 				Console.WriteLine("you died and lost the game.");
-				player.CurrentRoom = StartingRoom;
 				player = LoadPlayer();
+				CreateRooms();
+				player.Health = player.MaxHealth;
 				finished = !PrintWelcome();
-				if (finished) {
+				if (!finished) {
 					continue;
 				}
 			}
 			if (player.CurrentRoom == winRoom) {
 				Console.WriteLine("You won.");
 				finished = !PrintWelcome();
-				if (finished) {
+				if (!finished) {
 					continue;
 				}
 			}
@@ -469,11 +471,27 @@ class Game {
 		Byte[] bytes = Convert.FromBase64String(base64String);
 		string jsonString = Encoding.UTF8.GetString(bytes);
 		Player loadedPlayer = JsonSerializer.Deserialize<Player>(jsonString, options);
-		loadedPlayer.BackPack.ForEachItemName((Item) => {
-			if (Item.Contains("key")) {
-				loadedPlayer.BackPack.Remove(Item);
+		loadedPlayer.BackPack.ForEachItemName((item) => {
+			if (item.Contains("key")) {
+				loadedPlayer.BackPack.Remove(item);
 			}
 		});
+		foreach (var spell in loadedPlayer.SpellBook) {
+			switch (spell.Key) {
+				case "fireball":
+					spell.Value.Effect = () => generartion.Fireball(spell.Value);
+					break;
+				case "lesser-heal":
+					spell.Value.Effect = () => generartion.Heal(spell.Value, 5);
+					break;
+				case "greater-heal":
+					spell.Value.Effect = () => generartion.Heal(spell.Value, 20);
+					break;
+				case "smite":
+					spell.Value.Effect = () => generartion.Smite(spell.Value);
+					break;
+			}
+		}
 		return loadedPlayer;
 	}
 

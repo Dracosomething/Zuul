@@ -1,3 +1,5 @@
+using System.Net.Mime;
+using System.Reflection;
 using System.Text.Json.Serialization;
 
 namespace Zuul;
@@ -15,6 +17,7 @@ class Spell {
     public string Name { get { return this.name; } set { this.name = value; } }
     public string Description { get { return this.description; } set { this.description = value; } }
     public int ManaCost { get { return this.manaCost; } set { this.manaCost = value; } }
+    [JsonIgnore]
     public Action Effect { get { return this.effect; } set { this.effect = value; } }
     public bool IsSingleUse { get { return this.isSingleUse; } set { this.isSingleUse = value; } }
     [JsonIgnore]

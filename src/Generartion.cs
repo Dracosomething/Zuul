@@ -129,6 +129,8 @@ class Generartion
                                 Item armor = new Item(20, 5, 5, "A suit of heavy armor.", "armor");
                                 Item oldArmor = new Item(10, 2, 1, "A suit of rusty old armor.", "old-armor");
                                 Item medKit = new Item(10, "A box filled with medical supplies", "med-kit");
+                                excalibur.ManaModifier = 10;
+                                excalibur.MagicPowerModifier = 2;
 
                                 List<Item> items = [rustyShield, shield, rustySword, excalibur, cloackOfHealth, medKit, armor, oldArmor];
 
@@ -154,15 +156,14 @@ class Generartion
                             } else if (roomPoolChosen.Name.Equals(roomWithSpellBook.Name)) {
                                 Spell fireball = new Spell("fireball", "This spell creates a large ball of fire that engulfs an entire room.", 20, false);
                                 fireball.Effect = () => Fireball(fireball);
-                                Spell lesserHeal = new Spell("lesser heal", "Heals 5 hp of the caster", 3, false);
+                                Spell lesserHeal = new Spell("lesser-heal", "Heals 5 hp of the caster", 3, false);
                                 lesserHeal.Effect = () => Heal(lesserHeal, 5);
-                                Spell greaterHeal = new Spell("greater heal", "Heals 20 hp of the caster", 15, false);
+                                Spell greaterHeal = new Spell("greater-heal", "Heals 20 hp of the caster", 15, false);
                                 greaterHeal.Effect = () => Heal(greaterHeal, 20);
                                 Spell smite = new Spell("smite",
                                     "Creates a beam of light from the users weapon that strengthens the weapon and deals some damage to one enemy in the room when casted",
                                     30, true);
                                 smite.Effect = () => Smite(smite);
-                                
                                 
                                 List<Spell> spells = [fireball, lesserHeal, greaterHeal, smite];
                                 
@@ -249,7 +250,7 @@ class Generartion
         });
     }
 
-    private void Fireball(Spell spell) {
+    public void Fireball(Spell spell) {
         spell.Caster.CurrentRoom.ForEachInhabitant((inhabitant) => {
             if (!inhabitant.Value.Equals(spell.Caster)) {
                 inhabitant.Value.Damage(30);
@@ -259,12 +260,12 @@ class Generartion
         Console.WriteLine($"{spell.Caster.Name} casted fireball. The room gets engulfed in a sea of fire.");
     }
 
-    private void Heal(Spell spell, int amount) {
+    public void Heal(Spell spell, int amount) {
         spell.Caster.Heal(amount);
         Console.WriteLine($"Healed {spell.Caster.Name}");
     }
 
-    private void Smite(Spell spell) {
+    public void Smite(Spell spell) {
         Random random = new Random();
         Entity entity = spell.Caster.CurrentRoom.GetInhabitants()[random.Next(0, spell.Caster.CurrentRoom.GetInhabitants().Count)];
         while (entity.Equals(spell.Caster)) {

@@ -52,6 +52,7 @@ class MagicEntity : Entity {
             spellBook.Remove(spell.Name);
             Console.WriteLine($"{spell.Name} can no longer be used.");
         }
+        spell.Caster = null;
     }
 
     public void HealMana(int amount) {
