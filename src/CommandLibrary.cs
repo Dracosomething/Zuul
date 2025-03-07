@@ -17,6 +17,7 @@ class CommandLibrary {
 		validCommands.Add("drop");
 		validCommands.Add("use");
 		validCommands.Add("attack");
+		validCommands.Add("learn");
 	}
 
 	/*

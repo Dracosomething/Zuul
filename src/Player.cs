@@ -1,6 +1,6 @@
 ﻿namespace Zuul;
 
-class Player : Entity {
+class Player : MagicEntity {
     // fields
     private Inventory backPack;
     private string noteBook;
@@ -12,7 +12,7 @@ class Player : Entity {
     public int MaxHealth { get { return this.maxHealth; } set { maxHealth = value; } }
     
     // constructor
-    public Player() : base(1, 0, 100, "player") {
+    public Player() : base(1, 0, 100, 50, 3, "player") {
         this.backPack = new Inventory(25);
         noteBook = "";
         this.maxHealth = 100;
@@ -34,7 +34,7 @@ class Player : Entity {
     
     public new void Heal (int amount) {
         if ((Health += amount) == maxHealth) return;
-        Health += amount;
+        base.Heal(amount);
     }
     
     public bool DropToChest(string itemName) {
@@ -74,5 +74,32 @@ class Player : Entity {
 
     public string Read() {
         return this.noteBook;
+    }
+    
+    public bool LearnSpell(string spellName) {
+        Spell spell = CurrentRoom.GetSpell(spellName);
+        if (spell != null) {
+            if (SpellBook.TryAdd(spell.Name, spell)) {
+                Console.WriteLine("successfully learned a new spell.");
+                return true;
+            }
+        }
+        Console.WriteLine("That spell is not in this rooms spell book.");
+        return false;
+    }
+    
+    public string ShowSpells() {
+        string itemString = "";
+        int loopTimes = 0;
+        foreach (var keyValuePair in SpellBook) {
+            loopTimes++;
+            itemString += keyValuePair.Key;
+            itemString += $"[description: \"{keyValuePair.Value.Description}\", cost: {keyValuePair.Value.ManaCost}, is single use: {keyValuePair.Value.IsSingleUse}]";
+            if (SpellBook.Count > loopTimes) {
+                itemString += ", \n";
+            }
+        }
+        
+        return itemString;
     }
 }

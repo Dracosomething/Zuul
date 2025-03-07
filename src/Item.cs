@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.IO.Pipes;
+using System.Text.Json.Serialization;
 
 namespace Zuul;
 
@@ -10,6 +11,8 @@ class Item {
     private int armorModifier;
     private int damageModifier;
     private int healthModifier;
+    private int magicPowerModifier;
+    private int manaModifier;
     
     // attributes
     public int Weight { get { return weight; } set { weight = value; } }
@@ -19,7 +22,9 @@ class Item {
     public int ArmorModifier { get { return armorModifier; } set { armorModifier = value; } }
     public int DamageModifier { get { return damageModifier; } set { damageModifier = value; } }
     public int HealthModifier { get { return healthModifier; } set { healthModifier = value; } }
-
+    public int MagicPowerModifier { get { return magicPowerModifier; } set { magicPowerModifier = value; } }
+    public int ManaModifier { get { return manaModifier; } set { manaModifier = value; } }
+    
     // constructor
     public Item(int weight, string description, string name) {
         this.name = name;
@@ -36,6 +41,9 @@ class Item {
         this.description = description;
         this.armorModifier = armorModifier;
         this.healthModifier = healthModifier;
+        this.damageModifier = 0;
+        this.manaModifier = 0;
+        this.magicPowerModifier = 0;
         Equiped = false;
     }
     
@@ -46,6 +54,32 @@ class Item {
         this.healthModifier = healthModifier;
         this.armorModifier = armorModifier;
         this.damageModifier = damageModifier;
+        this.manaModifier = 0;
+        this.magicPowerModifier = 0;
+        Equiped = false;
+    }
+    
+    public Item(int weight, int armorModifier, int damageModifier, int healthModifier, int manaModifier, string description, string name) {
+        this.name = name;
+        this.weight = weight;
+        this.description = description;
+        this.healthModifier = healthModifier;
+        this.armorModifier = armorModifier;
+        this.damageModifier = damageModifier;
+        this.manaModifier = manaModifier;
+        this.magicPowerModifier = 0;
+        Equiped = false;
+    }
+    
+    public Item(int weight, int armorModifier, int damageModifier, int healthModifier, int manaModifier, int magicPowerModifier, string description, string name) {
+        this.name = name;
+        this.weight = weight;
+        this.description = description;
+        this.healthModifier = healthModifier;
+        this.armorModifier = armorModifier;
+        this.damageModifier = damageModifier;
+        this.manaModifier = manaModifier;
+        this.magicPowerModifier = magicPowerModifier;
         Equiped = false;
     }
 
@@ -56,12 +90,38 @@ class Item {
         switch (modType.ToLower()) {
             case "armor":
                 this.armorModifier = modifier;
+                this.damageModifier = 0;
+                this.manaModifier = 0;
+                this.magicPowerModifier = 0;
+                this.healthModifier = 0;
                 break;
             case "damage":
                 this.damageModifier = modifier;
+                this.armorModifier = 0;
+                this.manaModifier = 0;
+                this.magicPowerModifier = 0;
+                this.healthModifier = 0;
                 break;
             case "health":
                 this.healthModifier = modifier;
+                this.damageModifier = 0;
+                this.manaModifier = 0;
+                this.magicPowerModifier = 0;
+                this.armorModifier = 0;
+                break;
+            case "mana":
+                this.manaModifier = modifier;
+                this.damageModifier = 0;
+                this.armorModifier = 0;
+                this.magicPowerModifier = 0;
+                this.healthModifier = 0;
+                break;
+            case "magicPower":
+                this.magicPowerModifier = modifier;
+                this.damageModifier = 0;
+                this.manaModifier = 0;
+                this.armorModifier = 0;
+                this.healthModifier = 0;
                 break;
         }
         Equiped = false;
@@ -75,6 +135,8 @@ class Item {
         this.armorModifier = 0;
         this.damageModifier = 0;
         this.healthModifier = 0;
+        this.manaModifier = 0;
+        this.magicPowerModifier = 0;
         this.Equiped = false;
     }
     
@@ -82,6 +144,11 @@ class Item {
     public void ApplyModifiers(Entity entity) {
         entity.DamageModifier += damageModifier;
         entity.ArmorModifier += armorModifier;
+        if (entity.GetType().Name.Equals("MagicEntity")) {
+            MagicEntity magicEntity = (MagicEntity)entity;
+            magicEntity.MaxMana += manaModifier;
+            magicEntity.MagicPower += magicPowerModifier;
+        } 
         if (entity.GetType().Name.Equals("Player")) {
             Player player = (Player)entity;
             player.MaxHealth += healthModifier;
@@ -93,6 +160,11 @@ class Item {
     public void RemoveModifiers(Entity entity) {
         entity.DamageModifier -= damageModifier;
         entity.ArmorModifier -= armorModifier;
+        if (entity.GetType().Name.Equals("MagicEntity")) {
+            MagicEntity magicEntity = (MagicEntity)entity;
+            magicEntity.MaxMana -= manaModifier;
+            magicEntity.MagicPower -= magicPowerModifier;
+        } 
         if (entity.GetType().Name.Equals("Player")) {
             Player player = (Player)entity;
             player.MaxHealth -= healthModifier;
@@ -102,7 +174,7 @@ class Item {
     }
 
     public Item Clone() {
-        Item clone = new Item(this.weight, this.armorModifier, this.damageModifier, this.healthModifier, this.description, this.name);
+        Item clone = new Item(this.weight, this.armorModifier, this.damageModifier, this.healthModifier, this.manaModifier, this.magicPowerModifier, this.description, this.name);
         return clone;
     }
 }

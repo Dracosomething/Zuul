@@ -9,6 +9,7 @@ class Room {
 	private Inventory chest;
 	private Item conditionalItem;
 	private Dictionary<string, dynamic> inhabitants;
+	private Dictionary<string, Spell> spellBook;
 
 	// properties
 	public Inventory Chest { get { return this.chest; } }
@@ -27,6 +28,7 @@ class Room {
 		chest = new Inventory(Int32.MaxValue-1);
 		IsUnlocked = true;
 		inhabitants = new Dictionary<string, dynamic>();
+		this.spellBook = new Dictionary<string, Spell>();
 	}
 	
 	public Room(string desc, string name, Item conditionalItem) {
@@ -35,6 +37,7 @@ class Room {
 		exits = new Dictionary<string, Room>();
 		chest = new Inventory(Int32.MaxValue-1);
 		inhabitants = new Dictionary<string, dynamic>();
+		this.spellBook = new Dictionary<string, Spell>();
 		this.conditionalItem = conditionalItem;
 		IsUnlocked = false;
 	}
@@ -83,6 +86,15 @@ class Room {
 		if (this.chest.Count() != 0) {
 			str += "The room contains these items\n";
 			str += this.Chest.Show();
+		}
+		if (this.spellBook.Count() != 0) {
+			str += "The room has a spell book filled with these spells\n";
+			foreach (var spell in spellBook)
+			{
+				str += spell.Key;
+				str += ", ";
+				str += spell.Value.Description;
+			}
 		}
 		return str;
 	}
@@ -141,5 +153,17 @@ class Room {
 
 	public int GetExitCount() {
 		return this.exits.Count;
+	}
+
+	public void AddSpell(Spell spell) {
+		this.spellBook.TryAdd(spell.Name, spell);
+	}
+
+	public void RemoveSpell(string spellName) {
+		this.spellBook.Remove(spellName);
+	}
+	
+	public Spell GetSpell(string spellName) {
+		return this.spellBook[spellName];
 	}
 }

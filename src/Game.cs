@@ -119,6 +119,8 @@ class Game {
 			SafePlayer();
 			if (!player.IsAlive()) {
 				Console.WriteLine("you died and lost the game.");
+				player.CurrentRoom = StartingRoom;
+				player = LoadPlayer();
 				finished = !PrintWelcome();
 				if (finished) {
 					continue;
@@ -201,6 +203,9 @@ class Game {
 			case "attack":
 				Attack(command);
 				break;
+			case "learn":
+				Learn(command);
+				break;
 			case "konami":
 				InfHealth();
 				break;
@@ -275,6 +280,7 @@ class Game {
 		Console.WriteLine($"[Health: {player.Health}]");
 		Console.WriteLine($"[Damage: {player.DamageModifier}]");
 		Console.WriteLine($"[inventory [weight: {player.BackPack.FreeWeight()}]:\n{player.BackPack.Show()}]");
+		Console.WriteLine($"[spellbook: \n {player.ShowSpells()}");
 	}
 	
 	// take an item from a room
@@ -289,6 +295,11 @@ class Game {
 	// put an item into a room
 	private void Drop(Command command) {
 		player.DropToChest(command.SecondWord);
+	}
+	
+	// learn a new spell
+	private void Learn(Command command) {
+		player.LearnSpell(command.SecondWord);
 	}
 	
 	// use an item
