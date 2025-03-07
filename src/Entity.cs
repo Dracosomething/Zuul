@@ -43,10 +43,14 @@ class Entity {
     /// deals damage to the entity
     /// </summary>
     /// <param name="amount">the amount of damage</param>
+    /// <param name="bypassDefense">if the damage should bypass the entities devence</param>
     public void Damage (int amount, bool bypassDefense) {
         if (!bypassDefense) {
-            if (amount * ((ArmorModifier + 1) * 0.01) < 0) amount = 0;
-            else amount -= (int)Math.Ceiling(amount * ((ArmorModifier + 1) * 0.01));
+            if (amount * ((ArmorModifier + 1) * 0.01) < 0 && (ArmorModifier != 0)) amount = 0;
+            else {
+                if ((int)Math.Ceiling(amount * ((ArmorModifier + 1) * 0.01)) == 1 && amount == 1) amount = 1;
+                else amount -= (int)Math.Ceiling(amount * ((ArmorModifier + 1) * 0.01));
+            }
         }
         Health -= amount;
     }

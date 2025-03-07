@@ -93,7 +93,7 @@ class Game {
 		attic.AddInhabitant(guard.Name, guard);
 
 		Generartion generartion = new Generartion();
-		generartion.GenerateWorld(attic, winRoom, 40);
+		generartion.GenerateWorld(attic, winRoom, 19);
 
 		kid.CurrentRoom = theatre;
 		kid.Inventory.Put(yellowKey.Name, yellowKey);
@@ -280,7 +280,7 @@ class Game {
 		Console.WriteLine($"[Health: {player.Health}]");
 		Console.WriteLine($"[Damage: {player.DamageModifier}]");
 		Console.WriteLine($"[inventory [weight: {player.BackPack.FreeWeight()}]:\n{player.BackPack.Show()}]");
-		Console.WriteLine($"[spellbook: \n {player.ShowSpells()}");
+		Console.WriteLine($"[spellbook: \n {player.ShowSpells()}]");
 	}
 	
 	// take an item from a room
