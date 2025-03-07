@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace Zuul;
 
 class Spell {
@@ -7,6 +9,7 @@ class Spell {
     private int manaCost;
     private Action effect;
     private bool isSingleUse;
+    private MagicEntity caster;
     
     // properties
     public string Name { get { return this.name; } set { this.name = value; } }
@@ -14,12 +17,14 @@ class Spell {
     public int ManaCost { get { return this.manaCost; } set { this.manaCost = value; } }
     public Action Effect { get { return this.effect; } set { this.effect = value; } }
     public bool IsSingleUse { get { return this.isSingleUse; } set { this.isSingleUse = value; } }
+    [JsonIgnore]
+    public MagicEntity Caster { get { return this.caster; } set { this.caster = value; } }
     
     // constructor
-    public Spell(string name, string description, Action effect, int manaCost, bool isSingleUse) {
+    public Spell(string name, string description, int manaCost, bool isSingleUse) {
         this.name = name;
         this.description = description;
-        this.effect = effect;
+        this.effect = null;
         this.manaCost = manaCost;
         this.isSingleUse = isSingleUse;
     }

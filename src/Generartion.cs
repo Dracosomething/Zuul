@@ -15,6 +15,7 @@ class Generartion
     private Room trapRoomEmpty = new Room("an empty room", "empty-room-trap");
     private Room trapRoomChest = new Room("a room with a chest", "chest-room-trap");
     private Room celler = new Room("a room filled with beer fats", "cellar");
+    private Room roomWithSpellBook = new Room("a room with a magical book in the center", "room-spellbook");
     
     // constructor
     public Generartion()
@@ -28,6 +29,7 @@ class Generartion
         roomPool.Add(trapRoomEmpty);
         roomPool.Add(trapRoomChest);
         roomPool.Add(celler);
+        roomPool.Add(roomWithSpellBook);
         
         directionPool.Add("west");
         directionPool.Add("east");
@@ -69,7 +71,7 @@ class Generartion
             List<Room> toBeAdded= new List<Room>();
             
             foreach (var room in currentRooms) {
-                chance = 25;
+                chance = 100;
                 if (room.Name.Equals("staircase-top")) { 
                     if (!room.HasExit("down")) { 
                         Room nextStairs = random.Next(0, 2) == 1 ? stairwell.Clone() : stairwellBottom.Clone(); 
@@ -149,6 +151,24 @@ class Generartion
                                 
                                 nextRoom.AddInhabitant(arrowWall.Name, arrowWall);
                                 arrowWall.CurrentRoom = nextRoom;
+                            } else if (roomPoolChosen.Name.Equals(roomWithSpellBook.Name)) {
+                                Spell fireball = new Spell("fireball", "This spell creates a large ball of fire that engulfs an entire room.", 20, false);
+                                fireball.Effect = () => Fireball(fireball);
+                                Spell lesserHeal = new Spell("lesser heal", "Heals 5 hp of the caster", 3, false);
+                                lesserHeal.Effect = () => Heal(lesserHeal, 5);
+                                Spell greaterHeal = new Spell("greater heal", "Heals 20 hp of the caster", 15, false);
+                                greaterHeal.Effect = () => Heal(greaterHeal, 20);
+                                Spell smite = new Spell("smite",
+                                    "Creates a beam of light from the users weapon that strengthens the weapon and deals some damage to one enemy in the room when casted",
+                                    30, true);
+                                smite.Effect = () => Smite(smite);
+                                
+                                
+                                List<Spell> spells = [fireball, lesserHeal, greaterHeal, smite];
+                                
+                                Spell spell = spells[random.Next(0, spells.Count)];
+                                
+                                nextRoom.AddSpell(spell);
                             }
                             nextRoom.AddExit(
                                 dir.Equals("west") ? "east" :
@@ -159,7 +179,7 @@ class Generartion
                             toBeAdded.Add(nextRoom);
                         }
                     }
-                    chance += 30; 
+                    chance -= 20; 
                 }
             }
             currentRooms.Clear();
@@ -171,7 +191,7 @@ class Generartion
             
             // for placing the rooms that have to be put in the dungeon
             if (i >= iterations) {
-                chance = 1;
+                chance = currentRooms.Count;
                 Room goldKeyRoom = new Room("A room with a chest in the middle", "gold-key-room");
                 Item goldKey = new Item(5, "A very shiny key.", "gold-key");
                 goldKeyRoom.Chest.Put(goldKey.Name, goldKey);
@@ -200,7 +220,7 @@ class Generartion
                 break;
             }
 
-            chance++;
+            chance--;
         }
     }
 
@@ -224,8 +244,39 @@ class Generartion
         trap.CurrentRoom.ForEachInhabitant((Inhabitant) => {
             Entity inhabitant = Inhabitant.Value;
             if (!(inhabitant is Trap)) {
-                inhabitant.Damage(trap.DamageModifier);
+                inhabitant.Damage(trap.DamageModifier, false);
             }
         });
+    }
+
+    private void Fireball(Spell spell) {
+        spell.Caster.CurrentRoom.ForEachInhabitant((inhabitant) => {
+            if (!inhabitant.Value.Equals(spell.Caster)) {
+                inhabitant.Value.Damage(30);
+                inhabitant.Value.TicksOnFire = 5;
+            }
+        });
+        Console.WriteLine($"{spell.Caster.Name} casted fireball. The room gets engulfed in a sea of fire.");
+    }
+
+    private void Heal(Spell spell, int amount) {
+        spell.Caster.Heal(amount);
+        Console.WriteLine($"Healed {spell.Caster.Name}");
+    }
+
+    private void Smite(Spell spell) {
+        Random random = new Random();
+        Entity entity = spell.Caster.CurrentRoom.GetInhabitants()[random.Next(0, spell.Caster.CurrentRoom.GetInhabitants().Count)];
+        while (entity.Equals(spell.Caster)) {
+            entity = spell.Caster.CurrentRoom.GetInhabitants()[
+                random.Next(0, spell.Caster.CurrentRoom.GetInhabitants().Count)];
+        }
+        entity.Damage(20, true);
+        spell.Caster.BackPack.ForEachItem((item) => {
+            if (item.Name.Contains("sword") || item.Name.Contains("excalibur")) {
+                item.DamageModifier += 10;
+            }
+        });
+        Console.WriteLine($"{spell.Caster.Name} casted smite, their swords now glow and one enemy looks severally weakened.");
     }
 }

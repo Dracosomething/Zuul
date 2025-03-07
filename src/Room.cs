@@ -166,4 +166,14 @@ class Room {
 	public Spell GetSpell(string spellName) {
 		return this.spellBook[spellName];
 	}
+
+	public List<Entity> GetInhabitants() {
+		List<Entity> returnValue = new List<Entity>();
+		ForEachInhabitant((inhabitant) => {
+			if (!(inhabitant.Value is Trap)) {
+				returnValue.Add(inhabitant.Value);
+			}
+		});
+		return returnValue;
+	}
 }

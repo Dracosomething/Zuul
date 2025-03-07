@@ -46,6 +46,7 @@ class Enemy : Entity {
     }
 
     public new void Tick() {
+        base.Tick();
         Random random = new Random();
         if (!IsAlive()) {
             OnDeath();
@@ -58,7 +59,7 @@ class Enemy : Entity {
                     } else {
                         Console.WriteLine($"{this.Name} attacked player.");
                     }
-                    player.Damage(DamageModifier);
+                    player.Damage(DamageModifier, false);
                     hasSeenPlayer = true;
                 }
             });

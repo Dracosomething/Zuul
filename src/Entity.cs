@@ -9,6 +9,7 @@ class Entity {
     private int health;
     private Room currentRoom;
     private string name;
+    private int ticksOnFire;
 
     // attributes
     public int DamageModifier { get { return damageModifier; } set { damageModifier = value; } }
@@ -18,6 +19,8 @@ class Entity {
     public int Health { get { return health; } set { health = value; } }
     [JsonIgnore]
     public string Name { get { return name; } }
+    [JsonIgnore]
+    public int TicksOnFire { set { ticksOnFire = value; } }
 
     
     // constructor
@@ -27,6 +30,7 @@ class Entity {
         this.health = health;
         this.currentRoom = null;
         this.name = name;
+        ticksOnFire = 0;
     }
     
     // methods
@@ -36,12 +40,14 @@ class Entity {
     }
     
     /// <summary>
-    /// deals damage to the player
+    /// deals damage to the entity
     /// </summary>
     /// <param name="amount">the amount of damage</param>
-    public void Damage (int amount) {
-        if (amount * ((ArmorModifier+1) * 0.01) < 0) amount = 0;
-        else amount -= (int) Math.Ceiling(amount * ((ArmorModifier+1) * 0.01));
+    public void Damage (int amount, bool bypassDefense) {
+        if (!bypassDefense) {
+            if (amount * ((ArmorModifier + 1) * 0.01) < 0) amount = 0;
+            else amount -= (int)Math.Ceiling(amount * ((ArmorModifier + 1) * 0.01));
+        }
         Health -= amount;
     }
 
@@ -62,5 +68,9 @@ class Entity {
     }
 
     public void Tick() {
+        if (ticksOnFire > 0) {
+            this.Damage(2, false);
+            this.ticksOnFire--;
+        }
     }
 }

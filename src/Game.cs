@@ -266,7 +266,7 @@ class Game {
 			Console.WriteLine(player.CurrentRoom.GetLongDescription());
 		}
 		if (isHurt) {
-			player.Damage(5);
+			player.Damage(5, false);
 		}
 	}
 
@@ -415,7 +415,7 @@ class Game {
 		player.CurrentRoom.ForEachInhabitant((keyValuePair) => {
 			if (keyValuePair.Key == target) {
 				Console.WriteLine($"Attacked {((Enemy)keyValuePair.Value).Name} using {item}");
-				((Enemy)keyValuePair.Value).Damage(damage);
+				((Enemy)keyValuePair.Value).Damage(damage, false);
 				weapon.RemoveModifiers(player);
 			}
 		});

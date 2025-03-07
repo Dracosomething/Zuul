@@ -2,18 +2,16 @@
 
 class Player : MagicEntity {
     // fields
-    private Inventory backPack;
     private string noteBook;
     private int maxHealth;
     
     // properties
-    public Inventory BackPack { get { return this.backPack; } set { this.backPack = value; } }
     public string NoteBook { get { return this.noteBook; } set { this.noteBook = value; } }
     public int MaxHealth { get { return this.maxHealth; } set { maxHealth = value; } }
     
     // constructor
     public Player() : base(1, 0, 100, 50, 3, "player") {
-        this.backPack = new Inventory(25);
+        this.BackPack = new Inventory(25);
         noteBook = "";
         this.maxHealth = 100;
     }
@@ -44,7 +42,7 @@ class Player : MagicEntity {
                 if (item.Equiped) {
                     item.RemoveModifiers(this);
                 }
-                backPack.Remove(itemName);
+                BackPack.Remove(itemName);
                 Console.WriteLine("successfully added item to room.");
                 return true;
             }
