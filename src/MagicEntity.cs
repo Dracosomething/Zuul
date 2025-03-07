@@ -38,7 +38,12 @@ class MagicEntity : Entity {
         }
     }
 
-    public void UseSpell(Spell spell) {
+    public void UseSpell(string spellName) {
+        Spell spell = spellBook[spellName];
+        if (spell == null) {
+            Console.WriteLine("You dont have that spell.");
+            return;
+        }
         if ((mana -= spell.ManaCost) < 0) return;
         spell.Caster = this;
         mana -= spell.ManaCost;

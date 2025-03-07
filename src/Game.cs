@@ -37,7 +37,7 @@ class Game {
 		Item noteBook = new Item(0, "A book where you can note down the exits of rooms.", "notebook");
 		
 		// Enemies
-		Enemy guard = new Enemy(50, 10, 100, 1, "Guard");
+		Enemy guard = new Enemy(25, 5, 100, 1, "Guard");
 		Enemy kid = new Enemy(5, 1, 5, 0, "billy");
 		
 		// Create the rooms
@@ -203,8 +203,8 @@ class Game {
 			case "attack":
 				Attack(command);
 				break;
-			case "learn":
-				Learn(command);
+			case "magic":
+				Magic(command);
 				break;
 			case "konami":
 				InfHealth();
@@ -266,7 +266,7 @@ class Game {
 			Console.WriteLine(player.CurrentRoom.GetLongDescription());
 		}
 		if (isHurt) {
-			player.Damage(5, false);
+			player.Damage(3, false);
 		}
 	}
 
@@ -279,6 +279,7 @@ class Game {
 	private void Status() {
 		Console.WriteLine($"[Health: {player.Health}]");
 		Console.WriteLine($"[Damage: {player.DamageModifier}]");
+		Console.WriteLine($"[Mana: {player.Mana}]");
 		Console.WriteLine($"[inventory [weight: {player.BackPack.FreeWeight()}]:\n{player.BackPack.Show()}]");
 		Console.WriteLine($"[spellbook: \n {player.ShowSpells()}]");
 	}
@@ -297,9 +298,30 @@ class Game {
 		player.DropToChest(command.SecondWord);
 	}
 	
+	// do stuff with magic
+	private void Magic(Command command) {
+		if (command.SecondWord == null) {
+			Console.WriteLine("i dont know what you mean...");
+			return;
+		}
+
+		if (command.SecondWord == "learn") {
+			Learn(command);
+			return;
+		}
+		if (command.SecondWord == "cast") {
+			Cast(command);
+		}
+	}
+	
 	// learn a new spell
 	private void Learn(Command command) {
-		player.LearnSpell(command.SecondWord);
+		player.LearnSpell(command.ThirdWord);
+	}
+	
+	// cast a spell
+	private void Cast(Command command) {
+		player.UseSpell(command.ThirdWord);
 	}
 	
 	// use an item

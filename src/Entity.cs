@@ -56,7 +56,7 @@ class Entity {
     }
 
     /// <summary>
-    /// heals the player
+    /// heals the entity
     /// </summary>
     /// <param name="amount">the amount of health that should be added</param>
     public void Heal (int amount) {
@@ -64,7 +64,7 @@ class Entity {
     }
 
     /// <summary>
-    /// checks if the players health is above 0
+    /// checks if the entities health is above 0
     /// </summary>
     /// <returns>true if health is above 0, otherwise returns false.</returns>
     public bool IsAlive() {
