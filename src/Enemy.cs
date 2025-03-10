@@ -95,7 +95,7 @@ class Enemy : Entity {
     }
 
     public void SetWeapon(Item item) {
-        this.inventory.Put(nameof(item), item);
+        this.inventory.Put(item.Name, item);
         item.ApplyModifiers(this);
         item.Equiped = true;
         this.mainWeapon = item;

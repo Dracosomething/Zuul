@@ -11,7 +11,7 @@ class Game {
 	private Room StartingRoom;
 	private Room winRoom = new Room("", "");
 	private bool isHurt;
-	private Generartion generartion = new Generartion();
+	private Generation _generation = new Generation();
 
 	// Constructor
 	public Game() {
@@ -39,7 +39,7 @@ class Game {
 		Item noteBook = new Item(0, "A book where you can note down the exits of rooms.", "notebook");
 		
 		// Enemies
-		Enemy guard = new Enemy(25, 5, 100, 1, "Guard");
+		Enemy guard = new Enemy(25, 5, 100, 1, "guard");
 		Enemy kid = new Enemy(5, 1, 5, 0, "billy");
 		
 		// Create the rooms
@@ -94,7 +94,7 @@ class Game {
 		guard.SetWeapon(axe.Clone());
 		attic.AddInhabitant(guard.Name, guard);
 
-		generartion.GenerateWorld(attic, winRoom, 19);
+		_generation.GenerateWorld(attic, winRoom, 19);
 
 		kid.CurrentRoom = theatre;
 		kid.Inventory.Put(yellowKey.Name, yellowKey);
@@ -102,9 +102,9 @@ class Game {
 		
 		// Start game outside
 		player.BackPack.Put("notebook", noteBook);
-		player.CurrentRoom = outside;
+		player.CurrentRoom = attic;
 		player.CurrentRoom.AddInhabitant("player", player);
-		StartingRoom = outside;
+		StartingRoom = attic;
 	}
 
 	//  Main play routine. Loops until end of play.
@@ -292,6 +292,13 @@ class Game {
 			FunnySword();
 			return;
 		}
+
+		if (command.SecondWord.Equals("bigger-backpack")) {
+			player.BackPack.MaxWeight += 2;
+			player.CurrentRoom.Chest.Remove("bigger-backpack");
+			Console.WriteLine("You now have an expanded backpack");
+			return;
+		}
 		player.TakeFromChest(command.SecondWord);
 	}
 	
@@ -307,6 +314,12 @@ class Game {
 			return;
 		}
 
+		if (command.SecondWord.Equals("the") && command.ThirdWord.Equals("Gathering?")) {
+			player.MaxMana = Int32.MaxValue-1;
+			player.Mana = Int32.MaxValue-1;
+			return;
+		}
+		
 		if (command.SecondWord == "learn") {
 			Learn(command);
 			return;
@@ -479,16 +492,16 @@ class Game {
 		foreach (var spell in loadedPlayer.SpellBook) {
 			switch (spell.Key) {
 				case "fireball":
-					spell.Value.Effect = () => generartion.Fireball(spell.Value);
+					spell.Value.Effect = () => _generation.Fireball(spell.Value);
 					break;
 				case "lesser-heal":
-					spell.Value.Effect = () => generartion.Heal(spell.Value, 5);
+					spell.Value.Effect = () => _generation.Heal(spell.Value, 5);
 					break;
 				case "greater-heal":
-					spell.Value.Effect = () => generartion.Heal(spell.Value, 20);
+					spell.Value.Effect = () => _generation.Heal(spell.Value, 20);
 					break;
 				case "smite":
-					spell.Value.Effect = () => generartion.Smite(spell.Value);
+					spell.Value.Effect = () => _generation.Smite(spell.Value);
 					break;
 			}
 		}

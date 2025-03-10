@@ -1,6 +1,6 @@
 ﻿namespace Zuul;
 
-class Generartion
+class Generation
 {
     // fields
     private List<Room> roomPool = new List<Room>();
@@ -18,7 +18,7 @@ class Generartion
     private Room roomWithSpellBook = new Room("a room with a magical book in the center", "room-spellbook");
     
     // constructor
-    public Generartion()
+    public Generation()
     {
         roomPool.Add(hallway);
         roomPool.Add(stairwellBottom);
@@ -62,6 +62,7 @@ class Generartion
                 nextRoom.AddExit("west", startRoom);
                 
                 nextRoom.Chest.Put("stiches", new Item(1, "medical supplies", "stiches"));
+                nextRoom.Chest.Put("bigger-backpack", new Item(0, "A backpack that can hold more then your current one.", "bigger-backpack"));
                 
                 directionPoolCopy.Remove("west");
                 currentRooms.Add(nextRoom);
@@ -113,26 +114,59 @@ class Generartion
                             Room roomPoolChosen = roomPool[random.Next(0, roomPool.Count)];
                             Room nextRoom = roomPoolChosen.Clone();
                             if (roomPoolChosen.Name.Equals(roomWithEnemy.Name)) {
-                                List<string> names = ["Ermanno", "Leofwine", "Gerald", "Sam", "Timothée", "Guard", "Jimmy"];
+                                Item rustySword = new Item(5, 5, "A old and rusty sword", "damage", "rusty-sword");
+                                Item sword = new Item(random.Next(5, 7), random.Next(5, 14), "A sharp and long sword",
+                                    "damage", "sword");
+                                Item rustyShield = new Item(2, 1, "A rusty old shield, used for defending yourself.",
+                                    "armor", "shield");
+                                Item shield = new Item(random.Next(2, 3), random.Next(1, 6),
+                                    "A normal shield, used for defending yourself.", "armor", "shield");
+                                Item oldArmor = new Item(10, 2, 1, "A suit of rusty old armor.", "old-armor");
+                                Item armor = new Item(random.Next(10, 20), random.Next(2, 7), random.Next(1, 6),
+                                    "A suit of heavy armor.", "armor");
+                                
+                                List<Item> items = [rustyShield, shield, oldArmor, armor, rustySword, sword];
+                                
+                                Item gear = items[random.Next(0, items.Count)];
+                                
+                                List<string> names = ["ermanno", "leofwine", "gerald", "sam", "timothee", "guard", "jimmy"];
 
                                 string name = names[random.Next(0, names.Count)];
 
                                 Enemy enemy = new Enemy(random.Next(1, 101), random.Next(1, 21), 9999, random.Next(1, 11), name);
+                                enemy.SetWeapon(gear);
                                 nextRoom.AddInhabitant(name, enemy);
                                 enemy.CurrentRoom = nextRoom;
                             } else if (roomPoolChosen.Name.Equals(roomChest.Name)) {
-                                Item rustySword = new Item(5, 7, "A old and rusty sword", "damage", "rusty-sword");
-                                Item shield = new Item(3, 3, "A normal shield, used for defending yourself.", "armor", "shield");
-                                Item cloackOfHealth = new Item(1, 25, "A magical cloack.", "health", "cloack-of-health");
-                                Item excalibur = new Item(5, 14, "A old and rusty sword", "damage", "excalibur");
-                                Item rustyShield = new Item(2, 1, "A rusty old shield, used for defending yourself.", "armor", "shield");
-                                Item armor = new Item(20, 5, 5, "A suit of heavy armor.", "armor");
+                                Item rustySword = new Item(5, 5, "A old and rusty sword", "damage", "rusty-sword");
+                                Item sword = new Item(random.Next(5, 7), random.Next(5, 14), "A sharp and long sword",
+                                    "damage", "sword");
+                                Item rustyShield = new Item(2, 1, "A rusty old shield, used for defending yourself.",
+                                    "armor", "shield");
+                                Item shield = new Item(random.Next(2, 3), random.Next(1, 6),
+                                    "A normal shield, used for defending yourself.", "armor", "shield");
                                 Item oldArmor = new Item(10, 2, 1, "A suit of rusty old armor.", "old-armor");
+                                Item armor = new Item(random.Next(10, 20), random.Next(2, 7), random.Next(1, 6),
+                                    "A suit of heavy armor.", "armor");
+                                Item backpack = new Item(0, "A backpack that can hold more then your current one.",
+                                    "bigger-backpack");
                                 Item medKit = new Item(10, "A box filled with medical supplies", "med-kit");
+                                Item cloackOfHealth = new Item(1, 25, "A magical cloack.", "health",
+                                    "cloack-of-health");
+                                Item excalibur = new Item(7, 14, "A old and rusty sword", "damage", "excalibur");
+                                Item kavacha = new Item(20, 7, 6,
+                                    "A legendary suit of armor, some say it holds incredible magical powers",
+                                    "kavacha");
+                                Item pridwen = new Item(3, 6,
+                                    "A legendary shield that comes from the Arthurian legend.", "armor", "pridwen");
                                 excalibur.ManaModifier = 10;
                                 excalibur.MagicPowerModifier = 2;
+                                kavacha.ManaModifier = 4;
+                                kavacha.MagicPowerModifier = 1;
+                                pridwen.ManaModifier = 5;
+                                pridwen.MagicPowerModifier = 3;
 
-                                List<Item> items = [rustyShield, shield, rustySword, excalibur, cloackOfHealth, medKit, armor, oldArmor];
+                                List<Item> items = [rustyShield, shield, pridwen, oldArmor, armor, kavacha, rustySword, sword, excalibur, backpack, medKit, cloackOfHealth];
 
                                 Item contents = items[random.Next(0, items.Count)];
 
@@ -253,8 +287,8 @@ class Generartion
     public void Fireball(Spell spell) {
         spell.Caster.CurrentRoom.ForEachInhabitant((inhabitant) => {
             if (!inhabitant.Value.Equals(spell.Caster)) {
-                inhabitant.Value.Damage(30);
-                inhabitant.Value.TicksOnFire = 5;
+                inhabitant.Value.Damage(spell.Caster.MagicPower*2);
+                inhabitant.Value.TicksOnFire = (int)Math.Floor((double) spell.Caster.MagicPower / 3);
             }
         });
         Console.WriteLine($"{spell.Caster.Name} casted fireball. The room gets engulfed in a sea of fire.");
@@ -272,10 +306,10 @@ class Generartion
             entity = spell.Caster.CurrentRoom.GetInhabitants()[
                 random.Next(0, spell.Caster.CurrentRoom.GetInhabitants().Count)];
         }
-        entity.Damage(20, true);
+        entity.Damage((spell.Caster.MagicPower), true);
         spell.Caster.BackPack.ForEachItem((item) => {
             if (item.Name.Contains("sword") || item.Name.Contains("excalibur")) {
-                item.DamageModifier += 10;
+                item.DamageModifier += (int)Math.Floor((double) spell.Caster.MagicPower / 2);
             }
         });
         Console.WriteLine($"{spell.Caster.Name} casted smite, their swords now glow and one enemy looks severally weakened.");
