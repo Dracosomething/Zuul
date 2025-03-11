@@ -86,6 +86,7 @@ class Item {
         this.manaModifier = manaModifier;
         this.magicPowerModifier = magicPowerModifier;
         Equiped = false;
+        DecayTicks = -1;
     }
 
     public Item(int weight, int modifier, string description, string modType, string name) {
@@ -130,6 +131,7 @@ class Item {
                 break;
         }
         Equiped = false;
+        DecayTicks = -1;
     }
 
     [JsonConstructor]
@@ -143,6 +145,7 @@ class Item {
         this.manaModifier = 0;
         this.magicPowerModifier = 0;
         this.Equiped = false;
+        DecayTicks = -1;
     }
     
     // methods
