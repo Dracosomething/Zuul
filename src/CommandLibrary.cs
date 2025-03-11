@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 
 class CommandLibrary {
+	// fields
 	// A List that holds all valid command words
 	private readonly List<string> validCommands;
 
@@ -19,16 +20,20 @@ class CommandLibrary {
 		validCommands.Add("attack");
 		validCommands.Add("magic");
 	}
-
-	/*
-	 * Check whether a given string is a valid command word.
-	 * Return true if it is, false if it isn't.
-	 */
+	
+	/// <summary>
+	/// Check whether a given string is a valid command word.
+	/// </summary>
+	/// <param name="instring"></param>
+	/// <returns>true if it is, false if it isn't.</returns>
 	public bool IsValidCommandWord(string instring) {
 		return validCommands.Contains(instring);
 	}
 
-	/// <returns> returns a list of valid command words as a comma separated string.</returns>
+	/// <summary>
+	/// used to get all the usable commands
+	/// </summary>
+	/// <returns>a list of valid command words as a comma separated string.</returns>
 	public string GetCommandsString() {
 		return String.Join(", ", validCommands);
 	}

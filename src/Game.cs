@@ -10,7 +10,6 @@ class Game {
 	private Player player;
 	private Room StartingRoom;
 	private Room winRoom = new Room("", "");
-	private bool isHurt;
 	private Generation generation = new Generation();
 
 	// Constructor
@@ -23,11 +22,12 @@ class Game {
 			player = new Player();
 		}
 		StartingRoom = null;
-		isHurt = true;
 		CreateRooms();
 	}
-
-	// Initialise the Rooms (and the Items)
+	
+	/// <summary>
+	/// Initialise the Rooms, items, spells, traps and enemies.
+	/// </summary>
 	private void CreateRooms() {
 		// Items
 		Item axe = new Item(20, 5 , "A shiny axe, it might be usefull later.", "damage", "axe");
@@ -108,7 +108,9 @@ class Game {
 		StartingRoom = outside;
 	}
 
-	//  Main play routine. Loops until end of play.
+	/// <summary>
+	/// Main play routine. Loops until end of play.
+	/// </summary>
 	public void Play() {
 		// Enter the main command loop. Here we repeatedly read commands and
 		// execute them until the player wants to quit.
@@ -152,7 +154,10 @@ class Game {
 		Console.ReadLine();
 	}
 
-	// Print out the opening message for the player.
+	/// <summary>
+	/// Print out the opening message for the player.
+	/// </summary>
+	/// <returns>if the player wants to start the game.</returns>
 	private bool PrintWelcome() {
 		Console.WriteLine();
 		Console.WriteLine("Welcome to Zuul!");
@@ -164,12 +169,13 @@ class Game {
 	}
 
 	/// <summary>
+	///	Handles the logic for commands.
+	/// </summary>
 	/// <param name="command">Given a command, process (that is: execute) the command.</param>
 	/// <returns>
 	/// If this command ends the game, it returns true.
-	/// Otherwise false is returned.
+	/// Otherwise, false is returned.
 	/// </returns>
-	/// </summary>
 	private bool ProcessCommand(Command command) {
 		bool wantToQuit = false;
 
@@ -221,10 +227,10 @@ class Game {
 	// implementations of user commands:
 	// ######################################
 	
-	/*
-	 * Print out some help information.
-	 * Here we print the mission and a list of the command words.
-	 */
+	/// <summary>
+	/// Print out some help information.
+	/// Here we print the mission and a list of the command words.
+	/// </summary>
 	private void PrintHelp() {
 		Console.WriteLine("You are lost. You are alone.");
 		Console.WriteLine("You wander around at the university.");
@@ -233,8 +239,10 @@ class Game {
 		parser.PrintValidCommands();
 	}
 
-	// Try to go to one direction. If there is an exit, enter the new
-	// room, otherwise print an error message.
+	/// <summary>
+	/// Try to go to one direction. If there is an exit, enter the new room, otherwise print an error message.
+	/// </summary>
+	/// <param name="command">This is used for the command params</param>
 	private void GoRoom(Command command) {
 		if (command.SecondWord.Equals("sped")) {
 			SpeedStrat();
@@ -268,17 +276,21 @@ class Game {
 		if (!player.CurrentRoom.Equals(winRoom)) {
 			Console.WriteLine(player.CurrentRoom.GetLongDescription());
 		}
-		if (isHurt) {
+		if (player.IsHurt) {
 			player.Damage(3, false);
 		}
 	}
 
-	// gives the description of the current room
+	/// <summary>
+	/// gives the description of the current room
+	/// </summary>
 	private void Look() {
 		Console.WriteLine(player.CurrentRoom.GetLongDescription());
 	}
 	
-	// shows the players status
+	/// <summary>
+	/// shows the players status
+	/// </summary>
 	private void Status() {
 		Console.WriteLine($"[Health: {player.Health}]");
 		Console.WriteLine($"[Damage: {player.DamageModifier}]");
@@ -287,7 +299,10 @@ class Game {
 		Console.WriteLine($"[spellbook: \n {player.ShowSpells()}]");
 	}
 	
-	// take an item from a room
+	/// <summary>
+	/// take an item from a room
+	/// </summary>
+	/// <param name="command">Used for the params of the command</param>
 	private void Take(Command command) {
 		if (command.SecondWord.Equals("9999")) {
 			FunnySword();
@@ -303,15 +318,28 @@ class Game {
 		player.TakeFromChest(command.SecondWord);
 	}
 	
-	// put an item into a room
+	/// <summary>
+	/// put an item into a room
+	/// </summary>
+	/// <param name="command">Used for the params of the command</param>
 	private void Drop(Command command) {
 		player.DropToChest(command.SecondWord);
 	}
 	
-	// do stuff with magic
+	/// <summary>
+	/// Used to learn and cast magic
+	/// </summary>
+	/// <param name="command">Used for the params of the command</param>
 	private void Magic(Command command) {
-		if (command.SecondWord == null) {
+		List<string> validArguments = ["the", "learn", "help", "cast"];
+		if (command.SecondWord == null || !validArguments.Contains(command.SecondWord)) {
 			Console.WriteLine("i dont know what you mean...");
+			return;
+		}
+
+		if (command.SecondWord.Equals("help")) {
+			Console.WriteLine("valid commands are:");
+			Console.WriteLine("learn, cast, help");
 			return;
 		}
 
@@ -330,17 +358,26 @@ class Game {
 		}
 	}
 	
-	// learn a new spell
+	/// <summary>
+	/// learns a new spell
+	/// </summary>
+	/// <param name="command">Used to get the spell to learn</param>
 	private void Learn(Command command) {
 		player.LearnSpell(command.ThirdWord);
 	}
 	
-	// cast a spell
+	/// <summary>
+	/// casts a spell
+	/// </summary>
+	/// <param name="command">Used to get the spell to cast</param>
 	private void Cast(Command command) {
 		player.UseSpell(command.ThirdWord);
 	}
 	
-	// use an item
+	/// <summary>
+	/// Allows the player to use an item.
+	/// </summary>
+	/// <param name="command">Used to get the commands arguments.</param>
 	private void Use(Command command) {
 		if (command.SecondWord.ToLower().Equals("equip")) {
 			Item item = player.BackPack.Get(command.ThirdWord);
@@ -364,24 +401,6 @@ class Game {
 			item.Equiped = false;
 			return;
 		}
-		
-		Item useItem = player.BackPack.Get(command.SecondWord);
-		if (useItem == null) {
-			Console.WriteLine("You don't have that item.");
-			return;
-		}
-		if (command.SecondWord.Equals("med-kit")) {
-			player.Heal(20);
-			Console.WriteLine("used med kit and healed 20 hp");
-			player.BackPack.Remove(command.SecondWord);
-			return;
-		}
-		if (command.SecondWord.Equals("stiches")) {
-			isHurt = false;
-			Console.WriteLine("used stiches and closed your wounds");
-			player.BackPack.Remove(command.SecondWord);
-			return;
-		}
 		if (command.SecondWord.Equals("notebook")) {
 			string useCase = command.ThirdWord;
 			if (useCase == null && useCase != "write" && useCase != "read") {
@@ -398,10 +417,10 @@ class Game {
 			}
 			return;
 		}
-		if (command.SecondWord.Equals("food-plate")) {
-			player.Heal(10);
-			Console.WriteLine("You ate the food and feel rejuvenated");
-			player.BackPack.Remove(command.SecondWord);
+		
+		Item useItem = player.BackPack.Get(command.SecondWord);
+		if (useItem == null) {
+			Console.WriteLine("You don't have that item.");
 			return;
 		}
 		
@@ -424,6 +443,10 @@ class Game {
 		}
 	}
 
+	/// <summary>
+	/// Allows the player to attack enemies
+	/// </summary>
+	/// <param name="command">Used to get the commands arguments.</param>
 	private void Attack(Command command) {
 		string item = command.ThirdWord;
 		string target = command.SecondWord;
@@ -459,6 +482,9 @@ class Game {
 		});
 	}
 
+	/// <summary>
+	/// saves the player to a json file.
+	/// </summary>
 	private void SafePlayer() {
 		if (OperatingSystem.IsWindows()) {
 			Directory.CreateDirectory(Directory.GetCurrentDirectory() + "\\save");
@@ -476,6 +502,10 @@ class Game {
 		File.WriteAllText(directory, newJsonString);
 	}
 
+	/// <summary>
+	/// loads the player from a json file
+	/// </summary>
+	/// <returns>The player obtained from the json file</returns>
 	private Player LoadPlayer() {
 		string directory = Getdirectory();
 
@@ -518,6 +548,10 @@ class Game {
 		return loadedPlayer;
 	}
 
+	/// <summary>
+	/// used to get the location of the player.json file
+	/// </summary>
+	/// <returns>the directory as a string</returns>
 	private string Getdirectory() {
 		string directory;
 		if (OperatingSystem.IsWindows()) {
@@ -529,16 +563,25 @@ class Game {
 		return directory;
 	}
 
+	/// <summary>
+	/// gives the player the 32 bit integer limit as their health stat
+	/// </summary>
 	private void InfHealth() {
 		this.player.Health = Int32.MaxValue-1;
 		this.player.MaxHealth = Int32.MaxValue-1;
 	}
 
+	/// <summary>
+	/// gives the player a sword that deals 9999 damage
+	/// </summary>
 	private void FunnySword() {
 		Item funnySword = new Item(0, 9999, "A weapon for developers.", "damage", "funny-sword");
 		player.BackPack.Put(funnySword.Name, funnySword);
 	}
 
+	/// <summary>
+	/// places the player in the win room
+	/// </summary>
 	private void SpeedStrat() {
 		player.CurrentRoom = winRoom;
 	}

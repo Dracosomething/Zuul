@@ -33,17 +33,26 @@ class Trap : Entity {
     }
     
     // methods
+    /// <summary>
+    /// deactivates a trap
+    /// </summary>
     public void Disarm() {
         this.Discard();
         this.CurrentRoom = null;
         Console.WriteLine($"Successfully disarmed {this.Name}");
     }
 
+    /// <summary>
+    /// removes a trap from the room
+    /// </summary>
     public void Discard() {
         this.CurrentRoom.RemoveInhabitant(this.Name);
         this.CurrentRoom = null;
     }
 
+    /// <summary>
+    /// executes the logic of the trap every game update
+    /// </summary>
     public new void Tick() {
         this.CurrentRoom.ForEachInhabitant((currentRoomInhabitant) => {
             if (!(currentRoomInhabitant.Value is Trap)) {

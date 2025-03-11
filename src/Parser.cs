@@ -1,6 +1,7 @@
 using System;
 
 class Parser {
+	// fields
 	// Holds all valid command words
 	private readonly CommandLibrary commandLibrary; 
 
@@ -9,7 +10,11 @@ class Parser {
 		commandLibrary = new CommandLibrary();
 	}
 
-	// Ask and interpret the user input. Return a Command object.
+	// methods
+	/// <summary>
+	/// Ask and interpret the user input.
+	/// </summary>
+	/// <returns>A Command object.</returns>
 	public Command GetCommand() {
 		Console.Write("> "); // print prompt
 
@@ -32,7 +37,9 @@ class Parser {
 		return new Command(null, null, null);
 	}
 
-	// Prints a list of valid command words from commandLibrary.
+	/// <summary>
+	/// Prints a list of valid command words from commandLibrary.
+	/// </summary>
 	public void PrintValidCommands() {
 		Console.WriteLine("Your command words are:");
 		Console.WriteLine(commandLibrary.GetCommandsString());

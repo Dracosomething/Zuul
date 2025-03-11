@@ -250,14 +250,21 @@ class Generation
         Console.WriteLine(roomAmount);
     }
 
-    private void PlaceRequiredRooms(int chance, List<string> directionPoolCopy, List<Room> rooms, Room required) {
+    /// <summary>
+    /// used to place rooms at random positions that are needed to beat the game
+    /// </summary>
+    /// <param name="chance">The chance the room initially has to generate</param>
+    /// <param name="directionPool">A list of directions a room can have</param>
+    /// <param name="rooms">The rooms the required room can generate onto</param>
+    /// <param name="required">The room that needs to be generated</param>
+    private void PlaceRequiredRooms(int chance, List<string> directionPool, List<Room> rooms, Room required) {
         Random random = new Random();
         foreach (var room in rooms) {
             if (random.Next(0, rooms.Count) <= chance) {
-                string dir = directionPoolCopy[random.Next(0, directionPoolCopy.Count)];
+                string dir = directionPool[random.Next(0, directionPool.Count)];
                         
                 while (room.HasExit(dir)) {
-                    dir = directionPoolCopy[random.Next(0, directionPoolCopy.Count)];
+                    dir = directionPool[random.Next(0, directionPool.Count)];
                 }
                         
                 room.AddExit(dir, required);
@@ -268,6 +275,10 @@ class Generation
         }
     }
 
+    /// <summary>
+    /// Spawns a mimic when the player enters the same room as the trap
+    /// </summary>
+    /// <param name="trap">The trap that the method should get attached to.</param>
     private void MimicSpawn(Trap trap) {
         if (!trap.CurrentRoom.ContainsInhabitant("player")) {
             Trap newMimic = new Trap(0, "Mimic", "A chest that when opened becomes a monster.", false);
@@ -284,6 +295,10 @@ class Generation
         }
     }
     
+    /// <summary>
+    /// damages all inhabitants of a room
+    /// </summary>
+    /// <param name="trap">The trap the method is attached to</param>
     private void ShootArrows(Trap trap) {
         trap.CurrentRoom.ForEachInhabitant((Inhabitant) => {
             Entity inhabitant = Inhabitant.Value;
@@ -293,6 +308,10 @@ class Generation
         });
     }
 
+    /// <summary>
+    /// The fireball spell logic
+    /// </summary>
+    /// <param name="spell">The spell the method is attached to</param>
     public void Fireball(Spell spell) {
         spell.Caster.CurrentRoom.ForEachInhabitant((inhabitant) => {
             if (!inhabitant.Value.Equals(spell.Caster)) {
@@ -303,11 +322,20 @@ class Generation
         Console.WriteLine($"{spell.Caster.Name} casted fireball. The room gets engulfed in a sea of fire.");
     }
 
+    /// <summary>
+    /// heals the caster of the spell
+    /// </summary>
+    /// <param name="spell">The spell the method is attached to</param>
+    /// <param name="amount">The amount of health you should heal</param>
     public void Heal(Spell spell, int amount) {
         spell.Caster.Heal(amount);
         Console.WriteLine($"Healed {spell.Caster.Name}");
     }
 
+    /// <summary>
+    /// The logic for the smite spell
+    /// </summary>
+    /// <param name="spell">The spell the method is attached to</param>
     public void Smite(Spell spell) {
         Random random = new Random();
         Entity entity = spell.Caster.CurrentRoom.GetInhabitants()[random.Next(0, spell.Caster.CurrentRoom.GetInhabitants().Count)];
@@ -324,6 +352,10 @@ class Generation
         Console.WriteLine($"{spell.Caster.Name} casted smite, their swords now glow and one enemy looks severally weakened.");
     }
 
+    /// <summary>
+    /// the logic of the conjure-sword spell
+    /// </summary>
+    /// <param name="spell">The spell the method is attached to.</param>
     public void ConjureSword(Spell spell) {
         MagicEntity caster = spell.Caster;
         if (!caster.BackPack.Items.ContainsKey("conjured-sword")) {
@@ -334,7 +366,11 @@ class Generation
             Console.WriteLine($"{caster.Name} already has conjured a sword.");
         }
     }
-
+    
+    /// <summary>
+    /// the logic of the conjure-shield spell
+    /// </summary>
+    /// <param name="spell">The spell the method is attached to.</param>
     public void ConjureShield(Spell spell) {
         MagicEntity caster = spell.Caster;
         if (!caster.BackPack.Items.ContainsKey("conjured-shield")) {
@@ -346,6 +382,10 @@ class Generation
         }
     }
 
+    /// <summary>
+    /// the logic for the magic-missile spell
+    /// </summary>
+    /// <param name="spell">The spell the method is attached to</param>
     public void MagicMissile(Spell spell) {
         Random random = new Random();
         Entity entity = spell.Caster.CurrentRoom.GetInhabitants()[random.Next(0, spell.Caster.CurrentRoom.GetInhabitants().Count)];

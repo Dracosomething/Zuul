@@ -43,11 +43,13 @@ class Entity {
     /// deals damage to the entity
     /// </summary>
     /// <param name="amount">the amount of damage</param>
-    /// <param name="bypassDefense">if the damage should bypass the entities devence</param>
+    /// <param name="bypassDefense">if the damage should bypass the entities defence</param>
     public void Damage (int amount, bool bypassDefense) {
         if (!bypassDefense) {
+            // makes shure that the entitie wont take negative damage
             if (amount * ((ArmorModifier + 1) * 0.01) < 0 && (ArmorModifier != 0)) amount = 0;
             else {
+                // makes shure that you always take at least 1 damage
                 if ((int)Math.Ceiling(amount * ((ArmorModifier + 1) * 0.01)) == 1 && amount == 1) amount = 1;
                 else amount -= (int)Math.Ceiling(amount * ((ArmorModifier + 1) * 0.01));
             }
@@ -71,6 +73,9 @@ class Entity {
         return Health > 0;
     }
 
+    /// <summary>
+    /// runs every game update, deals damage to an enemy if it is on fire.
+    /// </summary>
     public void Tick() {
         if (ticksOnFire > 0) {
             this.Damage(2, false);

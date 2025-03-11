@@ -25,10 +25,17 @@ class MagicEntity : Entity {
     }
     
     // method
+    /// <summary>
+    /// checks if an magic entitie is alive
+    /// </summary>
+    /// <returns>if the current health is above 0 and if mana is above 0</returns>
     public new bool IsAlive() {
         return base.IsAlive() && this.mana > 0;
     }
 
+    /// <summary>
+    /// Runs every game update.
+    /// </summary>
     public new void Tick() {
         base.Tick();
         HealMana(1);
@@ -49,6 +56,10 @@ class MagicEntity : Entity {
         }
     }
 
+    /// <summary>
+    /// casts a spell
+    /// </summary>
+    /// <param name="spellName">the name of the spell that needs to be casted</param>
     public void UseSpell(string spellName) {
         Spell spell = spellBook[spellName];
         if (spell == null) {
@@ -66,6 +77,10 @@ class MagicEntity : Entity {
         spell.Caster = null;
     }
 
+    /// <summary>
+    /// heals mana of a magic entity
+    /// </summary>
+    /// <param name="amount">The amount of mana that needs to be healed</param>
     public void HealMana(int amount) {
         if ((mana+=amount) > maxMana) return;
         mana += amount;

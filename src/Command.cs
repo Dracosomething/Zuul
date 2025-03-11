@@ -1,4 +1,5 @@
 class Command {
+	// properties
 	public string CommandWord { get; init; }
 	public string SecondWord { get; init; }
 	public string ThirdWord { get; init; }
@@ -13,18 +14,26 @@ class Command {
 		ThirdWord = third;
 	}
 
-	
-	/// <returns> true if this command was not understood.</returns>
+	/// <summary>
+	/// Checks if the command does not exist
+	/// </summary>
+	/// <returns> if the first word of the command is null</returns>
 	public bool IsUnknown() {
 		return CommandWord == null;
 	}
 
-	
-	/// <returns> Return true if the command has a second word. </returns>
+	/// <summary>
+	/// checks if the command has a second word
+	/// </summary>
+	/// <returns>if the command has a second word</returns>
 	public bool HasSecondWord() {
 		return SecondWord != null;
 	}
 
+	/// <summary>
+	/// checks if the command has a third word
+	/// </summary>
+	/// <returns>if the command has a third word</returns>
 	public bool HasThirdWord() {
 		return ThirdWord != null;
 	}

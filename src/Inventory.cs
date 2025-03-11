@@ -63,6 +63,10 @@ class Inventory {
         return maxWeight - TotalWeight();
     }
 
+    /// <summary>
+    /// shows the contents of the inventory
+    /// </summary>
+    /// <returns>The inventory as a string</returns>
     public string Show() {
         string itemString = "";
         int loopTimes = 0;
@@ -78,33 +82,53 @@ class Inventory {
         return itemString;
     }
 
+    /// <summary>
+    /// Removes an item from the inventory
+    /// </summary>
+    /// <param name="itemName">The name of the item that should be removed</param>
+    /// <returns>if the item is removed</returns>
     public bool Remove(string itemName) {
         return items.Remove(itemName);
     }
     
+    /// <summary>
+    /// loops through all KeyValuePair in the items dictionary
+    /// </summary>
+    /// <param name="consumer">the code that should get applied to the KeyValuePair</param>
     public void ForEach(Action<KeyValuePair<string, Item>> consumer) {
         foreach (var keyValuePair in items) {
             consumer.Invoke(keyValuePair);
         }
     }
     
+    /// <summary>
+    /// loops through all string in the items dictionary
+    /// </summary>
+    /// <param name="consumer">the code that should get applied to the string</param>
     public void ForEachItemName(Action<string> consumer) {
         foreach (var keyValuePair in items) {
             consumer.Invoke(keyValuePair.Key);
         }
     }
     
+    /// <summary>
+    /// loops through all <code>Item</code> in the items dictionary
+    /// </summary>
+    /// <param name="consumer">the code that should get applied to the Item</param>
     public void ForEachItem(Action<Item> consumer) {
         foreach (var keyValuePair in items) {
             consumer.Invoke(keyValuePair.Value);
         }
     }
 
+    /// <summary>
+    /// used to get all names of the items in the inventory
+    /// </summary>
+    /// <returns>A string of all item names in the inventory</returns>
     public string GetContents() {
         string itemsAsString = "";
         int loopTimes = 0;
-        ForEachItemName((item) =>
-        {
+        ForEachItemName((item) => {
             loopTimes++;
             itemsAsString += item;
             if (items.Count > loopTimes) {
@@ -116,6 +140,10 @@ class Inventory {
         return itemsAsString;
     }
 
+    /// <summary>
+    /// used to get the size of the items dictionary
+    /// </summary>
+    /// <returns>The amount of objects in the dictionary</returns>
     public int Count() {
         return this.items.Count;
     }

@@ -146,6 +146,10 @@ class Item {
     }
     
     // methods
+    /// <summary>
+    /// used to apply the stat modifiers of the item to the entity
+    /// </summary>
+    /// <param name="entity">the entity the modifiers need to get applied to.</param>
     public void ApplyModifiers(Entity entity) {
         entity.DamageModifier += damageModifier;
         entity.ArmorModifier += armorModifier;
@@ -162,6 +166,10 @@ class Item {
         }
     }
 
+    /// <summary>
+    /// used to remove the stat modifiers of the item from the entity
+    /// </summary>
+    /// <param name="entity">the entity the modifiers need to get removed from.</param>
     public void RemoveModifiers(Entity entity) {
         entity.DamageModifier -= damageModifier;
         entity.ArmorModifier -= armorModifier;
@@ -178,6 +186,10 @@ class Item {
         }    
     }
 
+    /// <summary>
+    /// used to get a clone of an item
+    /// </summary>
+    /// <returns>an exact copy of an item</returns>
     public Item Clone() {
         Item clone = new Item(this.weight, this.armorModifier, this.damageModifier, this.healthModifier, this.manaModifier, this.magicPowerModifier, this.description, this.name);
         return clone;
