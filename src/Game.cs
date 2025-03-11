@@ -11,7 +11,7 @@ class Game {
 	private Room StartingRoom;
 	private Room winRoom = new Room("", "");
 	private bool isHurt;
-	private Generation _generation = new Generation();
+	private Generation generation = new Generation();
 
 	// Constructor
 	public Game() {
@@ -86,6 +86,7 @@ class Game {
 		// adding items to the rooms
 		bacement.Chest.Put(axe.Name, axe);
 		bacement.Chest.Put(greenKey.Name, greenKey);
+		bacement.Chest.Put(medKit.Name, medKit.Clone());
 		office.Chest.Put(blueKey.Name, blueKey);
 		pub.Chest.Put(redKey.Name, redKey);
 		office.Chest.Put(medKit.Name, medKit);
@@ -94,7 +95,7 @@ class Game {
 		guard.SetWeapon(axe.Clone());
 		attic.AddInhabitant(guard.Name, guard);
 
-		_generation.GenerateWorld(attic, winRoom, 19);
+		generation.GenerateWorld(attic, winRoom, 19);
 
 		kid.CurrentRoom = theatre;
 		kid.Inventory.Put(yellowKey.Name, yellowKey);
@@ -102,9 +103,9 @@ class Game {
 		
 		// Start game outside
 		player.BackPack.Put("notebook", noteBook);
-		player.CurrentRoom = attic;
+		player.CurrentRoom = outside;
 		player.CurrentRoom.AddInhabitant("player", player);
-		StartingRoom = attic;
+		StartingRoom = outside;
 	}
 
 	//  Main play routine. Loops until end of play.
@@ -492,16 +493,25 @@ class Game {
 		foreach (var spell in loadedPlayer.SpellBook) {
 			switch (spell.Key) {
 				case "fireball":
-					spell.Value.Effect = () => _generation.Fireball(spell.Value);
+					spell.Value.Effect = () => generation.Fireball(spell.Value);
 					break;
 				case "lesser-heal":
-					spell.Value.Effect = () => _generation.Heal(spell.Value, 5);
+					spell.Value.Effect = () => generation.Heal(spell.Value, 5);
 					break;
 				case "greater-heal":
-					spell.Value.Effect = () => _generation.Heal(spell.Value, 20);
+					spell.Value.Effect = () => generation.Heal(spell.Value, 20);
 					break;
 				case "smite":
-					spell.Value.Effect = () => _generation.Smite(spell.Value);
+					spell.Value.Effect = () => generation.Smite(spell.Value);
+					break;
+				case "magic-missile":
+					spell.Value.Effect = () => generation.MagicMissile(spell.Value);
+					break;
+				case "conjure-sword":
+					spell.Value.Effect = () => generation.ConjureSword(spell.Value);
+					break;
+				case "conjure-shield":
+					spell.Value.Effect = () => generation.ConjureShield(spell.Value);
 					break;
 			}
 		}
@@ -520,8 +530,8 @@ class Game {
 	}
 
 	private void InfHealth() {
-		this.player.Health = Int32.MaxValue;
-		this.player.MaxHealth = Int32.MaxValue;
+		this.player.Health = Int32.MaxValue-1;
+		this.player.MaxHealth = Int32.MaxValue-1;
 	}
 
 	private void FunnySword() {

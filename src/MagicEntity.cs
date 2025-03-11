@@ -36,6 +36,17 @@ class MagicEntity : Entity {
             mana--;
             this.Damage(1, true);
         }
+        List<Item> toBeRemoved = new List<Item>();
+        this.backPack.ForEachItem((item) => {
+            if (item.DecayTicks == 0) {
+                toBeRemoved.Add(item);
+            } else if (item.DecayTicks > 0) {
+                item.DecayTicks -= 1;
+            }
+        });
+        foreach (var item in toBeRemoved) {
+            this.backPack.Remove(item.Name);
+        }
     }
 
     public void UseSpell(string spellName) {

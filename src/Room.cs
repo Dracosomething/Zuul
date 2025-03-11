@@ -148,7 +148,7 @@ class Room {
 			foreach (var inhabitant in inhabitants) {
 				action.Invoke(inhabitant);
 			}
-		} catch (Exception e) {}
+		} catch {}
 	}
 
 	public int GetExitCount() {

@@ -24,6 +24,7 @@ class Item {
     public int HealthModifier { get { return healthModifier; } set { healthModifier = value; } }
     public int MagicPowerModifier { get { return magicPowerModifier; } set { magicPowerModifier = value; } }
     public int ManaModifier { get { return manaModifier; } set { manaModifier = value; } }
+    public int DecayTicks { get; set; }
     
     // constructor
     public Item(int weight, string description, string name) {
@@ -33,6 +34,7 @@ class Item {
         this.armorModifier = 0;
         this.damageModifier = 0;
         Equiped = false;
+        DecayTicks = -1;
     }
     
     public Item(int weight, int armorModifier, int healthModifier, string description, string name) {
@@ -45,6 +47,7 @@ class Item {
         this.manaModifier = 0;
         this.magicPowerModifier = 0;
         Equiped = false;
+        DecayTicks = -1;
     }
     
     public Item(int weight, int armorModifier, int damageModifier, int healthModifier, string description, string name) {
@@ -57,6 +60,7 @@ class Item {
         this.manaModifier = 0;
         this.magicPowerModifier = 0;
         Equiped = false;
+        DecayTicks = -1;
     }
     
     public Item(int weight, int armorModifier, int damageModifier, int healthModifier, int manaModifier, string description, string name) {
@@ -69,6 +73,7 @@ class Item {
         this.manaModifier = manaModifier;
         this.magicPowerModifier = 0;
         Equiped = false;
+        DecayTicks = -1;
     }
     
     public Item(int weight, int armorModifier, int damageModifier, int healthModifier, int manaModifier, int magicPowerModifier, string description, string name) {

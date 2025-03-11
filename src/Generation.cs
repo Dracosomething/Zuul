@@ -198,10 +198,19 @@ class Generation
                                     "Creates a beam of light from the users weapon that strengthens the weapon and deals some damage to one enemy in the room when casted",
                                     30, true);
                                 smite.Effect = () => Smite(smite);
+                                Spell magicMissile = new Spell("magic-missile",
+                                    "fires a tiny missile that deals small damage to one enemy in your room", 5, false);
+                                magicMissile.Effect = () => MagicMissile(magicMissile);
+                                Spell conjureShield = new Spell("conjure-shield",
+                                    "creates a magical shield from the casters mana", 12, false);
+                                conjureShield.Effect = () => ConjureShield(conjureShield);
+                                Spell conjureSword = new Spell("conjure-sword",
+                                    "creates a magical sword from the casters mana", 12, false);
+                                conjureSword.Effect = () => ConjureSword(conjureSword);
                                 
-                                List<Spell> spells = [fireball, lesserHeal, greaterHeal, smite];
+                                List<Spell> spellPool = [fireball, lesserHeal, greaterHeal, smite, magicMissile, conjureShield, conjureSword];
                                 
-                                Spell spell = spells[random.Next(0, spells.Count)];
+                                Spell spell = spellPool[random.Next(0, spellPool.Count)];
                                 
                                 nextRoom.AddSpell(spell);
                             }
@@ -302,7 +311,7 @@ class Generation
     public void Smite(Spell spell) {
         Random random = new Random();
         Entity entity = spell.Caster.CurrentRoom.GetInhabitants()[random.Next(0, spell.Caster.CurrentRoom.GetInhabitants().Count)];
-        while (entity.Equals(spell.Caster)) {
+        while (entity.Equals(spell.Caster) || entity is Trap) {
             entity = spell.Caster.CurrentRoom.GetInhabitants()[
                 random.Next(0, spell.Caster.CurrentRoom.GetInhabitants().Count)];
         }
@@ -313,5 +322,38 @@ class Generation
             }
         });
         Console.WriteLine($"{spell.Caster.Name} casted smite, their swords now glow and one enemy looks severally weakened.");
+    }
+
+    public void ConjureSword(Spell spell) {
+        MagicEntity caster = spell.Caster;
+        if (!caster.BackPack.Items.ContainsKey("conjured-sword")) {
+            Item magicSword = new Item(0, 5, "A magical sword that slowly decays.", "damage", "conjured-sword");
+            magicSword.DecayTicks = 5;
+            Console.WriteLine($"{caster.Name} conjured a sword out of thin air.");
+        } else {
+            Console.WriteLine($"{caster.Name} already has conjured a sword.");
+        }
+    }
+
+    public void ConjureShield(Spell spell) {
+        MagicEntity caster = spell.Caster;
+        if (!caster.BackPack.Items.ContainsKey("conjured-shield")) {
+            Item magicShield = new Item(0, 5, "A magical shield that slowly decays.", "armor", "conjured-shield");
+            magicShield.DecayTicks = 5;
+            Console.WriteLine($"{caster.Name} conjured a shield out of thin air.");
+        } else {
+            Console.WriteLine($"{caster.Name} already has conjured a shield.");
+        }
+    }
+
+    public void MagicMissile(Spell spell) {
+        Random random = new Random();
+        Entity entity = spell.Caster.CurrentRoom.GetInhabitants()[random.Next(0, spell.Caster.CurrentRoom.GetInhabitants().Count)];
+        while (entity.Equals(spell.Caster) || entity is Trap) {
+            entity = spell.Caster.CurrentRoom.GetInhabitants()[
+                random.Next(0, spell.Caster.CurrentRoom.GetInhabitants().Count)];
+        }
+        entity.Damage(5, false);
+        Console.WriteLine($"{spell.Caster.Name} used magic missile on {entity.Name}");
     }
 }
