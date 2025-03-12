@@ -3,19 +3,16 @@
 class Player : MagicEntity {
     // fields
     private string noteBook;
-    private int maxHealth;
     private bool isHurt;
     
     // properties
     public string NoteBook { get { return this.noteBook; } set { this.noteBook = value; } }
-    public int MaxHealth { get { return this.maxHealth; } set { maxHealth = value; } }
     public bool IsHurt { get { return isHurt; } set { isHurt = value; } }
     
     // constructor
     public Player() : base(1, 0, 100, 50, 3, "player") {
         this.BackPack = new Inventory(25);
         noteBook = "";
-        this.maxHealth = 100;
         IsHurt = true;
     }
 
@@ -43,7 +40,7 @@ class Player : MagicEntity {
     /// </summary>
     /// <param name="amount">The amount of health that should get healed</param>
     public new void Heal (int amount) {
-        if ((Health += amount) == maxHealth) return;
+        if ((Health += amount) == MaxHealth) return;
         base.Heal(amount);
     }
     
@@ -138,17 +135,17 @@ class Player : MagicEntity {
     /// </summary>
     /// <returns>All spells the player has as a string</returns>
     public string ShowSpells() {
-        string itemString = "";
+        string spellString = "";
         int loopTimes = 0;
         foreach (var keyValuePair in SpellBook) {
             loopTimes++;
-            itemString += keyValuePair.Key;
-            itemString += $"[description: \"{keyValuePair.Value.Description}\", cost: {keyValuePair.Value.ManaCost}, is single use: {keyValuePair.Value.IsSingleUse}]";
+            spellString += keyValuePair.Key;
+            spellString += $"[description: \"{keyValuePair.Value.Description}\", cost: {keyValuePair.Value.ManaCost}, is single use: {keyValuePair.Value.IsSingleUse}]";
             if (SpellBook.Count > loopTimes) {
-                itemString += ", \n";
+                spellString += ", \n";
             }
         }
         
-        return itemString;
+        return spellString;
     }
 }

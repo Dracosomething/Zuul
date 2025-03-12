@@ -243,4 +243,14 @@ class Room {
 		});
 		return returnValue;
 	}
+
+	/// <summary>
+	/// used to get a random entity in this room
+	/// </summary>
+	/// <returns>A random entity in the room</returns>
+	public Entity GetRandomInhabitant() {
+		Random random = new Random();
+		string[] inhabitantNames = this.inhabitants.Keys.ToArray();
+		return inhabitants[inhabitantNames[random.Next(0, inhabitantNames.Length)]];
+	}
 }

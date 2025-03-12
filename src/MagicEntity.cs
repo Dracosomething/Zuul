@@ -2,6 +2,7 @@ namespace Zuul;
 
 class MagicEntity : Entity {
     // fields
+    private int maxHealth;
     private int mana;
     private int maxMana;
     private int magicPower;
@@ -9,6 +10,7 @@ class MagicEntity : Entity {
     private Inventory backPack;
     
     // properties
+    public int MaxHealth { get { return this.maxHealth; } set { maxHealth = value; } }
     public int MaxMana { get { return maxMana; } set { this.maxMana = value; } }
     public int Mana { get { return mana; } set { this.mana = value; } }
     public int MagicPower { get { return magicPower; } set { this.magicPower = value; } }
@@ -22,6 +24,7 @@ class MagicEntity : Entity {
         this.maxMana = mana;
         this.magicPower = magicPower;
         this.spellBook = new Dictionary<string, Spell>();
+        this.maxHealth = health;
     }
     
     // method

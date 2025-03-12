@@ -37,10 +37,27 @@ class Game {
 		Item redKey = new Item(1, "Used to open the red lock", "red-key");
 		Item medKit = new Item(10, "A box filled with medical supplies", "med-kit");
 		Item noteBook = new Item(0, "A book where you can note down the exits of rooms.", "notebook");
+		Item zalthorSword = new Item(5, 15, "The sword of Zalthor, is capable of cutting through the wall between worlds.", "damage",
+			"Vorthak, the dimensional blade");
+		zalthorSword.MagicPowerModifier = 10;
+		zalthorSword.ManaModifier = 12;
 		
 		// Enemies
 		Enemy guard = new Enemy(25, 5, 100, 1, "guard");
 		Enemy kid = new Enemy(5, 1, 5, 0, "billy");
+		// Bosses
+		BossEnemy zalthor = new BossEnemy("Zalthor, The one that devours", 55, 7, 150, 125, 9,
+			new Dictionary<int, Spell>(), zalthorSword);
+		Spell dimensionalBlade = new Spell("dimensional-blade", "creates a huge cut through reality", 75, false);
+		dimensionalBlade.Effect = () => DimensionalBlade(dimensionalBlade);
+		Spell sweepAttack = new Spell("sweep-attack", "attack one random enemy with your sword.", 0, false);
+		sweepAttack.Effect = () => SwordSwipe(sweepAttack);
+		Spell fullRestore = new Spell("full-restore", "restores 50 hp of the user", 50, false);
+		fullRestore.Effect = () => generation.Heal(fullRestore, 50);
+		Spell fireMagic = new Spell("fire-magic", "set one random enemy on fire.", 25, false);
+		fireMagic.Effect = () => FireMagic(fireMagic);
+		Spell necroticTouch = new Spell("necrotic-touch", "deals necrotic damage to one random target", 45, false);
+		necroticTouch.Effect = () => NecroticTouch(necroticTouch);
 		
 		// Create the rooms
 		Room outside = new Room("outside the main entrance of the university", "outside");
@@ -53,6 +70,7 @@ class Game {
 		Room pubStairMid = new Room("in a room with a staircase.", "pub-stairs-middle");
 		Room pubStairTip = new Room("at the top of the staircase", "pub-stairs-top");
 		Room pubStairBottom = new Room("at the bottom of the staircase", "pub-stairs-bottom");
+		Room bossRoom = new Room("a grand spacious room that holds Zalthor", "boss-room-zalthor");
 		
 		// Initialise room exits
 		outside.AddExit("east", theatre);
@@ -81,7 +99,7 @@ class Game {
 		bacement.AddExit("west", pubStairBottom);
 		
 		attic.AddExit("west", pubStairTip);
-		// attic.AddExit("west", winRoom);
+		bossRoom.AddExit("up", winRoom);
 		
 		// adding items to the rooms
 		bacement.Chest.Put(axe.Name, axe);
@@ -95,7 +113,7 @@ class Game {
 		guard.SetWeapon(axe.Clone());
 		attic.AddInhabitant(guard.Name, guard);
 
-		generation.GenerateWorld(attic, winRoom, 19);
+		generation.GenerateWorld(attic, bossRoom, 19);
 
 		kid.CurrentRoom = theatre;
 		kid.Inventory.Put(yellowKey.Name, yellowKey);
@@ -586,4 +604,77 @@ class Game {
 		player.CurrentRoom = winRoom;
 	}
 	// #########################################################
+	
+	// zalthor attacks
+	private void DimensionalBlade(Spell spell) {
+		MagicEntity caster = spell.Caster;
+		if (caster.BackPack.Items.ContainsKey("Vorthak, the dimensional blade")) {
+			caster.CurrentRoom.ForEachInhabitant((inhabitant) => {
+				if (!inhabitant.Value.Equals(caster)) {
+					inhabitant.Value.Damage(caster.MagicPower * 2, true);
+				}
+			});
+			Console.WriteLine(
+				$"{caster.Name} used {spell.Name} which summoned a created a giant crack in reality that hurt everyone in this room.");
+		} else {
+			Console.WriteLine($"You dont meet the conditions to use this ability.");
+		}
+	}
+
+	private void SwordSwipe(Spell spell) {
+		MagicEntity caster = spell.Caster;
+		IEnumerable<string> swordsInInventory = from sword in caster.BackPack.Items.Keys.ToList()
+										where sword.Contains("sword") || sword.Contains("excalibur")
+										select sword;
+		bool hasSword = !swordsInInventory.Any();
+		if (caster.BackPack.Items.ContainsKey("Vorthak, the dimensional blade") || hasSword) {
+			Entity target = caster.CurrentRoom.GetRandomInhabitant();
+			while (target.Equals(caster)) {
+				target = caster.CurrentRoom.GetRandomInhabitant();
+			}
+			target.Damage(caster.DamageModifier, false);
+			Console.WriteLine(
+				$"{caster.Name} swiped their sword which hurt a lot.");
+		} else {
+			Console.WriteLine($"You dont meet the conditions to use this ability.");
+		}
+	}
+
+	private void FireMagic(Spell spell) {
+		MagicEntity caster = spell.Caster;
+		Entity target = caster.CurrentRoom.GetRandomInhabitant();
+		while (target.Equals(caster)) {
+			target = caster.CurrentRoom.GetRandomInhabitant();
+		}
+		target.TicksOnFire = (int)Math.Floor((double) spell.Caster.MagicPower);
+		Console.WriteLine($"{caster.Name} used fire magic on {target.Name}.");
+	}
+
+	private void NecroticTouch(Spell spell) {
+		Random random = new Random();
+		MagicEntity caster = spell.Caster;
+		Entity target = caster.CurrentRoom.GetRandomInhabitant();
+		while (target.Equals(caster)) {
+			target = caster.CurrentRoom.GetRandomInhabitant();
+		}
+
+		if (target is MagicEntity magicTarget) {
+			Item toBeRemoved = null;
+			magicTarget.BackPack.ForEachItem((item) => {
+				if (random.Next(0, 100) <= 15) {
+					toBeRemoved = item;
+				}
+			});
+			magicTarget.BackPack.Remove(toBeRemoved.Name);
+			magicTarget.Mana -= 5;
+			magicTarget.Damage(10, true);
+			if (magicTarget.Health <= 0) {
+				Enemy zombie = new Enemy(magicTarget.MaxHealth, magicTarget.DamageModifier,
+					magicTarget.BackPack.MaxWeight, magicTarget.ArmorModifier, "zombie-" + magicTarget.Name);
+				zombie.CurrentRoom = magicTarget.CurrentRoom;
+				magicTarget.CurrentRoom.AddInhabitant(zombie.Name, zombie);
+			}
+		}
+		Console.WriteLine($"{caster.Name} used necrotic touch on {target.Name} and destroyed on of their items.");
+	}
 }

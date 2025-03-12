@@ -5,6 +5,7 @@ class Enemy : Entity {
     private Inventory inventory;
     private Item mainWeapon;
     private bool hasSeenPlayer;
+    private bool isSub;
     
     // attributes
     public Inventory Inventory { get { return inventory; } }
@@ -14,6 +15,14 @@ class Enemy : Entity {
         inventory = new Inventory(invSize);
         mainWeapon = null;
         hasSeenPlayer = false;
+        isSub = false;
+    }
+    
+    public Enemy(int hp, int dmg, int invSize, int armor, string enemyName, bool isSub) : base(dmg, armor, hp, enemyName) {
+        inventory = new Inventory(invSize);
+        mainWeapon = null;
+        hasSeenPlayer = false;
+        this.isSub = isSub;
     }
     
     // methods
@@ -76,18 +85,22 @@ class Enemy : Entity {
         } else {
             // makes shure it is in the room
             this.CurrentRoom.AddInhabitant(this.Name, this);
-            // code to attack the player
-            CurrentRoom.ForEachInhabitant((inhabitant) => {
-                if (inhabitant.Value is Player player) {
-                    if (this.mainWeapon != null) {
-                        Console.WriteLine($"{this.Name} attacked player using {mainWeapon.Name}.");
-                    } else {
-                        Console.WriteLine($"{this.Name} attacked player.");
+            if (!isSub) {
+                // code to attack the player
+                CurrentRoom.ForEachInhabitant((inhabitant) => {
+                    if (!inhabitant.Value is Player) {
+                        if (this.mainWeapon != null) {
+                            Console.WriteLine($"{this.Name} attacked {inhabitant.Key} using {mainWeapon.Name}.");
+                        }
+                        else {
+                            Console.WriteLine($"{this.Name} attacked {inhabitant.Key}.");
+                        }
+
+                        inhabitant.Value.Damage(DamageModifier, false);
+                        hasSeenPlayer = true;
                     }
-                    player.Damage(DamageModifier, false);
-                    hasSeenPlayer = true;
-                }
-            });
+                });
+            }
             int count = this.CurrentRoom.GetExitCount();
             int itterations = 0;
             // allows enemy to move to other rooms

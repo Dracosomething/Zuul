@@ -387,11 +387,9 @@ class Generation
     /// </summary>
     /// <param name="spell">The spell the method is attached to</param>
     public void MagicMissile(Spell spell) {
-        Random random = new Random();
-        Entity entity = spell.Caster.CurrentRoom.GetInhabitants()[random.Next(0, spell.Caster.CurrentRoom.GetInhabitants().Count)];
+        Entity entity = spell.Caster.CurrentRoom.GetRandomInhabitant();
         while (entity.Equals(spell.Caster) || entity is Trap) {
-            entity = spell.Caster.CurrentRoom.GetInhabitants()[
-                random.Next(0, spell.Caster.CurrentRoom.GetInhabitants().Count)];
+            entity = spell.Caster.CurrentRoom.GetRandomInhabitant();
         }
         entity.Damage(5, false);
         Console.WriteLine($"{spell.Caster.Name} used magic missile on {entity.Name}");
