@@ -83,5 +83,8 @@ class BossEnemy : MagicEntity {
                 BackPack.Remove(item.Key);
             }
         });
+        Spell learnSpell = abilities.Values.ToArray()[0];
+        Console.WriteLine($"{learnSpell.Name} is now available to learn.");
+        this.CurrentRoom.AddSpell(learnSpell);
     }
 }

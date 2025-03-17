@@ -253,4 +253,8 @@ class Room {
 		string[] inhabitantNames = this.inhabitants.Keys.ToArray();
 		return inhabitants[inhabitantNames[random.Next(0, inhabitantNames.Length)]];
 	}
+
+	public Entity GetInhabitant(string name) {
+		return inhabitants[name];
+	}
 }

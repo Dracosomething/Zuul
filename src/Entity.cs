@@ -18,7 +18,7 @@ class Entity {
     public Room CurrentRoom { get { return currentRoom; } set { this.currentRoom = value; } }
     public int Health { get { return health; } set { health = value; } }
     [JsonIgnore]
-    public string Name { get { return name; } }
+    public string Name { get { return name; } set { this.name = value; } }
     [JsonIgnore]
     public int TicksOnFire { set { ticksOnFire = value; } }
 

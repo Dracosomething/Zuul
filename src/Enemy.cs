@@ -113,8 +113,9 @@ class Enemy : Entity {
                         if (this.CurrentRoom.ContainsInhabitant("player")) {
                             return;
                         }
-                        // 50% chance for the enemy to move
-                        if (random.Next(0, 100) <= 50) {
+                        // 50% chance for the enemy to move or if their a minion a 100% chance
+                        int chance = this.isSub ? 100 : 50;
+                        if (random.Next(0, 100) <= chance) {
                             this.CurrentRoom.RemoveInhabitant(this.Name);
                             this.CurrentRoom = exit.Value;
                             exit.Value.AddInhabitant(this.Name, this);
@@ -149,5 +150,10 @@ class Enemy : Entity {
         item.ApplyModifiers(this);
         item.Equiped = true;
         this.mainWeapon = item;
+    }
+
+    public Enemy Clone() {
+        return new Enemy(this.Health, this.DamageModifier, this.inventory.MaxWeight, this.ArmorModifier, this.Name,
+            this.isSub);
     }
 }

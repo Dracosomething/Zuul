@@ -46,8 +46,6 @@ class Game {
 		Enemy guard = new Enemy(25, 5, 100, 1, "guard");
 		Enemy kid = new Enemy(5, 1, 5, 0, "billy");
 		// Bosses
-		BossEnemy zalthor = new BossEnemy("Zalthor, The one that devours", 55, 7, 150, 125, 9,
-			new Dictionary<int, Spell>(), zalthorSword);
 		Spell dimensionalBlade = new Spell("dimensional-blade", "creates a huge cut through reality", 75, false);
 		dimensionalBlade.Effect = () => DimensionalBlade(dimensionalBlade);
 		Spell sweepAttack = new Spell("sweep-attack", "attack one random enemy with your sword.", 0, false);
@@ -58,6 +56,15 @@ class Game {
 		fireMagic.Effect = () => FireMagic(fireMagic);
 		Spell necroticTouch = new Spell("necrotic-touch", "deals necrotic damage to one random target", 45, false);
 		necroticTouch.Effect = () => NecroticTouch(necroticTouch);
+		BossEnemy zalthor = new BossEnemy("Zalthor, The one that devours", 55, 7, 150, 125, 9,
+			new Dictionary<int, Spell>
+			{
+				{15, dimensionalBlade},
+				{75, sweepAttack},
+				{25, fullRestore},
+				{40, fireMagic},
+				{20, necroticTouch}
+			}, zalthorSword);
 		
 		// Create the rooms
 		Room outside = new Room("outside the main entrance of the university", "outside");
@@ -99,7 +106,9 @@ class Game {
 		bacement.AddExit("west", pubStairBottom);
 		
 		attic.AddExit("west", pubStairTip);
+		
 		bossRoom.AddExit("up", winRoom);
+		winRoom.AddExit("sped", bossRoom);
 		
 		// adding items to the rooms
 		bacement.Chest.Put(axe.Name, axe);
@@ -109,10 +118,14 @@ class Game {
 		pub.Chest.Put(redKey.Name, redKey);
 		office.Chest.Put(medKit.Name, medKit);
 
+		// places enemies in their respective rooms
 		guard.CurrentRoom = attic;
 		guard.SetWeapon(axe.Clone());
 		attic.AddInhabitant(guard.Name, guard);
 
+		zalthor.CurrentRoom = bossRoom;
+		bossRoom.AddInhabitant(zalthor.Name, zalthor);
+		
 		generation.GenerateWorld(attic, bossRoom, 19);
 
 		kid.CurrentRoom = theatre;
@@ -601,7 +614,7 @@ class Game {
 	/// places the player in the win room
 	/// </summary>
 	private void SpeedStrat() {
-		player.CurrentRoom = winRoom;
+		player.CurrentRoom = winRoom.GetExit("sped");
 	}
 	// #########################################################
 	

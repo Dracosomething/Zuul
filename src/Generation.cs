@@ -16,6 +16,8 @@ class Generation
     private Room trapRoomChest = new Room("a room with a chest", "chest-room-trap");
     private Room celler = new Room("a room filled with beer fats", "cellar");
     private Room roomWithSpellBook = new Room("a room with a magical book in the center", "room-spellbook");
+    private Room spookyBacement =
+        new Room("a room filled with cobwebs and spiders, the shadows look alive.", "bacement");
     
     // constructor
     public Generation()
@@ -30,6 +32,7 @@ class Generation
         roomPool.Add(trapRoomChest);
         roomPool.Add(celler);
         roomPool.Add(roomWithSpellBook);
+        roomPool.Add(spookyBacement);
         
         directionPool.Add("west");
         directionPool.Add("east");
@@ -53,26 +56,37 @@ class Generation
         
         // the for loop for the generation
         for (int i = 0; i <= iterations; i++) {
+            // creates a copy of the directionpool which allows us to safely edit it.
             List<string> directionPoolCopy = directionPool;
             
+            // calls on the first itteration
             if (i == 0) {
+                // gets a random room
                 Room nextRoom = roomPool[random.Next(0, roomPool.Count)].Clone();
                 
+                // places the room on the map
                 startRoom.AddExit("east", nextRoom);
                 nextRoom.AddExit("west", startRoom);
                 
+                // puts the required items in the rooms chest
                 nextRoom.Chest.Put("stiches", new Item(1, "medical supplies", "stiches"));
                 nextRoom.Chest.Put("bigger-backpack", new Item(0, "A backpack that can hold more then your current one.", "bigger-backpack"));
                 
                 directionPoolCopy.Remove("west");
+                // makes shure that new rooms are added to this room
                 currentRooms.Add(nextRoom);
+                // skips this itteration
                 continue;
             }
 
+            // initialises a list that all new rooms are added to
             List<Room> toBeAdded= new List<Room>();
-            
+            // loops through all rooms in currentRooms
             foreach (var room in currentRooms) {
+                // initializes chance to be 100
                 chance = 100;
+                // staircase rules, need to be at the top to make shure that the rooms get an exit
+                // upwards and in case for the middle staircase, skips the rest of the loop
                 if (room.Name.Equals("staircase-top")) { 
                     if (!room.HasExit("down")) { 
                         Room nextStairs = random.Next(0, 2) == 1 ? stairwell.Clone() : stairwellBottom.Clone(); 
@@ -108,12 +122,18 @@ class Generation
                     }
                 }
                 
+                // makes shure there can be a room in all directions
                 foreach (var dir in directionPoolCopy) {
+                    // checks for success
                     if (random.Next(0, 100) <= chance) {
+                        // checks if the room has an exit in that direction
                         if (!room.HasExit(dir)) {
+                            // gets a random room
                             Room roomPoolChosen = roomPool[random.Next(0, roomPool.Count)];
-                            Room nextRoom = roomPoolChosen.Clone();
+                            Room nextRoom = roomPoolChosen.Clone(); // clones the room
+                            // rules for the rooms
                             if (roomPoolChosen.Name.Equals(roomWithEnemy.Name)) {
+                                // creates items for the enemies to have
                                 Item rustySword = new Item(5, 5, "A old and rusty sword", "damage", "rusty-sword");
                                 Item sword = new Item(random.Next(5, 7), random.Next(5, 14), "A sharp and long sword",
                                     "damage", "sword");
@@ -125,16 +145,32 @@ class Generation
                                 Item armor = new Item(random.Next(10, 20), random.Next(2, 7), random.Next(1, 6),
                                     "A suit of heavy armor.", "armor");
                                 
+                                // the pool of which it chooses a random item
                                 List<Item> items = [rustyShield, shield, oldArmor, armor, rustySword, sword];
                                 
+                                // gets a random weapon
                                 Item gear = items[random.Next(0, items.Count)];
                                 
-                                List<string> names = ["ermanno", "leofwine", "gerald", "sam", "timothee", "guard", "jimmy"];
+                                // the pool of names
+                                List<string> names =
+                                [
+                                    "ermanno", "leofwine", "gerald", "sam", "timothee", "guard", "jimmy", "irmtraut",
+                                    "sacripante", "europe", "bas", "chirag", "arthur", "selina", "aldegonda", "feline"
+                                ];
 
+                                // selects a random name
                                 string name = names[random.Next(0, names.Count)];
 
+                                // creates the name
                                 Enemy enemy = new Enemy(random.Next(1, 101), random.Next(1, 21), 9999, random.Next(1, 11), name);
-                                enemy.SetWeapon(gear);
+                                // checks if their gear is not armor
+                                if (!gear.Name.Contains("armor")) {
+                                    enemy.SetWeapon(gear);
+                                } else {
+                                    if (enemy.Inventory.Put(gear.Name, gear)) {
+                                        gear.ApplyModifiers(enemy);
+                                    }
+                                }
                                 nextRoom.AddInhabitant(name, enemy);
                                 enemy.CurrentRoom = nextRoom;
                             } else if (roomPoolChosen.Name.Equals(roomChest.Name)) {
@@ -207,12 +243,29 @@ class Generation
                                 Spell conjureSword = new Spell("conjure-sword",
                                     "creates a magical sword from the casters mana", 12, false);
                                 conjureSword.Effect = () => ConjureSword(conjureSword);
+                                Spell summonMinion = new Spell("summon-minion",
+                                    "Summons a creature that fights for the player.", 90, true);
+                                summonMinion.Effect = () => SummonMinions(summonMinion);
                                 
-                                List<Spell> spellPool = [fireball, lesserHeal, greaterHeal, smite, magicMissile, conjureShield, conjureSword];
+                                List<Spell> spellPool = [fireball, lesserHeal, greaterHeal, smite, magicMissile, conjureShield, conjureSword, summonMinion];
                                 
                                 Spell spell = spellPool[random.Next(0, spellPool.Count)];
                                 
                                 nextRoom.AddSpell(spell);
+                            } else if (roomPoolChosen.Name.Equals(spookyBacement.Name)) {
+                                if (random.Next(0, 100) <= 25) {
+                                    Room bossRoom =
+                                        new Room(
+                                            "A room filled with cobwebs, it almost looks like some are pulsing with life.",
+                                            "spiders-den");
+                                    
+                                    BossEnemy giantSpider = new BossEnemy("spider-mother", 45, 25, 100, 20, 2,
+                                        new Dictionary<int, Spell>(), null);
+                                    
+                                    bossRoom.AddInhabitant(giantSpider.Name, giantSpider);
+                                    giantSpider.CurrentRoom = bossRoom;
+                                }
+
                             }
                             nextRoom.AddExit(
                                 dir.Equals("west") ? "east" :
@@ -393,5 +446,60 @@ class Generation
         }
         entity.Damage(5, false);
         Console.WriteLine($"{spell.Caster.Name} used magic missile on {entity.Name}");
+    }
+
+    /// <summary>
+    /// the logic of the summon minion spell
+    /// </summary>
+    /// <param name="spell">The spell the method is attached to.</param>
+    public void SummonMinions(Spell spell) {
+        MagicEntity caster = spell.Caster;
+        int i = 0;
+        caster.CurrentRoom.ForEachInhabitant((entitie) => {
+            if (entitie.Key.Contains("minion")) {
+                i++;
+            }
+        });
+        Enemy minion = new Enemy(25, 10, 100, 2, "minion " + i, true);
+        minion.CurrentRoom = caster.CurrentRoom;
+        caster.CurrentRoom.AddInhabitant(minion.Name, minion);
+    }
+
+    private void Slash(Spell spell) {
+        MagicEntity caster = spell.Caster;
+        if (caster.CurrentRoom.ContainsInhabitant("player")) {
+            Entity target = caster.CurrentRoom.GetInhabitant("player");
+            target.Damage(caster.DamageModifier+5, false);
+            Console.WriteLine($"{caster.Name} slashed out at {target.Name}");
+        }
+    }
+    
+    private void BabySpiders(Spell spell) {
+        MagicEntity caster = spell.Caster;
+        Enemy babySpider = new Enemy(10, 5, 0, 0, "baby-spider");
+        int i = 0;
+        foreach (var inhabitant in caster.CurrentRoom.GetInhabitants()) {
+            if (inhabitant.Name.Contains("baby-spider")) {
+                i++;
+            }
+        }
+
+        for (int x = 0; x <= 5; x++) {
+            Enemy clone = babySpider.Clone();
+            clone.Name += i;
+            clone.CurrentRoom = caster.CurrentRoom;
+            caster.CurrentRoom.AddInhabitant(clone.Name, clone);
+        }
+        Console.WriteLine($"{caster.Name} summoned an army of baby spiders");
+    }
+
+    private void PoisonSpit(Spell spell) {
+        MagicEntity caster = spell.Caster;
+        if (caster.CurrentRoom.ContainsInhabitant("player")) {
+            Entity target = caster.CurrentRoom.GetInhabitant("player");
+            target.Damage(caster.DamageModifier-5, false);
+            target.TicksOnFire = 5;
+            Console.WriteLine($"{caster.Name} spat poison at {target.Name}");
+        }
     }
 }
