@@ -258,14 +258,34 @@ class Generation
                                         new Room(
                                             "A room filled with cobwebs, it almost looks like some are pulsing with life.",
                                             "spiders-den");
-                                    
+                                    Spell slash = new Spell("slash", "Slash through the air.", 0, false);
+                                    slash.Effect = () => Slash(slash);
+                                    Spell summonSpiders = new Spell("summon-spiders", "Summon an army of tiny spiders.",
+                                        0, false);
+                                    summonSpiders.Effect = () => BabySpiders(summonSpiders);
+                                    Spell poisonSpit = new Spell("poison-spit", "Spit out poison damaging one target",
+                                        0, false);
+                                    poisonSpit.Effect = () => PoisonSpit(poisonSpit);
+                                        
                                     BossEnemy giantSpider = new BossEnemy("spider-mother", 45, 25, 100, 20, 2,
-                                        new Dictionary<int, Spell>(), null);
+                                        new Dictionary<int, Spell>
+                                        {
+                                            {0, null},
+                                            {50, slash},
+                                            {55, poisonSpit},
+                                            {15, summonSpiders}
+                                        }, null);
                                     
                                     bossRoom.AddInhabitant(giantSpider.Name, giantSpider);
                                     giantSpider.CurrentRoom = bossRoom;
+                                    
+                                    nextRoom.AddExit("down", bossRoom);
+                                    bossRoom.AddExit("up", nextRoom);
                                 }
 
+                                Enemy spider = new Enemy(5, 3, 1, 0, "spider");
+                                spider.CurrentRoom = nextRoom;
+                                nextRoom.AddInhabitant(spider.Name, spider);
                             }
                             nextRoom.AddExit(
                                 dir.Equals("west") ? "east" :
