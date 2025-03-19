@@ -56,7 +56,7 @@ class Game {
 		fireMagic.Effect = () => FireMagic(fireMagic);
 		Spell necroticTouch = new Spell("necrotic-touch", "deals necrotic damage to one random target", 45, false);
 		necroticTouch.Effect = () => NecroticTouch(necroticTouch);
-		BossEnemy zalthor = new BossEnemy("Zalthor, The one that devours", 55, 7, 150, 125, 9,
+		BossEnemy zalthor = new BossEnemy("zalthor", 55, 7, 150, 125, 9,
 			new Dictionary<int, Spell>
 			{
 				{15, dimensionalBlade},
@@ -134,9 +134,9 @@ class Game {
 		
 		// Start game outside
 		player.BackPack.Put("notebook", noteBook);
-		player.CurrentRoom = outside;
+		player.CurrentRoom = bossRoom;
 		player.CurrentRoom.AddInhabitant("player", player);
-		StartingRoom = outside;
+		StartingRoom = bossRoom;
 	}
 
 	/// <summary>
@@ -166,6 +166,7 @@ class Game {
 				Console.WriteLine("You won.");
 				finished = !PrintWelcome();
 				if (!finished) {
+					CreateRooms();
 					continue;
 				}
 			}

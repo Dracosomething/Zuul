@@ -85,7 +85,7 @@ class MagicEntity : Entity {
     /// </summary>
     /// <param name="amount">The amount of mana that needs to be healed</param>
     public void HealMana(int amount) {
-        if ((mana+=amount) > maxMana) return;
+        if ((mana+amount) > maxMana) return;
         mana += amount;
     }
 }

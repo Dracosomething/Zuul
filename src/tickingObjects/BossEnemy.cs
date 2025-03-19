@@ -1,3 +1,5 @@
+using System.Numerics;
+
 namespace Zuul;
 
 class BossEnemy : MagicEntity {
@@ -13,9 +15,12 @@ class BossEnemy : MagicEntity {
         this.abilities = abilities;
         this.mainWeapon = mainWeapon;
         this.hasSeenPlayer = false;
-        // foreach (var ability in abilities) {
-        //     this.SpellBook.Add(ability.Value.Name, ability.Value);
-        // }
+        foreach (var ability in abilities) {
+            if (ability.Value != null) {
+                // Console.WriteLine(ability.Value.Name);
+                this.SpellBook.Add(ability.Value.Name, ability.Value);
+            }
+        }
     }
     
     // methods
@@ -25,7 +30,6 @@ class BossEnemy : MagicEntity {
         if (!IsAlive()) {
             OnDeath();
         } else {
-            base.Tick();
             HealMana(5);
             // selects the next move to use
             Spell nextMove = null;
@@ -41,31 +45,7 @@ class BossEnemy : MagicEntity {
             UseSpell(nextMove.Name);
             // makes shure it is in the room
             this.CurrentRoom.AddInhabitant(this.Name, this);
-            int count = this.CurrentRoom.GetExitCount();
-            int itterations = 0;
-            // allows enemy to move to other rooms
-            this.CurrentRoom.ForEachExit((exit) => {
-                if (hasSeenPlayer) {
-                    if (exit.Value.ContainsInhabitant("player") || 
-                        (this.CurrentRoom.ContainsInhabitant("player"))) {
-                        
-                        // makes it so an enemy cant run from the player
-                        if (this.CurrentRoom.ContainsInhabitant("player")) {
-                            return;
-                        }
-                        // 50% chance for the enemy to move
-                        if (random.Next(0, 100) <= 25) {
-                            this.CurrentRoom.RemoveInhabitant(this.Name);
-                            this.CurrentRoom = exit.Value;
-                            exit.Value.AddInhabitant(this.Name, this);
-                        }
-                    } else if (itterations == count) { // makes shure the enemy wont run the code anymore.
-                        hasSeenPlayer = false;
-                    }
-
-                    itterations++;
-                }
-            });
+            base.Tick();
         }
     }
     

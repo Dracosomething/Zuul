@@ -339,8 +339,13 @@ class Generation
                 while (room.HasExit(dir)) {
                     dir = directionPool[random.Next(0, directionPool.Count)];
                 }
+                Console.WriteLine("placed required room");
                         
                 room.AddExit(dir, required);
+                required.AddExit(
+                    dir.Equals("west") ? "east" :
+                    dir.Equals("east") ? "west" :
+                    dir.Equals("north") ? "south" : "north", room);
                 break;
             }
 
