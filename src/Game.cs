@@ -134,9 +134,9 @@ class Game {
 		
 		// Start game outside
 		player.BackPack.Put("notebook", noteBook);
-		player.CurrentRoom = bossRoom;
+		player.CurrentRoom = outside;
 		player.CurrentRoom.AddInhabitant("player", player);
-		StartingRoom = bossRoom;
+		StartingRoom = outside;
 	}
 
 	/// <summary>
