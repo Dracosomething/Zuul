@@ -11,19 +11,11 @@ class Trap : Entity {
     public Action Function { set { this.function = value; } }
     
     // constructor
-    public Trap(int damage, string name, string describtion, bool hasNextRoom, Action func) : base(damage, 0, 0, name) {
-        this.describtion = describtion;
-        this.hasNextRoom = hasNextRoom;
-        this.nextRoom = null;
-        this.function = func;
-    }
+    public Trap(int damage, string name, string describtion, bool hasNextRoom, Action func) : 
+        this (damage, name, describtion, hasNextRoom, null, func) {}
     
-    public Trap(int damage, string name, string describtion, bool hasNextRoom) : base(damage, 0, 0, name) {
-        this.describtion = describtion;
-        this.hasNextRoom = hasNextRoom;
-        this.nextRoom = null;
-        this.function = null;
-    }
+    public Trap(int damage, string name, string describtion, bool hasNextRoom) : 
+        this(damage, name, describtion, hasNextRoom, null, null) {}
     
     public Trap(int damage, string name, string describtion, bool hasNextRoom, Room nextRoom, Action func) : base(damage, 0, 0, name) {
         this.describtion = describtion;

@@ -27,56 +27,21 @@ class Item {
     public int DecayTicks { get; set; }
     
     // constructor
-    public Item(int weight, string description, string name) {
-        this.name = name;
-        this.weight = weight;
-        this.description = description;
-        this.armorModifier = 0;
-        this.damageModifier = 0;
-        Equiped = false;
-        DecayTicks = -1;
-    }
+    public Item(int weight, string description, string name) : 
+        this(weight, 0, 0, description, name) {}
+
+    public Item(int weight, int armorModifier, int healthModifier, string description, string name) : 
+        this(weight, armorModifier, 0, healthModifier, description, name) {}
     
-    public Item(int weight, int armorModifier, int healthModifier, string description, string name) {
-        this.name = name;
-        this.weight = weight;
-        this.description = description;
-        this.armorModifier = armorModifier;
-        this.healthModifier = healthModifier;
-        this.damageModifier = 0;
-        this.manaModifier = 0;
-        this.magicPowerModifier = 0;
-        Equiped = false;
-        DecayTicks = -1;
-    }
+    public Item(int weight, int armorModifier, int damageModifier, int healthModifier, string description, string name) : 
+        this(weight, armorModifier, damageModifier, healthModifier, 0, description, name) {}
     
-    public Item(int weight, int armorModifier, int damageModifier, int healthModifier, string description, string name) {
-        this.name = name;
-        this.weight = weight;
-        this.description = description;
-        this.healthModifier = healthModifier;
-        this.armorModifier = armorModifier;
-        this.damageModifier = damageModifier;
-        this.manaModifier = 0;
-        this.magicPowerModifier = 0;
-        Equiped = false;
-        DecayTicks = -1;
-    }
+    public Item(int weight, int armorModifier, int damageModifier, 
+        int healthModifier, int manaModifier, string description, string name) : 
+        this(weight, armorModifier, damageModifier, healthModifier, manaModifier, 0, description, name) {}
     
-    public Item(int weight, int armorModifier, int damageModifier, int healthModifier, int manaModifier, string description, string name) {
-        this.name = name;
-        this.weight = weight;
-        this.description = description;
-        this.healthModifier = healthModifier;
-        this.armorModifier = armorModifier;
-        this.damageModifier = damageModifier;
-        this.manaModifier = manaModifier;
-        this.magicPowerModifier = 0;
-        Equiped = false;
-        DecayTicks = -1;
-    }
-    
-    public Item(int weight, int armorModifier, int damageModifier, int healthModifier, int manaModifier, int magicPowerModifier, string description, string name) {
+    public Item(int weight, int armorModifier, int damageModifier, int healthModifier, int manaModifier, 
+        int magicPowerModifier, string description, string name) {
         this.name = name;
         this.weight = weight;
         this.description = description;
@@ -89,10 +54,8 @@ class Item {
         DecayTicks = -1;
     }
 
-    public Item(int weight, int modifier, string description, string modType, string name) {
-        this.name = name;
-        this.weight = weight;
-        this.description = description;
+    public Item(int weight, int modifier, string description, string modType, string name) : 
+        this(weight, description, name) {
         switch (modType.ToLower()) {
             case "armor":
                 this.armorModifier = modifier;
@@ -130,23 +93,11 @@ class Item {
                 this.healthModifier = 0;
                 break;
         }
-        Equiped = false;
-        DecayTicks = -1;
     }
 
     [JsonConstructor]
-    public Item() {
-        this.name = null;
-        this.description = null;
-        this.weight = 0;
-        this.armorModifier = 0;
-        this.damageModifier = 0;
-        this.healthModifier = 0;
-        this.manaModifier = 0;
-        this.magicPowerModifier = 0;
-        this.Equiped = false;
-        DecayTicks = -1;
-    }
+    public Item() : 
+        this(0, 0, 0, 0, 0, 0, null, null) { }
     
     // methods
     /// <summary>

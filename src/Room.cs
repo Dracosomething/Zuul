@@ -18,15 +18,8 @@ class Room {
 	public string Name { get { return this.name; } }
 
 	// constructor
-	public Room(string desc, string name) {
-		description = desc;
-		this.name =  name;
-		exits = new Dictionary<string, Room>();
-		chest = new Inventory(Int32.MaxValue-1);
-		IsUnlocked = true;
-		inhabitants = new Dictionary<string, dynamic>();
-		this.spellBook = new Dictionary<string, Spell>();
-	}
+	public Room(string desc, string name) : 
+		this(desc, name, null) {}
 	
 	public Room(string desc, string name, Item conditionalItem) {
 		description = desc;

@@ -11,12 +11,8 @@ class Enemy : Entity {
     public Inventory Inventory { get { return inventory; } }
 
     // constructor
-    public Enemy(int hp, int dmg, int invSize, int armor, string enemyName) : base(dmg, armor, hp, enemyName) {
-        inventory = new Inventory(invSize);
-        mainWeapon = null;
-        hasSeenPlayer = false;
-        isSub = false;
-    }
+    public Enemy(int hp, int dmg, int invSize, int armor, string enemyName) : 
+        this(hp, dmg, invSize, armor, enemyName, false) {}
     
     public Enemy(int hp, int dmg, int invSize, int armor, string enemyName, bool isSub) : base(dmg, armor, hp, enemyName) {
         inventory = new Inventory(invSize);
