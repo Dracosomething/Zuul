@@ -13,9 +13,9 @@ class BossEnemy : MagicEntity {
         this.abilities = abilities;
         this.mainWeapon = mainWeapon;
         this.hasSeenPlayer = false;
-        foreach (var ability in abilities) {
-            this.SpellBook.Add(ability.Value.Name, ability.Value);
-        }
+        // foreach (var ability in abilities) {
+        //     this.SpellBook.Add(ability.Value.Name, ability.Value);
+        // }
     }
     
     // methods
