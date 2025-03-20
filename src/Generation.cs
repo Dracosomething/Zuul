@@ -186,11 +186,13 @@ class Generation {
                                     "bigger-backpack");
                                 Item medKit = new Item(10, "A box filled with medical supplies", "med-kit");
                                 
-                                List<string> mods = ["armor", "damage", "health", "mana", "magicPower"];
-                                string mod = mods[random.Next(0, mods.Count)];
+                                string[] mods = ["armor", "damage", "health", "mana", "magicPower"];
+                                string mod = mods[random.Next(0, mods.Length)];
+                                string[] artifacts = ["cloack", "ring", "necklace", "belt", "crown", "stone", "rod"];
+                                string artifact = artifacts[random.Next(0, artifacts.Length)];
                                 int modifier = random.Next(1, 50);
-                                Item magicCloack = new Item(1, modifier, "A magical cloack.", mod,
-                                    "cloack-of-"+mod);
+                                Item magicCloack = new Item(1, modifier, "A magical "+artifact+".", mod,
+                                    artifact+"-of-"+mod);
                                 
                                 Item excalibur = new Item(7, 14, "A old and rusty sword", "damage", "excalibur");
                                 Item kavacha = new Item(20, 7, 6,
