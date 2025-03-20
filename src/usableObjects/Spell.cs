@@ -17,6 +17,7 @@ class Spell {
     public string Name { get { return this.name; } set { this.name = value; } }
     public string Description { get { return this.description; } set { this.description = value; } }
     public int ManaCost { get { return this.manaCost; } set { this.manaCost = value; } }
+    public int Cooldown { get; set; }
     [JsonIgnore]
     public Action Effect { get { return this.effect; } set { this.effect = value; } }
     public bool IsSingleUse { get { return this.isSingleUse; } set { this.isSingleUse = value; } }
@@ -30,5 +31,6 @@ class Spell {
         this.effect = null;
         this.manaCost = manaCost;
         this.isSingleUse = isSingleUse;
+        this.Cooldown = 0;
     }
 }

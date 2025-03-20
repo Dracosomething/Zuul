@@ -57,6 +57,10 @@ class MagicEntity : Entity {
         foreach (var item in toBeRemoved) {
             this.backPack.Remove(item.Name);
         }
+
+        foreach (var spell in spellBook) {
+            spell.Value.Cooldown = spell.Value.Cooldown - 1;
+        }
     }
 
     /// <summary>
@@ -69,6 +73,7 @@ class MagicEntity : Entity {
             Console.WriteLine("You dont have that spell.");
             return;
         }
+        if (spell.Cooldown > 0) return;
         if ((mana -= spell.ManaCost) < 0) return;
         spell.Caster = this;
         mana -= spell.ManaCost;
@@ -78,6 +83,7 @@ class MagicEntity : Entity {
             Console.WriteLine($"{spell.Name} can no longer be used.");
         }
         spell.Caster = null;
+        spell.Cooldown = 10;
     }
 
     /// <summary>

@@ -126,7 +126,7 @@ class Game {
 		zalthor.CurrentRoom = bossRoom;
 		bossRoom.AddInhabitant(zalthor.Name, zalthor);
 		
-		generation.GenerateWorld(attic, bossRoom, 20);
+		generation.GenerateWorld(attic, bossRoom, 19);
 
 		kid.CurrentRoom = theatre;
 		kid.Inventory.Put(yellowKey.Name, yellowKey);
