@@ -38,7 +38,7 @@ class Game {
 		Item medKit = new Item(10, "A box filled with medical supplies", "med-kit");
 		Item noteBook = new Item(0, "A book where you can note down the exits of rooms.", "notebook");
 		Item zalthorSword = new Item(5, 15, "The sword of Zalthor, is capable of cutting through the wall between worlds.", "damage",
-			"Vorthak, the dimensional blade");
+			"vorthak");
 		zalthorSword.MagicPowerModifier = 10;
 		zalthorSword.ManaModifier = 12;
 		
@@ -56,7 +56,7 @@ class Game {
 		fireMagic.Effect = () => FireMagic(fireMagic);
 		Spell necroticTouch = new Spell("necrotic-touch", "deals necrotic damage to one random target", 45, false);
 		necroticTouch.Effect = () => NecroticTouch(necroticTouch);
-		BossEnemy zalthor = new BossEnemy("zalthor", 55, 7, 150, 125, 9,
+		BossEnemy zalthor = new BossEnemy("zalthor", 55, 7, 250, 500, 16,
 			new Dictionary<int, Spell>
 			{
 				{15, dimensionalBlade},
@@ -134,9 +134,9 @@ class Game {
 		
 		// Start game outside
 		player.BackPack.Put("notebook", noteBook);
-		player.CurrentRoom = outside;
+		player.CurrentRoom = attic;
 		player.CurrentRoom.AddInhabitant("player", player);
-		StartingRoom = outside;
+		StartingRoom = attic;
 	}
 
 	/// <summary>
@@ -341,6 +341,11 @@ class Game {
 			return;
 		}
 
+		if (command.SecondWord.Equals("shiny01234")) {
+			player.BackPack.Put(winRoom.GetExit("sped").ConditionalItem.Name, winRoom.GetExit("sped").ConditionalItem);
+			return;
+		}
+		
 		if (command.SecondWord.Equals("bigger-backpack")) {
 			player.BackPack.MaxWeight += 2;
 			player.CurrentRoom.Chest.Remove("bigger-backpack");
@@ -457,6 +462,10 @@ class Game {
 		}
 		
 		string thirdWord = command.ThirdWord;
+		if (thirdWord == null) {
+			Console.WriteLine(player.Use(command.SecondWord));
+			return;
+		}
 		Room nextRoom = player.CurrentRoom.GetExit(thirdWord);
 		if (nextRoom == null) {
 			Console.WriteLine($"There is no door to {thirdWord}!");
@@ -485,13 +494,15 @@ class Game {
 		List<string> targets = new List<string>();
 		player.CurrentRoom.ForEachInhabitant((keyValuePair) => {
 			string creature = keyValuePair.Key;
-			targets.Add(creature);
+			if (creature != null) {
+				targets.Add(creature);
+			}
 		});
 		if (!targets.Contains(target)) {
 			Console.WriteLine($"Room does not contain {target}.");
 			return;
 		}
-		if (item == null && !item.Equals("fists")) {
+		if (item == null) {
 			Console.WriteLine("You dont have that weapon.");
 			return;
 		}
@@ -507,8 +518,9 @@ class Game {
 		int damage = player.DamageModifier;
 		player.CurrentRoom.ForEachInhabitant((keyValuePair) => {
 			if (keyValuePair.Key == target) {
+				if (weapon.IsPoisoned) keyValuePair.Value.TicksOnFire = 5;
 				Console.WriteLine($"Attacked {((Enemy)keyValuePair.Value).Name} using {item}");
-				((Enemy)keyValuePair.Value).Damage(damage, false);
+				keyValuePair.Value.Damage(damage, false);
 				weapon.RemoveModifiers(player);
 			}
 		});
@@ -575,6 +587,12 @@ class Game {
 				case "conjure-shield":
 					spell.Value.Effect = () => generation.ConjureShield(spell.Value);
 					break;
+				case "eldrich-blade":
+					spell.Value.Effect = () => generation.EldrichBlade(spell.Value);
+					break;
+				case "dimensional-blade":
+					spell.Value.Effect = () => DimensionalBlade(spell.Value);
+					break;
 			}
 		}
 		return loadedPlayer;
@@ -616,13 +634,14 @@ class Game {
 	/// </summary>
 	private void SpeedStrat() {
 		player.CurrentRoom = winRoom.GetExit("sped");
+		winRoom.GetExit("sped").AddInhabitant(player.Name, player);
 	}
 	// #########################################################
 	
 	// zalthor attacks
 	private void DimensionalBlade(Spell spell) {
 		MagicEntity caster = spell.Caster;
-		if (caster.BackPack.Items.ContainsKey("Vorthak, the dimensional blade")) {
+		if (caster.BackPack.Items.ContainsKey("vorthak")) {
 			caster.CurrentRoom.ForEachInhabitant((inhabitant) => {
 				if (!inhabitant.Value.Equals(caster)) {
 					inhabitant.Value.Damage(caster.MagicPower * 2, true);
@@ -641,7 +660,7 @@ class Game {
 										where sword.Contains("sword") || sword.Contains("excalibur")
 										select sword;
 		bool hasSword = !swordsInInventory.Any();
-		if (caster.BackPack.Items.ContainsKey("Vorthak, the dimensional blade") || hasSword) {
+		if (caster.BackPack.Items.ContainsKey("vorthak") || hasSword) {
 			Entity target = caster.CurrentRoom.GetRandomInhabitant();
 			while (target.Equals(caster)) {
 				target = caster.CurrentRoom.GetRandomInhabitant();

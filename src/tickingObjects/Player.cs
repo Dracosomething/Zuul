@@ -51,7 +51,7 @@ class Player : MagicEntity {
     /// <returns>If the item is successfully dropped</returns>
     public bool DropToChest(string itemName) {
         Item item = BackPack.Get(itemName);
-        if (item != null) {
+        if (item != null && item.DecayTicks == -1) {
             if (CurrentRoom.Chest.Put(itemName, item)) {
                 if (item.Equiped) {
                     item.RemoveModifiers(this);

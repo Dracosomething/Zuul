@@ -14,6 +14,10 @@ class BossEnemy : MagicEntity {
         damageModifier, armorModifier, health, mana, magicPower, name) {
         this.abilities = abilities;
         this.mainWeapon = mainWeapon;
+        this.BackPack = new Inventory(9999);
+        if (mainWeapon != null) {
+            this.BackPack.Put(mainWeapon.Name, mainWeapon);
+        }
         this.hasSeenPlayer = false;
         foreach (var ability in abilities) {
             if (ability.Value != null) {
@@ -56,11 +60,14 @@ class BossEnemy : MagicEntity {
         this.CurrentRoom.RemoveInhabitant(this.Name);
         Console.WriteLine($"{this.Name} died and dropped {BackPack.GetContents()}");
         this.BackPack.ForEach((item) => {
-            if (CurrentRoom.Chest.Put(item.Key, item.Value)) {
-                if (item.Value.Equiped) {
-                    item.Value.RemoveModifiers(this);
+            if (item.Value.DecayTicks == -1) {
+                if (CurrentRoom.Chest.Put(item.Key, item.Value)) {
+                    if (item.Value.Equiped) {
+                        item.Value.RemoveModifiers(this);
+                    }
+
+                    BackPack.Remove(item.Key);
                 }
-                BackPack.Remove(item.Key);
             }
         });
         Spell learnSpell = abilities.Values.ToArray()[0];

@@ -25,6 +25,7 @@ class Item {
     public int MagicPowerModifier { get { return magicPowerModifier; } set { magicPowerModifier = value; } }
     public int ManaModifier { get { return manaModifier; } set { manaModifier = value; } }
     public int DecayTicks { get; set; }
+    public bool IsPoisoned { get; set; }
     
     // constructor
     public Item(int weight, string description, string name) : 
@@ -52,6 +53,7 @@ class Item {
         this.magicPowerModifier = magicPowerModifier;
         Equiped = false;
         DecayTicks = -1;
+        IsPoisoned = false;
     }
 
     public Item(int weight, int modifier, string description, string modType, string name) : 

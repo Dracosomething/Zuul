@@ -85,7 +85,9 @@ class Enemy : Entity {
                 // code to attack the player
                 CurrentRoom.ForEachInhabitant((inhabitant) => {
                     if (!inhabitant.Value is Player) {
-                        if (this.mainWeapon != null) {
+                        if (this.mainWeapon != null)
+                        {
+                            if (mainWeapon.IsPoisoned) inhabitant.Value.TicksOnFire = 5;
                             Console.WriteLine($"{this.Name} attacked {inhabitant.Key} using {mainWeapon.Name}.");
                         }
                         else {

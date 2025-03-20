@@ -1,7 +1,6 @@
 ﻿namespace Zuul;
 
-class Generation
-{
+class Generation {
     // fields
     private List<Room> roomPool = new List<Room>();
     private List<string> directionPool = new List<string>();
@@ -20,8 +19,7 @@ class Generation
         new Room("a room filled with cobwebs and spiders, the shadows look alive.", "bacement");
     
     // constructor
-    public Generation()
-    {
+    public Generation() {
         roomPool.Add(hallway);
         roomPool.Add(stairwellBottom);
         roomPool.Add(stairwellTip);
@@ -187,8 +185,11 @@ class Generation
                                 Item backpack = new Item(0, "A backpack that can hold more then your current one.",
                                     "bigger-backpack");
                                 Item medKit = new Item(10, "A box filled with medical supplies", "med-kit");
-                                Item cloackOfHealth = new Item(1, 25, "A magical cloack.", "health",
-                                    "cloack-of-health");
+                                List<string> mods = ["armor", "damage", "health", "mana", "magicPower"];
+                                string mod = mods[random.Next(0, mods.Count)];
+                                int modifier = random.Next(1, 50);
+                                Item magicCloack = new Item(1, modifier, "A magical cloack.", mod,
+                                    "cloack-of-"+mod);
                                 Item excalibur = new Item(7, 14, "A old and rusty sword", "damage", "excalibur");
                                 Item kavacha = new Item(20, 7, 6,
                                     "A legendary suit of armor, some say it holds incredible magical powers",
@@ -202,7 +203,7 @@ class Generation
                                 pridwen.ManaModifier = 5;
                                 pridwen.MagicPowerModifier = 3;
 
-                                List<Item> items = [rustyShield, shield, pridwen, oldArmor, armor, kavacha, rustySword, sword, excalibur, backpack, medKit, cloackOfHealth];
+                                List<Item> items = [rustyShield, shield, pridwen, oldArmor, armor, kavacha, rustySword, sword, excalibur, backpack, medKit, magicCloack.Clone()];
 
                                 Item contents = items[random.Next(0, items.Count)];
 
@@ -275,6 +276,20 @@ class Generation
                                             {55, poisonSpit},
                                             {15, summonSpiders}
                                         }, null);
+                                    Item spiderArmor = new Item(3, 4, "Armor made from the spiders body", "armor",
+                                        "spider-carapace-armor");
+                                    spiderArmor.HealthModifier = 4;
+                                    Item poisonDagger = new Item(1, 6, "A dagger made from the spiders jaws.", "damage",
+                                        "poisoned-dagger");
+                                    poisonDagger.IsPoisoned = true;
+                                    Item carapaseShield = new Item(2, 4, "A shield made from the spider carapace",
+                                        "armor", "carapace-shield");
+
+                                    List<Item> drops = [spiderArmor, carapaseShield, poisonDagger];
+
+                                    Item drop = drops[random.Next(0, drops.Count)];
+
+                                    giantSpider.BackPack.Put(drop.Name, drop);
                                     
                                     bossRoom.AddInhabitant(giantSpider.Name, giantSpider);
                                     giantSpider.CurrentRoom = bossRoom;
@@ -311,12 +326,39 @@ class Generation
                 chance = 1;
                 Room goldKeyRoom = new Room("A room with a chest in the middle", "gold-key-room");
                 Item goldKey = new Item(5, "A very shiny key.", "gold-key");
+                Item bronzeKey = new Item(3, "A shiny bronze key", "bronze-key");
+                Room bronzeKeyRoom = new Room("A grand chamber holding Igris.", "igris-boss-room");
+                Spell slash = new Spell("slash", "Slash through the air.", 0, false);
+                slash.Effect = () => Slash(slash);
+                Spell eldrichBlade = new Spell("eldrich-blade", "Use eldrich magic to empower your sword", 50, false);
+                eldrichBlade.Effect = () => EldrichBlade(eldrichBlade);
+                Spell eldrichBlast = new Spell("eldrich-blast", "Shoot a eldrich blast that deals minimal damage", 25,
+                    false);
+                eldrichBlast.Effect = () => EldrichBlast(eldrichBlast);
+                Spell magicShield = new Spell("magic-shield", "Create a magical barrier around yourself", 10, false);
+                magicShield.Effect = () => MagicShield(magicShield);
+                Item igrisStaff = new Item(3, "A mystical staff with imense power.", "staff-of-igris");
+                igrisStaff.DamageModifier = 4;
+                igrisStaff.ManaModifier = 4;
+                igrisStaff.MagicPowerModifier = 2;
+                BossEnemy igris = new BossEnemy("igris", 40, 5, 125, 400, 10, new Dictionary<int, Spell>()
+                {
+                    { 12, eldrichBlade },
+                    { 75, slash },
+                    { 20, eldrichBlast },
+                    { 30, magicShield }
+                }, igrisStaff);
+                igris.BackPack.Put(bronzeKey.Name, bronzeKey);
+                igris.CurrentRoom = bronzeKeyRoom;
+                bronzeKeyRoom.AddInhabitant(igris.Name, igris);
                 goldKeyRoom.Chest.Put(goldKey.Name, goldKey);
+                goldKeyRoom.ConditionalItem = bronzeKey;
                 winRoom.ConditionalItem = goldKey;
                 
                 // call methods here to place the rooms
                 PlaceRequiredRooms(chance, directionPoolCopy, currentRooms, winRoom);
                 PlaceRequiredRooms(chance, directionPoolCopy, currentRooms, goldKeyRoom);
+                PlaceRequiredRooms(chance, directionPoolCopy, currentRooms, bronzeKeyRoom);
             }
         }
         
@@ -339,8 +381,6 @@ class Generation
                 while (room.HasExit(dir)) {
                     dir = directionPool[random.Next(0, directionPool.Count)];
                 }
-                Console.WriteLine("placed required room");
-                        
                 room.AddExit(dir, required);
                 required.AddExit(
                     dir.Equals("west") ? "east" :
@@ -393,7 +433,7 @@ class Generation
     public void Fireball(Spell spell) {
         spell.Caster.CurrentRoom.ForEachInhabitant((inhabitant) => {
             if (!inhabitant.Value.Equals(spell.Caster)) {
-                inhabitant.Value.Damage(spell.Caster.MagicPower*2);
+                inhabitant.Value.Damage(spell.Caster.MagicPower*2, false);
                 inhabitant.Value.TicksOnFire = (int)Math.Floor((double) spell.Caster.MagicPower / 3);
             }
         });
@@ -490,6 +530,41 @@ class Generation
         caster.CurrentRoom.AddInhabitant(minion.Name, minion);
     }
 
+    public void EldrichBlade(Spell spell) {
+        MagicEntity caster = spell.Caster;
+        IEnumerable<string> swordsInInventory = from sword in caster.BackPack.Items.Keys.ToList()
+            where sword.Contains("sword") || sword.Contains("excalibur") || sword.Contains("vorthak")
+            select sword;
+        bool hasSword = !swordsInInventory.Any();
+        if (hasSword) {
+            spell.Caster.BackPack.ForEachItem((item) => {
+                if (item.Name.Contains("sword") || item.Name.Contains("excalibur") || item.Name.Contains("vorthak")) {
+                    item.DamageModifier += (int)Math.Floor((double) spell.Caster.MagicPower * 1.5);
+                }
+            });
+            Console.WriteLine(
+                $"{caster.Name} used {spell.Name} and their sword lightens up with a strange glow.");
+        } else {
+            Console.WriteLine($"You dont meet the conditions to use this ability.");
+        }
+    }
+
+    private void EldrichBlast(Spell spell) {
+        MagicEntity caster = spell.Caster;
+        Entity target = caster.CurrentRoom.GetInhabitant("player");
+        target.Damage(caster.MagicPower*2, false);
+        Console.WriteLine(
+            $"{caster.Name} used {spell.Name} on {target.Name} and it hurt a lot.");
+    }
+
+    private void MagicShield(Spell spell) {
+        MagicEntity caster = spell.Caster;
+        Item magicShield = new Item(0, 15, "A magical shield that slowly decays.", "armor", "conjured-shield");
+        magicShield.DecayTicks = 2;
+        caster.BackPack.Put(magicShield.Name, magicShield);
+        Console.WriteLine($"{caster.Name} created a defensive barrier around themself");
+    }
+    
     private void Slash(Spell spell) {
         MagicEntity caster = spell.Caster;
         if (caster.CurrentRoom.ContainsInhabitant("player")) {
