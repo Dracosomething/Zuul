@@ -126,7 +126,7 @@ class Game {
 		zalthor.CurrentRoom = bossRoom;
 		bossRoom.AddInhabitant(zalthor.Name, zalthor);
 		
-		generation.GenerateWorld(attic, bossRoom, 19);
+		generation.GenerateWorld(attic, bossRoom, 20);
 
 		kid.CurrentRoom = theatre;
 		kid.Inventory.Put(yellowKey.Name, yellowKey);
@@ -518,8 +518,8 @@ class Game {
 		int damage = player.DamageModifier;
 		player.CurrentRoom.ForEachInhabitant((keyValuePair) => {
 			if (keyValuePair.Key == target) {
-				if (weapon.IsPoisoned) keyValuePair.Value.TicksOnFire = 5;
-				Console.WriteLine($"Attacked {((Enemy)keyValuePair.Value).Name} using {item}");
+				if (weapon != null && weapon.IsPoisoned) keyValuePair.Value.TicksOnFire = 5;
+				Console.WriteLine($"Attacked {keyValuePair.Value.Name} using {item}");
 				keyValuePair.Value.Damage(damage, false);
 				weapon.RemoveModifiers(player);
 			}
