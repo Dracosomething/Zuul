@@ -32,5 +32,6 @@ class Spell {
         this.manaCost = manaCost;
         this.isSingleUse = isSingleUse;
         this.Cooldown = 0;
+        SpellRegistry.register(this);
     }
 }

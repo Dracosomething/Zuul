@@ -1,4 +1,6 @@
-﻿namespace Zuul;
+﻿using System.Text.Json.Serialization;
+
+namespace Zuul;
 
 class Generation {
     // fields
@@ -17,9 +19,13 @@ class Generation {
     private Room roomWithSpellBook = new Room("a room with a magical book in the center", "room-spellbook");
     private Room spookyBacement =
         new Room("a room filled with cobwebs and spiders, the shadows look alive.", "bacement");
+    private int seed;
+    
+    [JsonInclude]
+    public int Seed { get { return this.seed; } set { this.seed = value; } }
     
     // constructor
-    public Generation() {
+    public Generation(int seed) {
         roomPool.Add(hallway);
         roomPool.Add(stairwellBottom);
         roomPool.Add(stairwellTip);
@@ -36,6 +42,8 @@ class Generation {
         directionPool.Add("east");
         directionPool.Add("north");
         directionPool.Add("south");
+
+        this.seed = seed;
     }
 
     // list for all rooms that have to get a new room
@@ -48,7 +56,7 @@ class Generation {
     /// <param name="winRoom">The room that makes the player win.</param>
     /// <param name="iterations">The amount of times it should loop.</param>
     public void GenerateWorld(Room startRoom, Room winRoom, int iterations) {
-        Random random = new Random(); // creates the randomizer.
+        Random random = new Random(this.seed); // creates the randomizer.
         int chance; // an empty variable that gets assigned the chance for the randomizer to succeed.
         int roomAmount = 0; // the variable that stores all rooms, used for debugging.
         

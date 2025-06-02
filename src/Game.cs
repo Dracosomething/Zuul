@@ -10,19 +10,21 @@ class Game {
 	private Player player;
 	private Room StartingRoom;
 	private Room winRoom = new Room("", "");
-	private Generation generation = new Generation();
+	private Generation generation;
 
 	// Constructor
-	public Game() {
-		string directory = Getdirectory();
+	public Game(int seed) {
+		generation = new Generation(seed);
+		string directory = GetPlayDirectory();
 		parser = new Parser();
-		if (File.Exists(directory)) {
-			player = LoadPlayer();
-		} else {
-			player = new Player();
-		}
+		player = new Player();
 		StartingRoom = null;
 		CreateRooms();
+		if (File.Exists(directory)) {
+			player = LoadPlayer();
+		}
+		player.CurrentRoom = StartingRoom;
+		SafeWorld();
 	}
 	
 	/// <summary>
@@ -45,7 +47,7 @@ class Game {
 		// Enemies
 		Enemy guard = new Enemy(25, 5, 100, 1, "guard");
 		Enemy kid = new Enemy(5, 1, 5, 0, "billy");
-		// Bosses
+		// Boss
 		Spell dimensionalBlade = new Spell("dimensional-blade", "creates a huge cut through reality", 75, false);
 		dimensionalBlade.Effect = () => DimensionalBlade(dimensionalBlade);
 		Spell sweepAttack = new Spell("sweep-attack", "attack one random enemy with your sword.", 0, false);
@@ -91,6 +93,7 @@ class Game {
 		
 		pubStairMid.AddExit("up", pubStairTip);
 		pubStairMid.AddExit("down", pubStairBottom);
+		pubStairMid.AddExit("east", pub);
 		
 		pubStairBottom.AddExit("east", bacement);
 		pubStairBottom.AddExit("up", pubStairMid);
@@ -134,9 +137,9 @@ class Game {
 		
 		// Start game outside
 		player.BackPack.Put("notebook", noteBook);
-		player.CurrentRoom = attic;
+		player.CurrentRoom = outside;
 		player.CurrentRoom.AddInhabitant("player", player);
-		StartingRoom = attic;
+		StartingRoom = outside;
 	}
 
 	/// <summary>
@@ -152,6 +155,7 @@ class Game {
 		}
 		while (!finished) {
 			SafePlayer();
+			SafeWorld();
 			if (!player.IsAlive()) {
 				Console.WriteLine("you died and lost the game.");
 				player = LoadPlayer();
@@ -527,6 +531,32 @@ class Game {
 	}
 
 	/// <summary>
+	/// used to get the location of the player.json file
+	/// </summary>
+	/// <returns>the directory as a string</returns>
+	private string GetPlayDirectory() {
+		string directory;
+		if (OperatingSystem.IsWindows()) {
+			directory = Directory.GetCurrentDirectory() + "\\save\\player.json";
+		} else {
+			directory = Directory.GetCurrentDirectory() + "/save/player.json";
+		}
+
+		return directory;
+	}
+	
+	private string GetWorldDirectory() {
+		string directory;
+		if (OperatingSystem.IsWindows()) {
+			directory = Directory.GetCurrentDirectory() + "\\save\\world.json";
+		} else {
+			directory = Directory.GetCurrentDirectory() + "/save/world.json";
+		}
+
+		return directory;
+	}
+
+	/// <summary>
 	/// saves the player to a json file.
 	/// </summary>
 	private void SafePlayer() {
@@ -536,7 +566,7 @@ class Game {
 			Directory.CreateDirectory(Directory.GetCurrentDirectory() + "/save");
 		}
 		
-		string directory = Getdirectory();
+		string directory = GetPlayDirectory();
 
 		JsonSerializerOptions options = new JsonSerializerOptions { WriteIndented = true  };
 		string jsonString = JsonSerializer.Serialize(player);
@@ -551,7 +581,7 @@ class Game {
 	/// </summary>
 	/// <returns>The player obtained from the json file</returns>
 	private Player LoadPlayer() {
-		string directory = Getdirectory();
+		string directory = GetPlayDirectory();
 
 		JsonSerializerOptions options = new JsonSerializerOptions { WriteIndented = true  };
 		string jsonBase64String = File.ReadAllText(directory);
@@ -564,53 +594,42 @@ class Game {
 				loadedPlayer.BackPack.Remove(item);
 			}
 		});
-		foreach (var spell in loadedPlayer.SpellBook) {
-			switch (spell.Key) {
-				case "fireball":
-					spell.Value.Effect = () => generation.Fireball(spell.Value);
-					break;
-				case "lesser-heal":
-					spell.Value.Effect = () => generation.Heal(spell.Value, 5);
-					break;
-				case "greater-heal":
-					spell.Value.Effect = () => generation.Heal(spell.Value, 20);
-					break;
-				case "smite":
-					spell.Value.Effect = () => generation.Smite(spell.Value);
-					break;
-				case "magic-missile":
-					spell.Value.Effect = () => generation.MagicMissile(spell.Value);
-					break;
-				case "conjure-sword":
-					spell.Value.Effect = () => generation.ConjureSword(spell.Value);
-					break;
-				case "conjure-shield":
-					spell.Value.Effect = () => generation.ConjureShield(spell.Value);
-					break;
-				case "eldrich-blade":
-					spell.Value.Effect = () => generation.EldrichBlade(spell.Value);
-					break;
-				case "dimensional-blade":
-					spell.Value.Effect = () => DimensionalBlade(spell.Value);
-					break;
-			}
+		Player temp = loadedPlayer;
+		foreach (var spell in temp.SpellBook) {
+			Spell sp = spell.Value;
+			Spell newSpell = SpellRegistry.get(sp.Name);
+			loadedPlayer.SpellBook.Remove(spell.Key);
+			loadedPlayer.SpellBook.Add(newSpell.Name, newSpell);
 		}
 		return loadedPlayer;
 	}
 
-	/// <summary>
-	/// used to get the location of the player.json file
-	/// </summary>
-	/// <returns>the directory as a string</returns>
-	private string Getdirectory() {
-		string directory;
-		if (OperatingSystem.IsWindows()) {
-			directory = Directory.GetCurrentDirectory() + "\\save\\player.json";
-		} else {
-			directory = Directory.GetCurrentDirectory() + "/save/player.json";
-		}
+	private Generation LoadGeneration() {
+		string directory = GetWorldDirectory();
+		
+		JsonSerializerOptions options = new JsonSerializerOptions { WriteIndented = true  };
+		string jsonBase64String = File.ReadAllText(directory);
+		string base64String = JsonSerializer.Deserialize<string>(jsonBase64String);
+		Byte[] bytes = Convert.FromBase64String(base64String);
+		string jsonString = Encoding.UTF8.GetString(bytes);
+		return JsonSerializer.Deserialize<Generation>(jsonString, options);
+	}
 
-		return directory;
+	private void SafeWorld() {
+		if (OperatingSystem.IsWindows()) {
+			Directory.CreateDirectory(Directory.GetCurrentDirectory() + "\\save");
+		} else {
+			Directory.CreateDirectory(Directory.GetCurrentDirectory() + "/save");
+		}
+		
+		string directory = GetWorldDirectory();
+
+		JsonSerializerOptions options = new JsonSerializerOptions { WriteIndented = true  };
+		string jsonString = JsonSerializer.Serialize(generation);
+		Byte[] bytes = Encoding.UTF8.GetBytes(jsonString);
+		string base64String = Convert.ToBase64String(bytes);
+		string newJsonString = JsonSerializer.Serialize(base64String, options);
+		File.WriteAllText(directory, newJsonString);
 	}
 
 	/// <summary>

@@ -59,7 +59,7 @@ class MagicEntity : Entity {
         }
 
         foreach (var spell in spellBook) {
-            spell.Value.Cooldown = spell.Value.Cooldown - 1;
+            spell.Value.Cooldown -= 1;
         }
     }
 
